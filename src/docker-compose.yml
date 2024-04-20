@@ -1,0 +1,57 @@
+version: '3'
+services:
+  nextjs_frontend:
+    container_name: nextjs_frontend
+    build:
+      context: ./nextjs-frontend/build-tools
+    networks:
+      - mynetwork
+    ports:
+      - "3000:3000"
+    volumes:
+      - nextjs_frontend_volume:/var/app
+    depends_on:
+      - django_backend
+
+  django_backend:
+    restart: always
+    container_name: django_backend
+    build:
+      context: ./django-backend/build-tools
+    networks:
+      - mynetwork
+    ports:
+      - "8000:8000"
+    volumes:
+      - django_backend_volume:/var/app
+
+  redis:
+    container_name: redis
+    build:
+      context: ./redis
+    networks:
+      - mynetwork
+    expose:
+      - 6379
+
+
+volumes:
+  django_backend_volume:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: 'bind'
+      device: '${PWD}/src/django-backend/'
+
+  nextjs_frontend_volume:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: 'bind'
+      device: '${PWD}/src/nextjs-frontend'
+
+
+
+networks:
+  mynetwork:
+    driver: bridge
