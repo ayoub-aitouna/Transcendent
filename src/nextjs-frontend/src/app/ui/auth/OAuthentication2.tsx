@@ -14,7 +14,7 @@ const OAuthentication2 = ({ children, provider, AuthUrl, scope, client_id }: Rea
         const params = new URLSearchParams({
             response_type: "code",
             client_id: client_id,
-            redirect_uri: `${REACT_APP_REDIRECT_URL_ENDPOINT}/Auth`,
+            redirect_uri: `${REACT_APP_REDIRECT_URL_ENDPOINT}/auth`,
             prompt: 'select_account',
             access_type: 'offline',
             state: provider,

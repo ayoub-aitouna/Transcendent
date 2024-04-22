@@ -1,21 +1,9 @@
 from rest_framework import serializers
-from .models import User
+from user.models import User
 
 class InputSerializer(serializers.Serializer):
     code = serializers.CharField(required=False)
     error = serializers.CharField(required=False)
-
-
-class UserSerializer(serializers.ModelSerializer):
-    password =  serializers.CharField(write_only=True)
-    registration_method = serializers.CharField(read_only=True)
-    class Meta:
-        model = User
-        fields = ['email', 'password', 'image_url', 'username', 'first_name', 'last_name',  'registration_method']
-        
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-
 
 class GoogleUserSerializer(serializers.ModelSerializer):
     

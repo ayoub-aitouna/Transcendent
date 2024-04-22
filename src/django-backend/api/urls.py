@@ -4,4 +4,5 @@ from .views import HomeView
 urlpatterns = [
     path('', view=HomeView.as_view(), name='home'),
     path('auth/', include('authentication.urls')),
+    path('users/', include('user.urls')),
 ]

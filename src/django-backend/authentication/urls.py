@@ -11,7 +11,6 @@ urlpatterns = [
     path('google/', view=views.MixinsGooleLoginApi.as_view(), name='google-login'),
     path('intra/', view=views.IntraLoginApi.as_view(), name='inta-login'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('users/', view=views.UsersListApi.as_view(), name='users'),
     path('register-email/', view=views.RegisterEmailApi.as_view(), name='register-email'),
     path('verify-email/', view=views.VerifyEmailApi.as_view(), name='verify-email'),
     path('register-user/', view=views.RegisterUserApi.as_view(), name='register-user'),

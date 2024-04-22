@@ -1,14 +1,15 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 from rest_framework import exceptions as rest_exceptions
-from .serializers import InputSerializer, UserSerializer
+from .serializers import InputSerializer
+from user.serializers import UserSerializer
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 
 from django.conf import settings
 
 from .utils import get_error_message
-from .models import User
+from user.models import User
 
 from django.shortcuts import redirect
 from urllib.parse import urlencode
@@ -45,7 +46,7 @@ class OAuth2Authentication:
     access_token_url = None
     client_id = None
     client_secret = None
-    redirect_uri = f'{settings.BASE_FRONTEND_URL}/Auth'
+    redirect_uri = f'{settings.BASE_FRONTEND_URL}/auth'
     user_info_url = None
     serializer_class = None
 
