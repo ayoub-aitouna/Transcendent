@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+*,
+::before,
+::after {
+  border-width: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -26,6 +40,14 @@ body {
 }
 
 @layer utilities {
+  .max-container {
+    @apply mx-auto max-w-[1440px];
+  }
+
+  .padding-container {
+    @apply px-6 lg:px-20 3xl:px-0;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

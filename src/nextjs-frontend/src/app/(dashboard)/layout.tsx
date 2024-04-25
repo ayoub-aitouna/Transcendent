@@ -8,7 +8,7 @@ export default function RootLayout({
 	return (
 		<div
 			className='flex flex-col h-screen w-fu
-        items-start justify-center gap-10   pt-[30px] px-[45px] '>
+        items-start justify-center gap-10   pt-[30px] px-[45px]'>
 			<AuthNav />
 			<div className='flex-1 w-full'>{children}</div>
 		</div>

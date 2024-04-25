@@ -10,7 +10,7 @@
 ### User
     - CRUD user info ['username', ....]
     - manage teams
-    - manage fiendlist
+    - manage fiendlist [get_friendlist, accept_fiend, send_friend_request]
     - push-to-notification-on-event
     - crud achivments
 
