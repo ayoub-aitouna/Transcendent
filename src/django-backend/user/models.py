@@ -11,9 +11,17 @@ class User(AbstractUser):
         ('facebook', 'Facebook'),
         ('intra', 'Intra'),
     ]
+
+    STATUS_CHOICES = [
+        ('online', 'Online'),
+        ('offline', 'Offline'),
+        ('ingame', 'Ingame'),
+        ('away', 'Away'),
+    ]
     registration_method = models.CharField(max_length=10,
                                            choices=REGISTRATION_CHOICE,
                                            default='email')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='offline')
     image_url = models.URLField(blank=True, null=True)
     achivments = models.ManyToManyField('Achivments', blank=True)
     friends = models.ManyToManyField('self', through='Friends', symmetrical=False)
@@ -60,7 +68,6 @@ class Achivments(models.Model):
     
     def __str__(self) -> str:
         return self.name
-    
 
 class Ranks(models.Model):
     name = models.CharField(max_length=200)
