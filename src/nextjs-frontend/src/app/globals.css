@@ -41,7 +41,7 @@ body {
 
 @layer utilities {
   .max-container {
-    @apply mx-auto max-w-[1440px];
+    @apply  max-w-[1728px] mx-auto;
   }
 
   .padding-container {

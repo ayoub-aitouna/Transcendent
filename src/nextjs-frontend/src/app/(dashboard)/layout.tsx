@@ -1,4 +1,4 @@
-import AuthNav from "@/app/ui/dashboard/nav";
+import NavBar from "@/app/ui/dashboard/nav/NavBar";
 
 export default function RootLayout({
 	children,
@@ -7,9 +7,8 @@ export default function RootLayout({
 }>) {
 	return (
 		<div
-			className='flex flex-col h-screen w-fu
-        items-start justify-center gap-10   pt-[30px] px-[45px]'>
-			<AuthNav />
+			className='flex flex-col items-start justify-center max-container '>
+			<NavBar />
 			<div className='flex-1 w-full'>{children}</div>
 		</div>
 	);

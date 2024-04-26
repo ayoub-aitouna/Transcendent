@@ -1,30 +1,52 @@
-import { navItem } from "@/type/dashboard/navitem";
+import { navItem, SocialItem, SocialBtnType} from "@/type/dashboard/navitem";
 import Home from "@/app/ui/dashboard/icons/nav/home";
-import Turnements from "@/app/ui/dashboard/icons/nav/turnement";
+import Tournaments from "@/app/ui/dashboard/icons/nav/turnement";
 import Ranking from "@/app/ui/dashboard/icons/nav/ranking";
+import twitch  from "@/app/ui/dashboard/icons/nav/twitch";
+import Intra from "@/app/ui/dashboard/icons/nav/intra";
+import Discord from "@/app/ui/dashboard/icons/nav/discord";
+import Notification from "@/app/ui/dashboard/icons/nav/notification";
+
+
 
 export const navLinks: navItem[] = [
-	{ title: "Play Now", href: "/game" },
-	{ title: "Home", Icon: Home, href: "/home" },
-	{ title: "Turnements", Icon: Turnements, href: "/turnements" },
-	{ title: "Ranking", Icon: Ranking, href: "/ranking" },
+	{
+        name: 'Home',
+        href: '/home',
+        Icon: Home
+    },
+    {
+        name: 'Tournaments',
+        href: '/tournaments',
+        Icon: Tournaments
+    },
+    {
+        name: 'Ranking',
+        href: '/ranking',
+        Icon: Ranking
+    },
 ];
 
-export const socialLinks: any[] = [
+export const socialLinks: SocialItem[] = [
 	{
-		Icon: Home,
-		href: "https://www.facebook.com/",
-	},
+      
+        href: 'https://profile.intra.42.fr/',
+        Icon: Intra,
+		type: SocialBtnType.link
+    },
+    {
+        href: 'https://www.twitch.tv/',
+        Icon: twitch,
+		type:  SocialBtnType.link
+    },
+    {
+        href: 'https://discord.com/',
+        Icon: Discord,
+		type:  SocialBtnType.link
+    },
 	{
-		Icon: Home,
-		href: "https://www.twitter.com/",
-	},
-	{
-		Icon: Home,
-		href: "https://www.instagram.com/",
-	},
-	{
-		Icon: Home,
-		href: "https://www.youtube.com/",
-	},
+        href: '',
+        Icon: Notification,
+		type:  SocialBtnType.btn
+    },
 ];
