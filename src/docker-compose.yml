@@ -13,6 +13,7 @@ services:
     depends_on:
       - django_backend
 
+
   django_backend:
     restart: always
     container_name: django_backend
