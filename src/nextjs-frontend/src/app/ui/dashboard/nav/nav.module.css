@@ -10,6 +10,15 @@
 	border-radius: 5px;
 }
 
+.create_new_trn {
+	background: linear-gradient(100deg, #FD4106 0%, #FD4106 37%, #FE284F 64%, #FF0099 100%);
+}
+
+.highlight {
+	background: linear-gradient(90deg, #fd400624 0%, #9d270000 100%);
+}
+Rank
+4821
 .play_now_button:hover {
 	opacity: 0.8;
 }

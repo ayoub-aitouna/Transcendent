@@ -1,15 +1,26 @@
+'use client'
 import React from 'react';
+import { FilterBtn } from './content_area/filterBtn';
+import { UserContainer } from './content_area/userContainer';
 
-function TopPlayers
-() {
-    return (
-        < div className=""  style={{ padding: '20px',  borderRadius: '8px' }}>
-            <h2>TopPlayers 1</h2>
-            <p>This is the content of Component 1.</p>
-            <button>Click Me</button>
-        </div>
-    );
+function TopPlayers() {
+	const handleClick = () => {
+		window.location.href = "/profile";
+	};
+	return (
+		<div className='' >
+			<FilterBtn name='Top Players' />
+			{Array(4).fill(0).map((_, index) => (
+				<UserContainer
+					key={index} // Add a unique key for each component
+					name='Aaitouna'
+					href='/profile'
+					number={165}
+					index={index + 1} // Use the index variable to set the index prop dynamically
+				/>
+			))}
+		</div>
+	);
 }
 
-export default TopPlayers
-;
+export default TopPlayers;

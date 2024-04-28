@@ -15,3 +15,12 @@ export type SocialItem = {
 	href: string;
 	type: SocialBtnType;
 }
+
+
+export type TournamentsItem = {
+	href: string;
+	name: string;
+	followers: string;
+	secName: string;
+	// number: number;
+}
