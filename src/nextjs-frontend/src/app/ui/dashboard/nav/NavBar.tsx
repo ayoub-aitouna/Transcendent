@@ -5,9 +5,8 @@ import NavBtnR from "@/app/ui/dashboard/nav/NavBtnRight";
 import ProfileIcon from "@/app/ui/dashboard/nav/profile"
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import { navLinks, Notifications, socialLinks } from "@/constant/dashboard";
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { string } from "yup";
 
 
 const PlayNowIcon = () => {
@@ -24,37 +23,51 @@ function NotificationContent({ notification, time }: {
 	notification: string;
 	time: string
 }) {
+	const truncatedNotification = notification.length > 70 ? `${notification.substring(0, 70)}...` : notification;
 	return (
-		<div className={`pt-2 flex  flex-row items-center justify-between rounded-md  w-[206px] overflow-hidden`}>
-				<div className=" flex items-center rounded-sm">
-					<div className="rounded-ful flex items-start">
-						<Image className="ml-2 w-[25px] h-[25px] " src="/aaitouna.png" alt="Profile Image" width={25} height={25} />
-					</div>
-					<div className="pl-2 flex flex-col items-start w-[153px] h-full">
-						<div className=" text-white font-light text-[8px]"> {notification}</div>
-						<div className=" font-normal text-[#878787] text-[5px]  ">{time}</div>
-					</div>
+		<div className={`p-2 min-h-[30px] flex  flex-row items-center justify-between rounded-md  w-[206px] overflow-hidden`}>
+			<div className="flex items-center rounded-sm">
+				<div className="rounded-ful flex items-start">
+					<Image className=" w-[25px] h-[25px] " src="/aaitouna.png" alt="Profile Image" width={25} height={25} />
 				</div>
+				<div className="pl-2 flex flex-col items-start w-[153px] ">
+					<div className=" text-white font-light text-[8px] overflow-hidden max-h-[30px] "> {truncatedNotification}</div>
+					<div className=" font-normal text-[#878787] text-[5px]  ">{time}</div>
+				</div>
+			</div>
 		</div>
 	);
 };
 
 
 const NavBar = () => {
-	const [clickedIndex, setClickedIndex] = useState<number | null>(null);
-	const [isClicked, setIsClicked] = useState(false);
+	const [clickedIndex, setClickedIndex] = useState(false);
+	const [ViewALlClicked, setViewALlClicked] = useState(false);
+	const [NotificationClicked, setNotificationClicked] = useState<number | null>(null);;
 
-	const handleIconClick = (index: number, href: string) => {
-		if (href === '') {
-			setClickedIndex(prevIndex => prevIndex === index ? null : index);
-		}
+	const handleIconClick = (href :string) => {
+		if(href === '')
+			setClickedIndex(!clickedIndex);
 	};
 
-	const handleClick = () => {
-		setIsClicked(!isClicked);
+	const handleViewAll = () => {
+		setViewALlClicked(!ViewALlClicked);
 	};
 
-	Notification
+	const handleNotificationClicked = (index : number) => {
+		setNotificationClicked(index === NotificationClicked ? null : index);
+	}
+	// const calculateMaxNotifications = () => {
+	// 	let totalHeight = 0;
+	// 	let count = 0;
+	// 	const notificationHeight = 30;
+	// 	while (totalHeight < 190 && count < Notifications.length) {
+	// 		totalHeight += notificationHeight;
+	// 		count++;
+	// 	}
+	// 	return count;
+	// };
+	// const maxNotifications = calculateMaxNotifications();
 	return (
 		<div className='w-full mt-[40px] mb-[40px] flex flex-row justify-between items-center mx-auto max-w-[100vw]'>
 			<div className="text-white font-semibold flex flex-row gap-16 items-center justify-center">
@@ -71,31 +84,45 @@ const NavBar = () => {
 				</ul>
 			</div>
 			<div className="flex items-center space-x-2">
-				{socialLinks.map((item, index) => (
-					<div key={index} className={`relative rounded-full ${clickedIndex === index && item.href === '' ? 'bg-[#111111]' : 'bg-[#303030]'} h-[40px] w-[40px] aspect-square`} onClick={() => handleIconClick(index, item.href)}>
-						<NavBtnR
-							href={item.href}
-							Icon={item.Icon}
-						/>
-						{clickedIndex === index && (
-							<div className="mt-[3px] absolute top-full right-0 bg-[#242424] w-[226px] h-[290px] p-2 rounded-md flex flex-col">
-								<div className="font-semibold text-[12px] text-[#666666]"> NOTIFICATION</div>
-								<div className="w-[206px] mt-2 border-t border-[#363636] pt-2"></div>
-								<div className="flex items-center flex-col">
-									{Notifications.map((item, index) => (
-										<div key={index} className="container flex flex-col justify-between items-center">
-											<NotificationContent
-												notification={item.notification}
-												time={item.time}
-											/>
-										</div>
-									))}
+				{socialLinks.map((item, index) => {
+					return (
+						<div className="relative">
+							<div className={``} onClick={() => handleIconClick(item.href)}>
+								<div key={index} className={`rounded-full ${clickedIndex && item.href === '' ? 'bg-[#111111]' : 'bg-[#303030]'} h-[40px] w-[40px] aspect-square`} >
+									<NavBtnR href={item.href} Icon={item.Icon} />
+										{	item.href === '' && clickedIndex ?
+											<div className="mt-[3px] absolute top-full right-0 bg-[#242424] w-[226px] p-2 rounded-md flex flex-col" onClick={(e) => e.stopPropagation()}>
+												<div className="font-semibold text-[12px] text-[#666666]"> NOTIFICATION</div>
+												<div className="w-[206px] border-t border-[#363636] pt-2"></div>
+												<div className="flex flex-col items-center">
+													<div className={`${ViewALlClicked ? 'max-h-[250px] overflow-y-auto pl-2 ' : 'max-h-[250px]'}`}>
+														{Notifications.map((item, index) => (
+															<div key={index} className={`container flex flex-col justify-between items-center 
+															${index === NotificationClicked ? 'bg-[#3D3D3D] rounded-sm' : ''}`} onClick={() => handleNotificationClicked(index)}>
+																<NotificationContent
+																	notification={item.notification}
+																	time={item.time} />
+															</div>
+														)).slice(0, ViewALlClicked ? Notifications.length : 6)}
+													</div>
+													{Notifications.length > 6 && (
+														<button className="justify-center mt-2 flex flex-row items-center rounded-[2px] h-[11px] w-[38px]"
+															onClick={handleViewAll} aria-label="Navigate to game">
+															<div className="flex flex-row items-center justify-between mx-auto">
+																<div className="font-medium items-center text-[#A5A5A5] tracking-[.025] text-[6px]">
+																	{ViewALlClicked ? "SHOW LESS" : "VIEW ALL"}
+																</div>
+															</div>
+														</button>
+													)}
+												</div>
+											</div>: null
+										}
 								</div>
 							</div>
-						)}
-
-					</div>
-				))}
+						</div>
+					);
+				})}
 				<ProfileIcon />
 			</div>
 		</div>

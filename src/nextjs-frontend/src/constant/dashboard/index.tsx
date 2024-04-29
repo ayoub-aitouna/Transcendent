@@ -95,4 +95,32 @@ export const Notifications: NotificationItem[] = [
 		notification: 'New Message from aaitouna',
 		time: '15 hours ago',
 	},
+	{
+		notification: 'New Message from kmahdi',
+		time: '15 hours ago',
+	},
+	{
+		notification: 'New Message from aaitouna',
+		time: '15 hours ago',
+	},
+	{
+		notification: 'New Message from kmahdi',
+		time: '15 hours ago',
+	},
+	{
+		notification: 'New Message from aaitouna',
+		time: '15 hours ago',
+	},
+	{
+		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
+		time: '2 hours ago',
+	},
+	{
+		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
+		time: '2 hours ago',
+	},
+		{
+		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
+		time: '2 hours ago',
+	},
 ];
