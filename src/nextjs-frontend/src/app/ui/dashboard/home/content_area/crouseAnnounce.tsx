@@ -1,35 +1,42 @@
 'use client'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Carousel } from 'react-bootstrap';
 
 import Image from 'next/image';
+import styles from '@/app/ui/dashboard/nav/nav.module.css'
+
+export function CarouselElements(){
+	return(
+		<div>
+
+		</div>
+	)
+}
 
 function CarouselAnnounce() {
+	const handleClick = () => {
+		window.location.href = '/filter';
+	}
 	return (
-		<div>
-			<div id="carouselExampleControlsNoTouching" className="carousel slide" data-bs-touch="false">
-				<div className="carousel-inner">
-					<div className="carousel-item active">
-						{/* <Image src='/assets/images/Valorant.png' alt="Profile Image" width={363.08} height={544.63} /> */}
-
+		<div className='p-4 flex flex-row justify-between'>
+			<div>
+				<div className="pt-16 flex items-center bg">
+					<button className={`${styles.highlighted} rounded-[4px] w-[145px] h-[23px] text-[12px] font-bold  text-[#FF3D00]`} >  REGISTRATION OPENS </button>
+				</div>
+					<div className="ml-2 pt-10 flex flex-col justify-center  w-[334px] h-[101px]">
+						<div className=' text-[42px] font-bold'> VALORANT VCT </div>
+						<div className='text-[42px] font-bold m-0'> CUP 2024 </div>
 					</div>
-					<div className="carousel-item">
-						{/* <Image src='/assets/images/Valorant.png' alt="Profile Image" width={363.08} height={544.63} /> */}
-
-					</div>
-					<div className="carousel-item">
-						{/* <Image src='/assets/images/Valorant.png' alt="Profile Image" width={363.08} height={544.63} /> */}
-
+				<div className="pt-16 flex items-center w-[334px] h-[45px] ">
+					<div className='text-[12px] font-normal text-[#999999] tracking-tighter'>Valorant is a free-to-play first-person tactical hero shooter developed and published by Riot Games, for Windows. Teased under the codename Project A in October 2019, the game...</div>
+				</div>
+				<div className='pt-[63px]'>
+					<div className=" flex items-center " onClick={handleClick} aria-label="Navigate to profile">
+						<button className={`${styles.create_new_trn} rounded-md w-[104px] h-[37px] text-[14px] font-semibold`} onClick={handleClick}>Register now</button>
+						<div className="pl-2"><button className={`bg-[#3F3F3F] rounded-md w-[93px] h-[37px] text-[14px] font-semibold`} onClick={handleClick}>Learn more</button></div>
 					</div>
 				</div>
-				<button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
-					<span className="carousel-control-prev-icon" aria-hidden="true"></span>
-					<span className="visually-hidden">Previous</span>
-				</button>
-				<button className="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
-					<span className="carousel-control-next-icon" aria-hidden="true"></span>
-					<span className="visually-hidden">Next</span>
-				</button>
+			</div>
+			<div>
+			<Image className="" src="/assets/images/Valorant.png" alt="Profile Image" width={383.08} height={545.63} />
 			</div>
 		</div>
 	);

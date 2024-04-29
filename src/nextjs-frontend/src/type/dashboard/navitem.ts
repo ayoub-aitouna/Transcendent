@@ -24,3 +24,9 @@ export type TournamentsItem = {
 	secName: string;
 	// number: number;
 }
+
+
+export type NotificationItem = {
+	notification: string;
+	time: string;
+}
