@@ -1,4 +1,4 @@
-import { navItem, SocialItem, SocialBtnType, TournamentsItem } from "@/type/dashboard/navitem";
+import { navItem, SocialItem, SocialBtnType, TournamentsItem, NotificationItem } from "@/type/dashboard/navitem";
 import Home from "@/app/ui/dashboard/icons/nav/home";
 import Tournaments from "@/app/ui/dashboard/icons/nav/turnement";
 import Ranking from "@/app/ui/dashboard/icons/nav/ranking";
@@ -71,5 +71,28 @@ export const tournamentLinks: TournamentsItem[] = [
 		name: 'Fortnite MASTERS',
 		followers: '34.9k',
 		secName: 'Fortnite S14'
+	},
+];
+
+export const Notifications: NotificationItem[] = [
+	{
+		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
+		time: '2 hours ago',
+	},
+	{
+		notification: 'Eric invited you into a game of pingpong',
+		time: '1 hour ago',
+	},
+	{
+		notification: 'Aya invited you to join a Team',
+		time: '15 hours ago',
+	},
+	{
+		notification: 'New Message from kmahdi',
+		time: '15 hours ago',
+	},
+	{
+		notification: 'New Message from aaitouna',
+		time: '15 hours ago',
 	},
 ];
