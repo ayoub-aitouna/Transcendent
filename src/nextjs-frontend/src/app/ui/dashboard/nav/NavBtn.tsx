@@ -9,7 +9,8 @@ function NavBtn({ href, name, Icon }: {
 }) {
 
 	const pathname = usePathname()
-	const selected = pathname == href;
+	console.log('pathname', pathname, 'href', href, 'pathname.startsWith(href)', pathname.startsWith(href))
+	const selected = pathname.startsWith(href);
 
 	return (
 		<Link href={href} className='underline-none '>

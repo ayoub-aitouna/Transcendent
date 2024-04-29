@@ -9,7 +9,7 @@ export default function RootLayout({
 		<div
 			className='flex flex-col items-start justify-center max-container '>
 			<NavBar />
-			<div className='flex-1 w-full'>{children}</div>
+			<div className='flex-1 w-full pb-10'>{children}</div>
 		</div>
 	);
 }

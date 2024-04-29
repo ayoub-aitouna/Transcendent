@@ -54,7 +54,6 @@ export const socialLinks: SocialItem[] = [
 
 export const tournamentLinks: TournamentsItem[] = [
 	{
-
 		href: '/assets/images/valorant.jpg',
 		name: 'Valorant VCT cup 2024',
 		followers: '64.9k',
