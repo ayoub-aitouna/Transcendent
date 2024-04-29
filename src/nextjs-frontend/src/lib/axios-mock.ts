@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { BACKEND_API_URL, jwt_access, jwt_refresh } from '@/constant/api'
-// import Cookies from 'universal-cookie';
-// const cookies = new Cookies(null, { path: '/' });
+import { BACKEND_API_URL } from '@/constant/api'
+import { parseCookies } from 'nookies'
 
 export const apiMock = axios.create({
     baseURL: BACKEND_API_URL,
@@ -14,10 +13,10 @@ export const apiMock = axios.create({
 apiMock.defaults.withCredentials = false;
 
 apiMock.interceptors.request.use(function (config) {
-    // const token = cookies.get(jwt_cockies_name);
-    const token = null;
-    if (config.headers) {
-        config.headers.Authorization = token ? `Bearer ${token}` : '';
+    const cookies = parseCookies()
+    const token = cookies.access
+    if (config.headers && token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
 });

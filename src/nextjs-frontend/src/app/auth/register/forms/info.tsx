@@ -3,11 +3,12 @@ import Input from "@/app/ui/auth/input";
 import AuthForm from "@/app/ui/auth/form";
 import { useFormData } from "@/app/auth/register/context/FormProvider";
 import { RegisterUser } from "@/api/auth";
-import { redirect } from "next/navigation";
-import { user } from "@/type/user";
+import { useRouter } from "next/navigation";
+import { user } from "@/type/auth/user";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ApiResponse } from "@/type/auth/auth";
 
 const schema = yup.object().shape({
 	username: yup
@@ -31,6 +32,7 @@ const schema = yup.object().shape({
 });
 
 const Info = () => {
+	const router = useRouter();
 	const { getFormValues } = useFormData();
 	const {
 		register,
@@ -49,8 +51,8 @@ const Info = () => {
 			last_name: data.fullname.split(" ")[1],
 		} as user;
 		try {
-			const res = await RegisterUser({ ...user });
-			redirect("/Auth");
+			const res: Partial<ApiResponse> = await RegisterUser({ ...user });
+			router.replace("/");
 		} catch (e) {
 			console.log(e);
 		}
