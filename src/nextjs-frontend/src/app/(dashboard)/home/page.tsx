@@ -12,15 +12,15 @@ const page = () => {
 		<div className="h-full">
 			<div className="flex-1 h-full flex flex-col gap-5">
 				<div className="flex  flex-row flex-wrap h-[456px] gap-5">
-					<div className="w-full lg:w-[381px] h-full bg-secondary-200 rounded-xl p-4"><TeamLeader /></div>
-					<div className="w-full flex-1 h-full bg-secondary-200  min-w-[400px] rounded-xl"><NewTournaments /></div>
-					<div className="w-full lg:w-[381px] h-full bg-secondary-200 rounded-xl p-4"><TopPlayers /></div>
+					<div className="w-full lg:w-[381px] h-full bg-secondary-400 rounded-xl p-4"><TeamLeader /></div>
+					<div className="w-full flex-1 h-full bg-secondary-400  min-w-[400px] rounded-xl"><NewTournaments /></div>
+					<div className="w-full lg:w-[381px] h-full bg-secondary-400 rounded-xl p-4"><TopPlayers /></div>
 				</div>
 
 				<div className="flex flex-row flex-wrap h-[456px] gap-5">
-					<div className="w-full lg:w-[381px] bg-secondary-200 rounded-xl p-4"><OnlinePlayers /></div>
-					<div className="w-full flex-1 bg-secondary-200  min-w-[400px] rounded-xl p-4"><Tournaments /></div>
-					<div className="w-full lg:w-[381px] bg-secondary-200 rounded-xl p-4"><TeamRanking /></div>
+					<div className="w-full lg:w-[381px] bg-secondary-400 rounded-xl p-4"><OnlinePlayers /></div>
+					<div className="w-full flex-1 bg-secondary-400  min-w-[400px] rounded-xl p-4"><Tournaments /></div>
+					<div className="w-full lg:w-[381px] bg-secondary-400 rounded-xl p-4"><TeamRanking /></div>
 				</div>
 
 			</div>

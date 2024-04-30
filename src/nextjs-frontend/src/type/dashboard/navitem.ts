@@ -18,6 +18,7 @@ export type SocialItem = {
 
 
 export type TournamentsItem = {
+	id?: number;
 	href: string;
 	name: string;
 	followers: string;

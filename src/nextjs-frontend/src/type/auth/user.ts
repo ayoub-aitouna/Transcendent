@@ -5,4 +5,5 @@ export type user = {
     username: string,
     first_name: string,
     last_name: string,
+    level: number,
 }

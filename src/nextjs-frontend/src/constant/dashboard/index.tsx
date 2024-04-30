@@ -54,22 +54,22 @@ export const socialLinks: SocialItem[] = [
 
 export const tournamentLinks: TournamentsItem[] = [
 	{
-		href: '/assets/images/valorant.jpg',
-		name: 'Valorant VCT cup 2024',
-		followers: '64.9k',
-		secName: 'Valorant'
+		href: "/assets/images/valorantlogo.png",
+		name: "Valorant VCT cup 2024",
+		followers: "64.9k",
+		secName: "Valorant",
 	},
 	{
-		href: '/assets/images/lol.png',
-		name: 'lEAGUE MASTERS  ',
-		followers: '102.7k',
-		secName: 'league of legends'
+		href: "/assets/images/lol.png",
+		name: "lEAGUE MASTERS  ",
+		followers: "102.7k",
+		secName: "league of legends",
 	},
 	{
-		href: '/assets/images/fortnait.jpg',
-		name: 'Fortnite MASTERS',
-		followers: '34.9k',
-		secName: 'Fortnite S14'
+		href: "/assets/images/fortnait.jpg",
+		name: "Fortnite MASTERS",
+		followers: "34.9k",
+		secName: "Fortnite S14",
 	},
 ];
 
