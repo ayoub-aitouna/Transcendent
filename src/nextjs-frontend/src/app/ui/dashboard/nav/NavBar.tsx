@@ -12,11 +12,11 @@ import { usePathname } from "next/navigation";
 
 const PlayNowIcon = () => {
 	const pathname = usePathname();
-	if (pathname === "/game") return null;
+	if (pathname === "/game") return ;
 	return (
 		<Link
 			href='/game'
-			className={`${styles.play_now_button} h-9 w-36 grid place-content-center text-sm font-semibold`}>
+			className={`${styles.play_now_button}  h-9 w-36 grid place-content-center text-sm font-semibold`}>
 			Play Now{" "}
 		</Link>
 	);
@@ -76,17 +76,6 @@ const NavBar = () => {
 	const handleNotificationClicked = (index: number) => {
 		setNotificationClicked(index === NotificationClicked ? null : index);
 	};
-	// const calculateMaxNotifications = () => {
-	// 	let totalHeight = 0;
-	// 	let count = 0;
-	// 	const notificationHeight = 30;
-	// 	while (totalHeight < 190 && count < Notifications.length) {
-	// 		totalHeight += notificationHeight;
-	// 		count++;
-	// 	}
-	// 	return count;
-	// };
-	// const maxNotifications = calculateMaxNotifications();
 	return (
 		<div className='w-full mt-[40px] mb-[40px] flex flex-row justify-between items-center mx-auto max-w-[100vw]'>
 			<div className='text-white font-semibold flex flex-row gap-16 items-center justify-center'>

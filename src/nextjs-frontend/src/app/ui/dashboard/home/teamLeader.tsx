@@ -1,90 +1,23 @@
 
 'use client'
-import React from 'react';
 import Image from 'next/image';
 import { Rank } from '../icons/content_area/rank';
 import Coins from '../icons/content_area/coins';
 import Messages from '../icons/content_area/messages';
 import { ContentBtn } from './content_area/contentBtn';
+import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
-import { useEffect, useRef } from 'react';
-
-// width={340}
-// height={161}
-
 
 export const ChartComponent = () => {
-  const chartRef = useRef<Chart>();
-
-  const xValues: number[] = [];
-  const yValues: number[] = [];
-  useEffect(() => {
-    generateData(Math.sin, 0, 10, 0.5);
-
-    const ctx = document.getElementById("myChart") as HTMLCanvasElement;
-    if (!ctx) return;
-
-    if (chartRef.current) {
-      chartRef.current.destroy(); // Destroy the previous Chart instance
-    }
-
-    chartRef.current = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: xValues,
-        datasets: [{
-          fill: false,
-          pointRadius: 2,
-          borderColor: "rgba(0,0,255,0.5)",
-          data: yValues
-        }]
-      },
-      options: {
-        plugins: {
-          title: {
-            display: true,
-            text: "y = sin(x)",
-            fontSize: 16
-          }
-        },
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        scales: {
-          x: {
-            type: 'linear',
-            position: 'bottom',
-          },
-          y: {
-            type: 'linear',
-            position: 'left',
-          }
-        }
-      }
-    });
-
-    // Clean up function
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy(); // Destroy the Chart instance when the component unmounts
-      }
-    };
-  }, []);
-
-  function generateData(func: (x: number) => number, i1: number, i2: number, step: number = 1) {
-    for (let x = i1; x <= i2; x += step) {
-      yValues.push(func(x));
-      xValues.push(x);
-    }
-  }
-
-  return <canvas id="myChart" style={{ width: '100%', maxWidth: '600px' }} />;
-};
-
-
-
+	return (
+	  <div style={{ width: '340px', height: '162px', position: 'relative', overflow: 'hidden' }}>
+	  </div>
+	);
+  };
+  
+	
 function TeamLeader() {
+	const playerData = [70, 75, 79, 62, 80, 90, 82, 80, 75, 100];
 	const handleClick = () => {
 		window.location.href = "/profile";
 	};
@@ -103,8 +36,8 @@ function TeamLeader() {
 				<div className=' text-sx font-light'>My Level</div>
 				<div className="ml-auto">7.9000/9000</div>
 			</div>
-			<div className='mt-5'>
-				<ChartComponent />
+			<div className='mt-5 h-[161px] w-[340px]'>
+			<ChartComponent/>
 			</div >
 			<div className='mt-5'>
 				<div className='container  flex flex-row justify-between items-center'>
