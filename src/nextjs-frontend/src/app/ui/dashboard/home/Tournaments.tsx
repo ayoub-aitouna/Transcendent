@@ -9,6 +9,9 @@ function Tournaments() {
 	const handleClick = () => {
 		window.location.href = '/filter';
 	}
+	const handleClickAll = () => {
+		window.location.href = '/tournaments';
+	}
 	return (
 		<div className='relative h-full' >
 			<div className="pb-8 flex items-center justify-between" onClick={handleClick} aria-label="Navigate to profile">
@@ -26,7 +29,7 @@ function Tournaments() {
 			))}
 			<div className="w-full absolute bottom-0">
 				<div className="w-full grid place-content-end">
-					<div className='flex flex-row items-end justify-end'> <ViewAll /> </div>
+					<div className='flex flex-row items-end justify-end' onClick={handleClickAll}> <ViewAll /> </div>
 				</div>
 			</div>
 		</div>

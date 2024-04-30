@@ -6,34 +6,81 @@ import { Rank } from '../icons/content_area/rank';
 import Coins from '../icons/content_area/coins';
 import Messages from '../icons/content_area/messages';
 import { ContentBtn } from './content_area/contentBtn';
+import Chart from 'chart.js/auto';
+import { useEffect, useRef } from 'react';
 
-export const SvgComponent = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width={340}
-		height={161}
+// width={340}
+// height={161}
 
-		fill="none"
-	>
-		<path
-			fill="url(#a)"
-			d="M39.888 60.407 0 41.624V262h340V6.599l-4.749-1.523-25.642 30.965-10.447-3.046-32.29 28.934-3.799 2.538-32.766-34.01-9.972 5.584-18.044-30.965h-3.325l-20.893 25.381h-2.375l-14.245 19.29-16.621 22.842-4.273 3.046-9.498-11.675-19.944-59.9L106.369 0l-7.598 4.06L85 37.057l-5.224 4.569-10.446-7.107-9.498 2.538-19.944 23.35Z"
-		/>
-		<defs>
-			<linearGradient
-				id="a"
-				x1={170}
-				x2={170}
-				y1={0}
-				y2={149.714}
-				gradientUnits="userSpaceOnUse"
-			>
-				<stop offset={0.062} stopColor="#FD4106" stopOpacity={0.28} />
-				<stop offset={1} stopColor="#FD4106" stopOpacity={0} />
-			</linearGradient>
-		</defs>
-	</svg>
-)
+
+export const ChartComponent = () => {
+  const chartRef = useRef<Chart>();
+
+  const xValues: number[] = [];
+  const yValues: number[] = [];
+  useEffect(() => {
+    generateData(Math.sin, 0, 10, 0.5);
+
+    const ctx = document.getElementById("myChart") as HTMLCanvasElement;
+    if (!ctx) return;
+
+    if (chartRef.current) {
+      chartRef.current.destroy(); // Destroy the previous Chart instance
+    }
+
+    chartRef.current = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          fill: false,
+          pointRadius: 2,
+          borderColor: "rgba(0,0,255,0.5)",
+          data: yValues
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: "y = sin(x)",
+            fontSize: 16
+          }
+        },
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom',
+          },
+          y: {
+            type: 'linear',
+            position: 'left',
+          }
+        }
+      }
+    });
+
+    // Clean up function
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy(); // Destroy the Chart instance when the component unmounts
+      }
+    };
+  }, []);
+
+  function generateData(func: (x: number) => number, i1: number, i2: number, step: number = 1) {
+    for (let x = i1; x <= i2; x += step) {
+      yValues.push(func(x));
+      xValues.push(x);
+    }
+  }
+
+  return <canvas id="myChart" style={{ width: '100%', maxWidth: '600px' }} />;
+};
 
 
 
@@ -57,7 +104,7 @@ function TeamLeader() {
 				<div className="ml-auto">7.9000/9000</div>
 			</div>
 			<div className='mt-5'>
-				<SvgComponent />
+				<ChartComponent />
 			</div >
 			<div className='mt-5'>
 				<div className='container  flex flex-row justify-between items-center'>
