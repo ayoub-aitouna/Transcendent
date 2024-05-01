@@ -1,7 +1,8 @@
 FROM debian:bullseye
 
 # Install Python 3.9
-RUN apt-get update && apt-get install -y python3.9 python3-pip zsh
+RUN apt-get update && apt-get install -y python3.9 python3-pip zsh git curl
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 RUN mkdir -p /var/app
 

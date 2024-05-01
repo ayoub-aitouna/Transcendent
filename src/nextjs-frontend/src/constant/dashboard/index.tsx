@@ -1,4 +1,10 @@
-import { navItem, SocialItem, SocialBtnType, TournamentsItem, NotificationItem } from "@/type/dashboard/navitem";
+import {
+	navItem,
+	SocialItem,
+	SocialBtnType,
+	TournamentsItem,
+	NotificationItem,
+} from "@/type/dashboard/navitem";
 import Home from "@/app/ui/dashboard/icons/nav/home";
 import Tournaments from "@/app/ui/dashboard/icons/nav/turnement";
 import Ranking from "@/app/ui/dashboard/icons/nav/ranking";
@@ -7,50 +13,46 @@ import Intra from "@/app/ui/dashboard/icons/nav/intra";
 import Discord from "@/app/ui/dashboard/icons/nav/discord";
 import Notification from "@/app/ui/dashboard/icons/nav/notification";
 
-
-
 export const navLinks: navItem[] = [
 	{
-		name: 'Home',
-		href: '/home',
-		Icon: Home
+		name: "Home",
+		href: "/home",
+		Icon: Home,
 	},
 	{
-		name: 'Tournaments',
-		href: '/tournaments',
-		Icon: Tournaments
+		name: "Tournaments",
+		href: "/tournaments",
+		Icon: Tournaments,
 	},
 	{
-		name: 'Ranking',
-		href: '/ranking',
-		Icon: Ranking
+		name: "Ranking",
+		href: "/ranking",
+		Icon: Ranking,
 	},
 ];
 
 export const socialLinks: SocialItem[] = [
 	{
-
-		href: 'https://profile.intra.42.fr/',
+		href: "https://profile.intra.42.fr/",
 		Icon: Intra,
-		type: SocialBtnType.link
+		type: SocialBtnType.link,
 	},
 	{
-		href: 'https://www.twitch.tv/',
+		href: "https://www.twitch.tv/",
 		Icon: twitch,
-		type: SocialBtnType.link
+		type: SocialBtnType.link,
 	},
 	{
-		href: 'https://discord.com/',
+		href: "https://discord.com/",
 		Icon: Discord,
-		type: SocialBtnType.link
+		type: SocialBtnType.link,
 	},
 	{
-		href: '',
+		href: "",
 		Icon: Notification,
-		type: SocialBtnType.btn
+		type: SocialBtnType.btn,
 	},
 ];
-
 
 export const tournamentLinks: TournamentsItem[] = [
 	{
@@ -75,51 +77,224 @@ export const tournamentLinks: TournamentsItem[] = [
 
 export const Notifications: NotificationItem[] = [
 	{
-		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
-		time: '2 hours ago',
+		notification:
+			"Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose",
+		time: "2 hours ago",
 	},
 	{
-		notification: 'Eric invited you into a game of pingpong',
-		time: '1 hour ago',
+		notification: "Eric invited you into a game of pingpong",
+		time: "1 hour ago",
 	},
 	{
-		notification: 'Aya invited you to join a Team',
-		time: '15 hours ago',
+		notification: "Aya invited you to join a Team",
+		time: "15 hours ago",
 	},
 	{
-		notification: 'New Message from kmahdi',
-		time: '15 hours ago',
+		notification: "New Message from kmahdi",
+		time: "15 hours ago",
 	},
 	{
-		notification: 'New Message from aaitouna',
-		time: '15 hours ago',
+		notification: "New Message from aaitouna",
+		time: "15 hours ago",
 	},
 	{
-		notification: 'New Message from kmahdi',
-		time: '15 hours ago',
+		notification: "New Message from kmahdi",
+		time: "15 hours ago",
 	},
 	{
-		notification: 'New Message from aaitouna',
-		time: '15 hours ago',
+		notification: "New Message from aaitouna",
+		time: "15 hours ago",
 	},
 	{
-		notification: 'New Message from kmahdi',
-		time: '15 hours ago',
+		notification: "New Message from kmahdi",
+		time: "15 hours ago",
 	},
 	{
-		notification: 'New Message from aaitouna',
-		time: '15 hours ago',
+		notification: "New Message from aaitouna",
+		time: "15 hours ago",
 	},
 	{
-		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
-		time: '2 hours ago',
+		notification:
+			"Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose",
+		time: "2 hours ago",
 	},
 	{
-		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
-		time: '2 hours ago',
+		notification:
+			"Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose",
+		time: "2 hours ago",
 	},
+	{
+		notification:
+			"Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose",
+		time: "2 hours ago",
+	},
+];
+
+// FOR DEBUGING
+
+export const BracketData = [
+	[
 		{
-		notification: 'Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose',
-		time: '2 hours ago',
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "ooussama",
+				level: 100,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "ooussama",
+				level: 100,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "ooussama",
+				level: 100,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "ooussama",
+				level: 100,
+			},
+		},
+	],
+	[
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "ooussama",
+				level: 100,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "ooussama",
+				level: 100,
+			},
+		},
+	],
+	[
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "ooussama",
+				level: 100,
+			},
+		},
+	],
+	[
+		{
+			player1: {
+				image_url: "/assets/images/profile.jpg",
+				username: "aaitouna",
+				level: 50,
+			},
+		},
+	],
+];
+
+export const StreamingData = [
+	{
+		user1: {
+			image_url: "/assets/images/profile.jpg",
+			username: "aaitounaasdadasd",
+			level: 50,
+		},
+		user2: {
+			image_url: "/assets/images/profile.jpg",
+			username: "ooussama",
+			level: 100,
+		},
+	},
+	{
+		user1: {
+			image_url: "/assets/images/profile.jpg",
+			username: "aaitouna",
+			level: 50,
+		},
+		user2: {
+			image_url: "/assets/images/profile.jpg",
+			username: "ooussama",
+			level: 100,
+		},
+	},
+	{
+		user1: {
+			image_url: "/assets/images/profile.jpg",
+			username: "aaitouna",
+			level: 50,
+		},
+		user2: {
+			image_url: "/assets/images/profile.jpg",
+			username: "ooussama",
+			level: 100,
+		},
+	},
+	{
+		user1: {
+			image_url: "/assets/images/profile.jpg",
+			username: "aaitouna",
+			level: 50,
+		},
+		user2: {
+			image_url: "/assets/images/profile.jpg",
+			username: "ooussama",
+			level: 100,
+		},
 	},
 ];

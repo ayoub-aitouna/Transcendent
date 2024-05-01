@@ -41,7 +41,7 @@ body {
 
 @layer utilities {
   .max-container {
-    @apply  max-w-[1728px] mx-auto;
+    @apply max-w-[1728px] mx-auto;
   }
 
   .padding-container {
@@ -57,6 +57,7 @@ body {
     color: white;
   }
 }
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
@@ -70,4 +71,48 @@ body {
   /* Firefox */
 }
 
+.lead::after {
+  content: "";
+  width: 20px;
+  height: 30px;
+  border-style: groove;
+  border-color: #ffffff;
+  position: absolute;
+}
 
+.lead-to::after {
+  border-width: 1px 1px 0px 0px;
+  transform: translate(-50%, -50%);
+  left: 100%;
+  top: 100%;
+  border-top-right-radius: 8px;
+}
+.lead-to:last-child:after,
+.lead-to:nth-child(even):after {
+  border-width: 0px 1px 1px 0px;
+  bottom: -100%;
+  top: 0%;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 8px;
+}
+
+.lead-to-left::after {
+  border-width: 1px 0px 0px 1px;
+    transform: translate(50%, -50%);
+  right: 100%;
+  top: 100%;
+  border-top-left-radius: 8px;
+}
+
+.lead-to-left:last-child:after , 
+.lead-to-left:nth-child(even):after {
+  border-width: 0px 0px 1px 1px;
+  bottom: -100%;
+  top: 0%;
+  border-top-left-radius: 0px;
+    border-bottom-left-radius: 8px;
+}
+
+.lead-to-parent:last-child>li::after {
+  border: none;
+}

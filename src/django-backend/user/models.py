@@ -25,7 +25,7 @@ class User(AbstractUser):
     image_url = models.URLField(blank=True, null=True)
     achivments = models.ManyToManyField('Achivments', blank=True)
     friends = models.ManyToManyField('self', through='Friends', symmetrical=False)
-    ranking_logs = models.ManyToManyField('Ranks', through='RankingLogs', symmetrical=False)
+    ranking_logs = models.ManyToManyField('Ranks', through='RankingLogs')
     coins = models.IntegerField(default=0)
     current_xp = models.IntegerField(default=0)
 
