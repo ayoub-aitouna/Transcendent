@@ -66,8 +66,8 @@ export const ProfileIcon = () => {
 	};
 
 	return (
-		<div className='relative'>
-			<button className="flex  flex-row items-center justify-between rounded-md overflow-hidden bg-[#292929] p-1 h-[46.9px] min-w-40 "
+		<div className='relative z-50'>
+			<button className=" flex-row items-center justify-between rounded-md overflow-hidden bg-[#292929] p-1 h-[46.9px] min-w-40 "
 				onClick={handleClick} aria-label="Navigate to game">
 				<div className="flex items-center">
 
@@ -92,7 +92,7 @@ export const ProfileIcon = () => {
 				</div>
 			</button >
 			{isClicked && (
-				<div className="mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] h-[145px] p-4 rounded-md">
+				<div className="mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] h-[145px] p-4 rounded-md ">
 					<div className="flex items-start">
 						<div className="rounded-full flex items-start">
 							<div className="rounded-full flex items-start w-[30px] h-[30px]">

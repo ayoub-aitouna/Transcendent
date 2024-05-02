@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 
 const PlayNowIcon = () => {
 	const pathname = usePathname();
-	if (pathname === "/game") return ;
+	if (pathname.startsWith('/game')) return;
 	return (
 		<Link
 			href='/game'
@@ -35,39 +35,34 @@ function NotificationContent({
 			: notification;
 	return (
 		<div
-			className={`p-2 min-h-[30px] flex  flex-row items-center justify-between rounded-md  w-[206px] overflow-hidden`}>
+			className={`p-2 min-h-[60px] flex  flex-row items-center justify-between rounded-md  w-[256px] overflow-hidden`}>
 			<div className='flex items-center rounded-sm'>
 				<div className='rounded-ful flex items-start'>
 					<Image
-						className=' w-[25px] h-[25px] '
+						className=' w-[35px] h-[35px] '
 						src='/aaitouna.png'
 						alt='Profile Image'
-						width={25}
-						height={25}
+						width={35}
+						height={35}
 					/>
 				</div>
-				<div className='pl-2 flex flex-col items-start w-[153px] '>
-					<div className=' text-white font-light text-[8px] overflow-hidden max-h-[30px] '>
+				<div className='pl-2 flex flex-col items-start w-[203px] '>
+					<div className=' text-white font-light text-[14px] overflow-hidden max-h-[80px] '>
 						{" "}
 						{truncatedNotification}
 					</div>
-					<div className=' font-normal text-[#878787] text-[5px]  '>{time}</div>
+					<div className=' font-normal text-[#878787] text-[12px]  '>{time}</div>
 				</div>
 			</div>
 		</div>
 	);
 }
 
-const NavBar = () => {
-	const [clickedIndex, setClickedIndex] = useState(false);
+function NotificationPanel(){
 	const [ViewALlClicked, setViewALlClicked] = useState(false);
 	const [NotificationClicked, setNotificationClicked] = useState<number | null>(
 		null
 	);
-
-	const handleIconClick = (href: string) => {
-		if (href === "") setClickedIndex(!clickedIndex);
-	};
 
 	const handleViewAll = () => {
 		setViewALlClicked(!ViewALlClicked);
@@ -76,6 +71,60 @@ const NavBar = () => {
 	const handleNotificationClicked = (index: number) => {
 		setNotificationClicked(index === NotificationClicked ? null : index);
 	};
+	return (
+		<div
+		className='z-50 mt-[3px] absolute top-full right-0 bg-[#242424] w-[276px] p-2 rounded-md flex flex-col'
+		onClick={(e) => e.stopPropagation()}>
+		<div className='font-semibold text-[16px] text-[#666666]'>
+			{" "}
+			NOTIFICATION
+		</div>
+		<div className='w-[256px] border-t-[2px] border-[#363636] pt-3 mt-3'></div>
+		<div className='flex flex-col items-center'>
+			<div
+				className={`${ViewALlClicked
+						? "h-[300px] overflow-y-scroll hide-scrollbar pl-2 "
+						: "h-[300px]"
+					}`}>
+				{Notifications.map((item, index) => (
+					<div
+						key={index}
+						className={`container flex flex-col justify-between items-center 
+						${index === NotificationClicked ? "bg-[#3D3D3D] rounded-sm" : ""}`}
+						onClick={() => handleNotificationClicked(index)}>
+						<NotificationContent
+							notification={item.notification}
+							time={item.time}
+						/>
+					</div>
+				)).slice(
+					0,
+					ViewALlClicked ? Notifications.length : 4
+				)}
+			</div>
+			{Notifications.length > 4 && (
+				<button
+					className='justify-center flex flex-row items-center rounded-[2px] h-[20px] w-[70px]'
+					onClick={handleViewAll}
+					aria-label='Navigate to game'>
+					<div className='flex flex-row items-center justify-between mx-auto '>
+						<div className='font-medium  items-center text-[#A5A5A5]  text-[12px]'>
+							{ViewALlClicked ? "SHOW LESS" : "VIEW ALL"}
+						</div>
+					</div>
+				</button>
+			)}
+		</div>
+	</div>
+	)
+}
+const NavBar = () => {
+	const [clickedIndex, setClickedIndex] = useState(false);
+
+	const handleIconClick = (href: string) => {
+		if (href === "") setClickedIndex(!clickedIndex);
+	};
+
 	return (
 		<div className='w-full mt-[40px] mb-[40px] flex flex-row justify-between items-center mx-auto max-w-[100vw]'>
 			<div className='text-white font-semibold flex flex-row gap-16 items-center justify-center'>
@@ -99,58 +148,13 @@ const NavBar = () => {
 						<div key={index} className='relative'>
 							<div className={``} onClick={() => handleIconClick(item.href)}>
 								<div
-									className={`rounded-full ${
-										clickedIndex && item.href === ""
+									className={`rounded-full ${clickedIndex && item.href === ""
 											? "bg-[#111111]"
 											: "bg-[#303030]"
-									} h-[40px] w-[40px] aspect-square`}>
+										} h-[40px] w-[40px] aspect-square`}>
 									<NavBtnR href={item.href} Icon={item.Icon} />
 									{item.href === "" && clickedIndex ? (
-										<div
-											className='mt-[3px] absolute top-full right-0 bg-[#242424] w-[226px] p-2 rounded-md flex flex-col'
-											onClick={(e) => e.stopPropagation()}>
-											<div className='font-semibold text-[12px] text-[#666666]'>
-												{" "}
-												NOTIFICATION
-											</div>
-											<div className='w-[206px] border-t border-[#363636] pt-2'></div>
-											<div className='flex flex-col items-center'>
-												<div
-													className={`${
-														ViewALlClicked
-															? "max-h-[250px] overflow-y-auto pl-2 "
-															: "max-h-[250px]"
-													}`}>
-													{Notifications.map((item, index) => (
-														<div
-															key={index}
-															className={`container flex flex-col justify-between items-center 
-															${index === NotificationClicked ? "bg-[#3D3D3D] rounded-sm" : ""}`}
-															onClick={() => handleNotificationClicked(index)}>
-															<NotificationContent
-																notification={item.notification}
-																time={item.time}
-															/>
-														</div>
-													)).slice(
-														0,
-														ViewALlClicked ? Notifications.length : 6
-													)}
-												</div>
-												{Notifications.length > 6 && (
-													<button
-														className='justify-center mt-2 flex flex-row items-center rounded-[2px] h-[11px] w-[38px]'
-														onClick={handleViewAll}
-														aria-label='Navigate to game'>
-														<div className='flex flex-row items-center justify-between mx-auto'>
-															<div className='font-medium items-center text-[#A5A5A5] tracking-[.025] text-[6px]'>
-																{ViewALlClicked ? "SHOW LESS" : "VIEW ALL"}
-															</div>
-														</div>
-													</button>
-												)}
-											</div>
-										</div>
+											<NotificationPanel/>
 									) : null}
 								</div>
 							</div>

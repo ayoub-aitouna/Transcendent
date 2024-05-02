@@ -43,13 +43,13 @@ function TeamLeader() {
 				<div className='container  flex flex-row justify-between items-center'>
 					<ContentBtn
 						name={"Rank"}
-						href={"/ranking"}
+						href={""}
 						Icon={Rank}
 						number={'4561'}
 					/>
 					<ContentBtn
 						name={"Coins"}
-						href={"/ranking"}
+						href={""}
 						Icon={Coins}
 						number={'345'}
 					/>
