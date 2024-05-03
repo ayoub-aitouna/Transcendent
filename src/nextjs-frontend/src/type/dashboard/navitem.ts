@@ -32,6 +32,11 @@ export type NotificationItem = {
 	time: string;
 }
 
+export type MessagesItem = {
+	message: string;
+	time: string;
+}
+
 export type MessengerItem = {
 	name: string;
 	href: string;
