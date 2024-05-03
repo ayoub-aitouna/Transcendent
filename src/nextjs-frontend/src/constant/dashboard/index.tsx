@@ -4,6 +4,7 @@ import {
 	SocialBtnType,
 	TournamentsItem,
 	NotificationItem,
+	MessengerItem,
 } from "@/type/dashboard/navitem";
 import Home from "@/app/ui/dashboard/icons/nav/home";
 import Tournaments from "@/app/ui/dashboard/icons/nav/turnement";
@@ -72,6 +73,198 @@ export const tournamentLinks: TournamentsItem[] = [
 		name: "Fortnite MASTERS",
 		followers: "34.9k",
 		secName: "Fortnite S14",
+	},
+];
+
+export const MessengerLinks: MessengerItem[] = [
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 1 ?",
+		time: "20.50",
+		messagesNbr: 4
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 2 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 3 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 4 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 5 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 6 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 7 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 8 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 9 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 10 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 11 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 12 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 13 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 14 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 15 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 16 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 17 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 18 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 19 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 20 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 21 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 22 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 23 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 24 ?",
+		time: "20.50",
+		messagesNbr: 0,
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 25 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 26 ?",
+		time: "20.50",
+		messagesNbr: 0
+	},
+	{
+		href: "/aaitouna.png",
+		name: "kmahdi",
+		LastMessage: "chat number 27 ?",
+		time: "20.50",
+		messagesNbr: 0,
 	},
 ];
 

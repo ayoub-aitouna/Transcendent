@@ -31,3 +31,12 @@ export type NotificationItem = {
 	notification: string;
 	time: string;
 }
+
+export type MessengerItem = {
+	name: string;
+	href: string;
+	LastMessage: string;
+	time: string;
+	messagesNbr:Number;
+}
+	

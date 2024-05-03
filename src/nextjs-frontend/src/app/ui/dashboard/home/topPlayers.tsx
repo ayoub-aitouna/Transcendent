@@ -4,9 +4,6 @@ import { FilterBtn } from './content_area/filterBtn';
 import { UserContainer } from './content_area/userContainer';
 
 function TopPlayers() {
-	const handleClick = () => {
-		window.location.href = "/profile";
-	};
 	return (
 		<div className='' >
 			<FilterBtn name='Top Players' />

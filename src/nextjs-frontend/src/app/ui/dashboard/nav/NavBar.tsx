@@ -6,8 +6,8 @@ import ProfileIcon from "@/app/ui/dashboard/nav/profile";
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import { navLinks, Notifications, socialLinks } from "@/constant/dashboard";
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const PlayNowIcon = () => {

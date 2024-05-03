@@ -17,6 +17,11 @@
 .highlight {
 	background: linear-gradient(90deg, #ff400624 0%, #9d270000 100%);
 }
+
+.highlightMess{
+	background: linear-gradient(90deg, #1bfd061a 0%, #10970400 100%);
+}
+
 .highlighted{
 	background-image: linear-gradient(90deg, #ff3d0030 100%, transparent 19%);
 }
