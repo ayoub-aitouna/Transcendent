@@ -14,15 +14,28 @@ class Tournament(models.Model):
     description = models.TextField(blank=False, null=False)
     max_players = models.IntegerField(default=16)
     start_date = models.DateTimeField(null=False, blank=False) 
-    registred_users = models.ManyToManyField(User, on_delete=models.CASCADE, through='TurnementsRegistredPlayers')
+    registered_users = models.ManyToManyField(User, through='TournamentsRegisteredPlayers')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def registered_players(self):
+        return self.registered_users.all()
+    
+    def get_registered_players_count(self):
+        return self.registered_users.count()
+    
+    def get_brackets(self):
+        return self.tournament_bracket.all()
+    
+    def __str__(self):
+        return self.name
+    
 
-class TurnementsRegistredPlayers(models.Model):
+
+class TournamentsRegisteredPlayers(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='tournament')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -32,7 +45,7 @@ class Matchup(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='game')
     first_player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='first_player')
     second_player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='second_player')
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='tournament', null=True)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='tournament_match_up', null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -48,8 +61,9 @@ class MatchStatus(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class Brackets(models.Model):
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='tournament', null=True)
-    round_number = models.IntegerField(null=False)
-    
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='tournament_bracket', null=False, default=None)
+    round_number = models.IntegerField(null=False, default=1)
+    player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player', null=False, default=None)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -22,7 +22,7 @@ export function UserContainer({ name, href, number, index }: {
 			onClick={handleClick}
 			aria-label="Navigate to game">
 			<div className='flex items-center justify-between '>
-				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src="/aaitouna.png" alt="Profile Image" width={53} height={53} />
+				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src="/assets/images/profile.jpg" alt="Profile Image" width={53} height={53} />
 				<div />
 				<div className="flex items-start flex-col max-w-[80px]">
 					<div className="ml-[10px]  text-white truncate font-semibold">{name}</div>

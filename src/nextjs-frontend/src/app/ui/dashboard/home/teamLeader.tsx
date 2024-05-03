@@ -25,7 +25,7 @@ function TeamLeader() {
 		<div className='' >
 			<div className="pt-4 flex items-center" onClick={handleClick} aria-label="Navigate to profile">
 				<div className="rounded-full overflow-hidden bg-white w-[62px] h-[62px]">
-					<Image src="/aaitouna.png" alt="Profile Image" width={62} height={62} />
+					<Image src="/assets/images/profile.jpg" alt="Profile Image" width={62} height={62} />
 				</div>
 				<div className="flex flex-col ml-5">
 					<div className=" text-white  font-bold text-base tracking-tight	">Ayoub Aitouna </div>

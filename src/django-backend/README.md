@@ -1,11 +1,10 @@
 ## TODO:
 
 ### Game
-    - match making
-    - create turnements
-    - get (game or turnemenet) history, statue
-    - get turnement map
-    - push-to-notification-on-event
+- add channels
+- match making
+- create turnements
+- get (game or turnemenet) history, statue
 
 ### User
     - CRUD user info ['username', ....]

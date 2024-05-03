@@ -15,6 +15,7 @@ const initialState: userState = {
         username: "",
         first_name: "",
         last_name: "",
+        level: 0,
     },
     token: "",
     isAuth: false,
@@ -40,5 +41,6 @@ const userSlice = createSlice(
         }
     }
 )
+
 export const { Logout, Login } = userSlice.actions;
 export default userSlice.reducer;

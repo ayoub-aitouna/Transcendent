@@ -2,7 +2,7 @@
 
 import { apiMock } from '@/lib/axios-mock';
 import { ApiResponse } from '@/type/auth/auth';
-import { setCookie, parseCookies } from 'nookies'
+import { setCookie, destroyCookie } from 'nookies'
 
 
 export const RegisterEmail = async (credentials: { email: string }): Promise<Partial<ApiResponse>> => {
@@ -36,8 +36,7 @@ export const LoginUser = async (credentials: { email: string, password: string }
     const data: Partial<ApiResponse> = Response.data;
     if (Response.status != 200)
         throw new Error(data.details || "Failed To Login User");
-    setCookie(null, 'access', data.access as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
-    setCookie(null, 'refresh', data.refresh as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
+    setCookies(data);
     return data;
 }
 
@@ -46,6 +45,7 @@ export const HandleSocialAuth = async ({ provider, params }: { provider: string,
     const data: Partial<ApiResponse> = Response.data;
     if (Response.status != 200)
         throw new Error(data.details || "Failed To Handle Social Auth");
+    setCookies(data);
     return data;
 }
 
@@ -55,4 +55,14 @@ export const GetMe = async (): Promise<Partial<ApiResponse>> => {
     if (Response.status != 200)
         throw new Error(data.details || "Failed To Get Me");
     return data;
+}
+
+const setCookies = (data: Partial<ApiResponse>) => {
+    setCookie(null, 'access', data.access as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
+    setCookie(null, 'refresh', data.refresh as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
+}
+
+export const clearCookies = () => {
+    destroyCookie(null, 'access')
+    destroyCookie(null, 'refresh')
 }

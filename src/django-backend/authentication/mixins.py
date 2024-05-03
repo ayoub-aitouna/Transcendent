@@ -74,7 +74,7 @@ class OAuth2Authentication:
     
         try:
             user = User.objects.get(email=user_data['email'])
-            return Response(self.get_response_data(user))
+            return Response(self.get_response_data(user, request))
         except User.DoesNotExist:
             if(self.serializer_class is None):
                 raise ValidationError('serializer_class is not defined')
@@ -82,13 +82,13 @@ class OAuth2Authentication:
             serializer.is_valid(raise_exception=True)
             user = serializer.save()
             print(f'serialize validated data => {validated_data} \n\n')
-            return Response(self.get_response_data(user))
+            return Response(self.get_response_data(user, request))
 
     
-    def get_response_data(self, user) -> dict:
+    def get_response_data(self, user, request) -> dict:
         access_token, refresh_token = generate_user_tokens(user)
         return {
-            "user" : UserSerializer(user).data,
+            "user" : UserSerializer(user, context={'request' :request}).data,
             'access_token':str(access_token),
             'refresh_token': str(refresh_token),
         }

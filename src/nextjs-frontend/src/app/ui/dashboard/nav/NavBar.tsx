@@ -40,7 +40,7 @@ function NotificationContent({
 				<div className='rounded-ful flex items-start'>
 					<Image
 						className=' w-[35px] h-[35px] '
-						src='/aaitouna.png'
+						src='/assets/images/profile.jpg'
 						alt='Profile Image'
 						width={35}
 						height={35}
