@@ -11,4 +11,5 @@ urlpatterns = [
         path('decline-friend-request/<int:pk>', view=views.Decline_friend_request.as_view(), name='decline-friend-request'),
         path('unfriend-user/<int:pk>', view=views.DestroyFriendShip.as_view(), name='unfriend-user'),
         path('block-user/<int:pk>', view=views.BlockUser.as_view(), name='block-user'),
+        path('send-test-notification', view=views.SendTestNotification.as_view(), name='send-test-notification'),
     ]

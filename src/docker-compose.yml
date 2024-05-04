@@ -1,6 +1,7 @@
 version: '3'
 services:
   nextjs_frontend:
+    restart: always
     container_name: nextjs_frontend
     build:
       context: ./nextjs-frontend/build-tools
@@ -12,7 +13,6 @@ services:
       - nextjs_frontend_volume:/var/app
     depends_on:
       - django_backend
-
 
   django_backend:
     restart: always
