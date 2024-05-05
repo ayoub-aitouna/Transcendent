@@ -104,34 +104,34 @@ export const SendIcon = () => (
 
 export const GetDataIcon = () => (
 	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width={30}
-		height={30}
-		fill="none"
-	>
-		<path
-			fill="#878787"
-			fillRule="evenodd"
-			d="M12 1.25a.75.75 0 0 1 .57.262l3 3.5a.75.75 0 0 1-1.14.976l-1.68-1.96V15a.75.75 0 1 1-1.5 0V4.027L9.57 5.988a.75.75 0 0 1-1.14-.976l3-3.5A.75.75 0 0 1 12 1.25ZM6.996 8.252a.75.75 0 0 1 .008 1.5c-1.093.006-1.868.034-2.457.142-.566.105-.895.272-1.138.515-.277.277-.457.666-.556 1.4-.101.755-.103 1.756-.103 3.191v1c0 1.436.002 2.437.103 3.192.099.734.28 1.122.556 1.4.277.276.665.456 1.4.555.754.102 1.756.103 3.191.103h8c1.435 0 2.436-.001 3.192-.103.734-.099 1.122-.279 1.399-.556.277-.277.457-.665.556-1.399.101-.755.103-1.756.103-3.192v-1c0-1.435-.002-2.436-.103-3.192-.099-.733-.28-1.122-.556-1.399-.244-.243-.572-.41-1.138-.515-.589-.108-1.364-.136-2.457-.142a.75.75 0 0 1 .008-1.5c1.082.006 1.983.032 2.72.167.758.14 1.403.405 1.928.93.602.601.86 1.36.982 2.26.116.866.116 1.969.116 3.336v1.11c0 1.368 0 2.47-.116 3.337-.122.9-.38 1.658-.982 2.26-.602.602-1.36.86-2.26.982-.867.116-1.97.116-3.337.116h-8.11c-1.367 0-2.47 0-3.337-.116-.9-.121-1.658-.38-2.26-.982-.602-.602-.86-1.36-.981-2.26-.117-.867-.117-1.97-.117-3.337v-1.11c0-1.367 0-2.47.117-3.337.12-.9.38-1.658.981-2.26.525-.524 1.17-.79 1.928-.929.737-.135 1.638-.161 2.72-.167Z"
-			clipRule="evenodd"
-		/>
-	</svg>
+    xmlns="http://www.w3.org/2000/svg"
+    width={24}
+    height={24}
+    fill="none"
+  >
+    <path
+      fill="#878787"
+      fillRule="evenodd"
+      d="M12 1.25a.75.75 0 0 1 .57.262l3 3.5a.75.75 0 0 1-1.14.976l-1.68-1.96V15a.75.75 0 1 1-1.5 0V4.027L9.57 5.988a.75.75 0 0 1-1.14-.976l3-3.5A.75.75 0 0 1 12 1.25ZM6.996 8.252a.75.75 0 0 1 .008 1.5c-1.093.006-1.868.034-2.457.142-.566.105-.895.272-1.138.515-.277.277-.457.666-.556 1.4-.101.755-.103 1.756-.103 3.191v1c0 1.436.002 2.437.103 3.192.099.734.28 1.122.556 1.4.277.276.665.456 1.4.555.754.102 1.756.103 3.191.103h8c1.435 0 2.436-.001 3.192-.103.734-.099 1.122-.279 1.399-.556.277-.277.457-.665.556-1.399.101-.755.103-1.756.103-3.192v-1c0-1.435-.002-2.436-.103-3.192-.099-.733-.28-1.122-.556-1.399-.244-.243-.572-.41-1.138-.515-.589-.108-1.364-.136-2.457-.142a.75.75 0 0 1 .008-1.5c1.082.006 1.983.032 2.72.167.758.14 1.403.405 1.928.93.602.601.86 1.36.982 2.26.116.866.116 1.969.116 3.336v1.11c0 1.368 0 2.47-.116 3.337-.122.9-.38 1.658-.982 2.26-.602.602-1.36.86-2.26.982-.867.116-1.97.116-3.337.116h-8.11c-1.367 0-2.47 0-3.337-.116-.9-.121-1.658-.38-2.26-.982-.602-.602-.86-1.36-.981-2.26-.117-.867-.117-1.97-.117-3.337v-1.11c0-1.367 0-2.47.117-3.337.12-.9.38-1.658.981-2.26.525-.524 1.17-.79 1.928-.929.737-.135 1.638-.161 2.72-.167Z"
+      clipRule="evenodd"
+    />
+  </svg>
 )
 
 export const EmojiIcon = () => (
 	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width={34}
-		height={34}
-		fill="none"
-	>
-		<path
-			fill="#878787"
-			fillRule="evenodd"
-			d="M17 31.167C9.176 31.167 2.834 24.824 2.834 17S9.175 2.833 17 2.833c7.824 0 14.167 6.343 14.167 14.167S24.824 31.167 17 31.167Zm5.667-12.75a5.667 5.667 0 1 1-11.334 0h11.334ZM17 28.333a11.333 11.333 0 1 0 0-22.666 11.333 11.333 0 0 0 0 22.666Zm-3.541-12.75a2.125 2.125 0 1 0 0-4.249 2.125 2.125 0 0 0 0 4.25Zm7.083 0a2.125 2.125 0 1 0 0-4.249 2.125 2.125 0 0 0 0 4.25Z"
-			clipRule="evenodd"
-		/>
-	</svg>
+    xmlns="http://www.w3.org/2000/svg"
+    width={24}
+    height={24}
+    fill="none"
+  >
+    <path
+      fill="#878787"
+      fillRule="evenodd"
+      d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10Zm4-9a4 4 0 1 1-8 0h8Zm-4 7a8 8 0 1 0 0-16.001A8 8 0 0 0 12 20Zm-2.5-9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"
+      clipRule="evenodd"
+    />
+  </svg>
 )
 
 function ChatMessage({ message, isSent, time }: {
@@ -212,7 +212,7 @@ const page = () => {
 										<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={selectedChat.href} alt="Profile Image" width={53} height={53} />
 										<div />
 										<div className="flex items-start flex-col max-w-[80px]">
-											<div className="ml-[10px]  text-white truncate text-[18px] font-bold">{selectedChat.name}</div>
+											<div className="ml-[10px]  text-white truncate text-[16px] font-bold">{selectedChat.name}</div>
 											<div className={`ml-[10px]  text-[#878787] text-[14px] truncate font-normal`}>Online</div>
 										</div>
 									</Link>
@@ -227,7 +227,7 @@ const page = () => {
 										)}
 									</div>
 								</button>
-								<div className='overflow-y-scroll hide-scrollbar max-h-[650px]'>
+								<div className='overflow-y-scroll hide-scrollbar max-h-[600px]'>
 									<div className=" flex-1 p  w-full mt-5">
 										<ChatMessage message="Hi there!" isSent={false} time="10:00" />
 										<ChatMessage message="Hello! How are you?" isSent={true} time="10:05" />
@@ -256,12 +256,12 @@ const page = () => {
 
 									</div>
 								</div>
-								<div className="absolute bottom-0 left-0 right-0 p-2 h-[80px] bg-[#303030]">
-									<div className="flex flex-row items-end justify-end">
+								<div className="absolute bottom-0 left-0 right-0 p-2 h-[70px] bg-[#303030]">
+									<div className="flex flex-row items-center justify-center h-full">
 										<div className="p-2"><EmojiIcon /></div>
 										<div className="p-2"><GetDataIcon /></div>
 										<input
-											className="flex-grow bg-[#363636] pl-[60px] h-[60px] p-3 rounded-lg"
+											className="flex-grow bg-[#464646]  h-[50px] p-3 rounded-lg"
 											type="text"
 											placeholder="Type a message"
 										/>

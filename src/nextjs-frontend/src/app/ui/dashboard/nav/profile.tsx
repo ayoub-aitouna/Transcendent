@@ -1,7 +1,9 @@
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { SVGProps } from "react"
+import Link from "next/link";
+
 export const Sttings = (props: SVGProps<SVGSVGElement>) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -53,17 +55,22 @@ export const ProfileIcon = () => {
 	const handleClick = () => {
 		setIsClicked(!isClicked);
 	};
-
-	const handleViwProfile = () => {
-		window.location.href = "/profile";
-	};
-	const handleLogout = () => {
-		window.location.href = "/auth";
-	};
-
-	const handleSttings = () => {
-		window.location.href = "/";
-	};
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+		  const target = event.target as HTMLElement;
+		  const panel = document.getElementById('profile-panel');
+	
+		  if (panel && !panel.contains(target)) {
+			setIsClicked(false);
+		  }
+		};
+	
+		document.addEventListener('mousedown', handleOutsideClick);
+	
+		return () => {
+		  document.removeEventListener('mousedown', handleOutsideClick);
+		};
+	  }, []);
 
 	return (
 		<div className='relative z-50'>
@@ -96,7 +103,7 @@ export const ProfileIcon = () => {
 				</div>
 			</button >
 			{isClicked && (
-				<div className="mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] h-[145px] p-4 rounded-md">
+				<div id="profile-panel" className="mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] h-[145px] p-4 rounded-md">
 					<div className="flex items-start">
 						<div className="rounded-full flex items-start">
 							<div className="rounded-full flex items-start w-[30px] h-[30px]">
@@ -111,20 +118,20 @@ export const ProfileIcon = () => {
 						<div className="flex flex-col items-start ml-[5px]">
 							<div className="truncate text-white font-bold text-[14px]">Ayoub Aitouna</div>
 							<div className="truncate text-[#A2A2A2] text-[8px]">@aaitouna</div>
-							<button className="mt-1 truncate text-[#FD4106] text-[8px]" onClick={handleViwProfile}>View Your Profile</button>
+							<Link href="/profile" className="mt-1 truncate text-[#FD4106] text-[8px]">View Your Profile</Link>
 						</div>
 					</div>
 
 
 					<div className=" w-[160px]   mt-2 border-t border-[#363636] pt-2"></div>
-					<button className="flex items-center justify-between  flex-row  w-[55px] h-[14px]" onClick={handleSttings}>
+					<Link href = "/auth" className="flex items-center justify-between  flex-row  w-[55px] h-[14px]">
 						<div className="items-start"><Sttings /></div>
 						<div className="items-end text-[8px]">Settings</div>
-					</button>
-					<button className="pt-4 flex items-center justify-between  flex-row  w-[55px] h-[14px]" onClick={handleLogout}>
+					</Link>
+					<Link href = "/" className="pt-4 flex items-center justify-between  flex-row  w-[55px] h-[14px]">
 						<div className="items-start"><LogOut /></div>
 						<div className="items-end text-[8px]" >Sing out</div>
-					</button>
+					</Link>
 				</div>
 			)}
 

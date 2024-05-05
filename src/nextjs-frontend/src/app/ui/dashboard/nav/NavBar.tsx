@@ -5,7 +5,7 @@ import NavBtnR from "@/app/ui/dashboard/nav/NavBtnRight";
 import ProfileIcon from "@/app/ui/dashboard/nav/profile";
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import { navLinks, Notifications, socialLinks } from "@/constant/dashboard";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -30,12 +30,12 @@ function NotificationContent({
 	time: string;
 }) {
 	const truncatedNotification =
-		notification.length > 70
-			? `${notification.substring(0, 70)}...`
+		notification.length > 60
+			? `${notification.substring(0, 60)}...`
 			: notification;
 	return (
 		<div
-			className={`p-2 min-h-[60px] flex  flex-row items-center justify-between rounded-md  w-[256px] overflow-hidden`}>
+			className={`p-2 h-[60px] flex  flex-row items-center justify-between rounded-md  w-[256px] overflow-hidden`}>
 			<div className='flex items-center rounded-sm'>
 			<div className="rounded-ful flex items-start ">
 						<Image
@@ -45,11 +45,11 @@ function NotificationContent({
 							width={35} height={35} />
 					</div>
 				<div className='pl-2 flex flex-col items-start w-[203px] '>
-					<div className=' text-white font-light text-[14px] overflow-hidden max-h-[80px] '>
+					<div className=' text-white font-light text-[12px] overflow-hidden max-h-[80px] '>
 						{" "}
 						{truncatedNotification}
 					</div>
-					<div className=' font-normal text-[#878787] text-[12px]  '>{time}</div>
+					<div className=' font-normal text-[#878787] text-[10px]  '>{time}</div>
 				</div>
 			</div>
 		</div>
@@ -71,9 +71,10 @@ function NotificationPanel(){
 	};
 	return (
 		<div
-		className='z-50 mt-[3px] absolute top-full right-0 bg-[#242424] w-[276px] p-2 rounded-md flex flex-col'
+		id="notification-panel"
+		className=' z-50 mt-[3px] absolute top-full right-0 bg-[#242424] w-[276px] p-2 rounded-md flex flex-col'
 		onClick={(e) => e.stopPropagation()}>
-		<div className='font-semibold text-[16px] text-[#666666]'>
+		<div className='font-semibold text-[14px] text-[#666666]'>
 			{" "}
 			NOTIFICATION
 		</div>
@@ -97,16 +98,16 @@ function NotificationPanel(){
 					</div>
 				)).slice(
 					0,
-					ViewALlClicked ? Notifications.length : 4
+					ViewALlClicked ? Notifications.length : 5
 				)}
 			</div>
-			{Notifications.length > 4 && (
+			{Notifications.length > 5 && (
 				<button
 					className='justify-center flex flex-row items-center rounded-[2px] h-[20px] w-[90px]'
 					onClick={handleViewAll}
 					aria-label='Navigate to game'>
 					<div className='flex flex-row items-center justify-between mx-auto '>
-						<div className='font-medium  items-center text-[#A5A5A5]  text-[12px]'>
+						<div className='font-medium  items-center text-[#A5A5A5]  text-[10px]'>
 							{ViewALlClicked ? "SHOW LESS" : "VIEW ALL"}
 						</div>
 					</div>
@@ -122,6 +123,23 @@ const NavBar = () => {
 	const handleIconClick = (href: string) => {
 		if (href === "") setClickedIndex(!clickedIndex);
 	};
+
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+		  const target = event.target as HTMLElement;
+		  const panel = document.getElementById('notification-panel'); // Replace with your actual panel ID
+	
+		  if (panel && !panel.contains(target)) {
+			setClickedIndex(false);
+		  }
+		};
+	
+		document.addEventListener('mousedown', handleOutsideClick);
+	
+		return () => {
+		  document.removeEventListener('mousedown', handleOutsideClick);
+		};
+	  }, []);
 
 	return (
 		<div className='w-full mt-[40px] mb-[40px] flex flex-row justify-between items-center mx-auto max-w-[100vw]'>
