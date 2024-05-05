@@ -37,15 +37,13 @@ function NotificationContent({
 		<div
 			className={`p-2 min-h-[60px] flex  flex-row items-center justify-between rounded-md  w-[256px] overflow-hidden`}>
 			<div className='flex items-center rounded-sm'>
-				<div className='rounded-ful flex items-start'>
-					<Image
-						className=' w-[35px] h-[35px] '
-						src='/assets/images/profile.jpg'
-						alt='Profile Image'
-						width={35}
-						height={35}
-					/>
-				</div>
+			<div className="rounded-ful flex items-start ">
+						<Image
+							className="bg-white  w-[35px] h-[35px] rounded-full"
+							src='/assets/images/profile.jpg'
+							alt="Profile Image"
+							width={35} height={35} />
+					</div>
 				<div className='pl-2 flex flex-col items-start w-[203px] '>
 					<div className=' text-white font-light text-[14px] overflow-hidden max-h-[80px] '>
 						{" "}
@@ -104,7 +102,7 @@ function NotificationPanel(){
 			</div>
 			{Notifications.length > 4 && (
 				<button
-					className='justify-center flex flex-row items-center rounded-[2px] h-[20px] w-[70px]'
+					className='justify-center flex flex-row items-center rounded-[2px] h-[20px] w-[90px]'
 					onClick={handleViewAll}
 					aria-label='Navigate to game'>
 					<div className='flex flex-row items-center justify-between mx-auto '>

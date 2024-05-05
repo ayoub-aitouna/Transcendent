@@ -168,10 +168,10 @@ const page = () => {
 	};
 
 	return <>
-		<div className="h-full">
-			<div className="flex-1 flex flex-col gap-4">
-				<div className="flex  h-[940px] flex-row flex-wrap gap-5">
-					<div className=" h-[940px] overflow-y-scroll hide-scrollbar  w-[440px] bg-[#292929] rounded-xl p-4">
+		<div className="h-full max-h-[82vh]overflow-hidden">
+			<div className="h-full flex-1 flex flex-col gap-4">
+				<div className="h-full flex flex-row flex-wrap gap-5">
+					<div className="  overflow-y-scroll hide-scrollbar  w-[440px] bg-[#292929] rounded-xl p-4">
 						<div className="flex flex-row items-center justify-between p-2 relative">
 							<input
 								className="flex-row items-center justify-between rounded-lg overflow-hidden bg-[#363636] pl-[60px] p-2 h-[40px] w-[336px]"
@@ -204,7 +204,7 @@ const page = () => {
 
 					</div>
 
-					<div className="flex-1 h-[940px] bg-secondary-400  min-w-[400px] rounded-xl relative">
+					<div className={`flex-1 h-full bg-secondary-400  min-w-[400px] rounded-xl relative`}>
 						{selectedChat ? (
 							<div className=''>
 								<button className={`w-full h-[80px] bg-[#303030] flex items-center justify-between rounded-lg overflow-hidden`}>
@@ -217,23 +217,44 @@ const page = () => {
 										</div>
 									</Link>
 									<div className="relative flex flex-col items-center">
-                                            <div className="relative flex flex-col items-center p-7" onClick={handleThreePoints}>
-                                                <ThreePointsIcon />
-                                            </div>
+										<div className="relative flex flex-col items-center p-7" onClick={handleThreePoints}>
+											<ThreePointsIcon />
+										</div>
 										{clickedThreePoints && (
-														<div className="absolute left-0 bottom-[-150px] bg-[#242424] w-[00px] h-[245px] p-4 rounded-md">
-															{/* Panel Content */}
-														</div>
+											<div className="absolute left-0 bottom-[-150px] bg-[#242424] w-[00px] h-[245px] p-4 rounded-md">
+												{/* Panel Content */}
+											</div>
 										)}
-                                        </div>
+									</div>
 								</button>
-								<div className="flex-1 p overflow-y-auto w-full mt-5">
-									<ChatMessage message="Hi there!" isSent={false} time="10:00" />
-									<ChatMessage message="Hello! How are you?" isSent={true} time="10:05" />
-									<ChatMessage message="I was thinking we could go see that new movie. It's the latest one by that director we both like. I've heard it's a mix of suspense and da, which sounds like it could be interesting. Plus, the lead actor has won several awards for his past performances, so I'm expecting some solid acting." isSent={false} time="10:00" />
-									<ChatMessage message="That sounds like a great idea. I've been wanting to see that movie too. I've read some reviews and they all praise the storyline and the performances. It's been a while since we've seen a good movie. Plus, it would be nice to catch up. Let's do it." isSent={true} time="10:05" />
-									<ChatMessage message="Awesome, I'll get the tickets. Do you prefer a matinee or an evening show? Personally, I prefer evening shows. There's something about ending the day with a good movie. Plus, we could grab dinner before the movie. There's a new Italian restaurant that opened recently near the cinema" isSent={false} time="10:00" />
-									<ChatMessage message="An evening show sounds perfect. And trying out the new Italian restaurant is a great idea. I've heard they serve an excellent lasagna. Looking forward to it. Let's meet at the restaurant around 6?" isSent={true} time="10:05" />
+								<div className='overflow-y-scroll hide-scrollbar max-h-[650px]'>
+									<div className=" flex-1 p  w-full mt-5">
+										<ChatMessage message="Hi there!" isSent={false} time="10:00" />
+										<ChatMessage message="Hello! How are you?" isSent={true} time="10:05" />
+										<ChatMessage message="I was thinking we could go see that new movie. It's the latest one by that director we both like. I've heard it's a mix of suspense and da, which sounds like it could be interesting. Plus, the lead actor has won several awards for his past performances, so I'm expecting some solid acting." isSent={false} time="10:00" />
+										<ChatMessage message="That sounds like a great idea. I've been wanting to see that movie too. I've read some reviews and they all praise the storyline and the performances. It's been a while since we've seen a good movie. Plus, it would be nice to catch up. Let's do it." isSent={true} time="10:05" />
+										<ChatMessage message="Awesome, I'll get the tickets. Do you prefer a matinee or an evening show? Personally, I prefer evening shows. There's something about ending the day with a good movie. Plus, we could grab dinner before the movie. There's a new Italian restaurant that opened recently near the cinema" isSent={false} time="10:00" />
+										<ChatMessage message="An evening show sounds perfect. And trying out the new Italian restaurant is a great idea. I've heard they serve an excellent lasagna. Looking forward to it. Let's meet at the restaurant around 6?" isSent={true} time="10:05" />
+										<ChatMessage message="Hi there!" isSent={false} time="10:00" />
+										<ChatMessage message="Hello! How are you?" isSent={true} time="10:05" />
+										<ChatMessage message="I was thinking we could go see that new movie. It's the latest one by that director we both like. I've heard it's a mix of suspense and da, which sounds like it could be interesting. Plus, the lead actor has won several awards for his past performances, so I'm expecting some solid acting." isSent={false} time="10:00" />
+										<ChatMessage message="That sounds like a great idea. I've been wanting to see that movie too. I've read some reviews and they all praise the storyline and the performances. It's been a while since we've seen a good movie. Plus, it would be nice to catch up. Let's do it." isSent={true} time="10:05" />
+										<ChatMessage message="Awesome, I'll get the tickets. Do you prefer a matinee or an evening show? Personally, I prefer evening shows. There's something about ending the day with a good movie. Plus, we could grab dinner before the movie. There's a new Italian restaurant that opened recently near the cinema" isSent={false} time="10:00" />
+										<ChatMessage message="An evening show sounds perfect. And trying out the new Italian restaurant is a great idea. I've heard they serve an excellent lasagna. Looking forward to it. Let's meet at the restaurant around 6?" isSent={true} time="10:05" />
+										<ChatMessage message="Hi there!" isSent={false} time="10:00" />
+										<ChatMessage message="Hello! How are you?" isSent={true} time="10:05" />
+										<ChatMessage message="I was thinking we could go see that new movie. It's the latest one by that director we both like. I've heard it's a mix of suspense and da, which sounds like it could be interesting. Plus, the lead actor has won several awards for his past performances, so I'm expecting some solid acting." isSent={false} time="10:00" />
+										<ChatMessage message="That sounds like a great idea. I've been wanting to see that movie too. I've read some reviews and they all praise the storyline and the performances. It's been a while since we've seen a good movie. Plus, it would be nice to catch up. Let's do it." isSent={true} time="10:05" />
+										<ChatMessage message="Awesome, I'll get the tickets. Do you prefer a matinee or an evening show? Personally, I prefer evening shows. There's something about ending the day with a good movie. Plus, we could grab dinner before the movie. There's a new Italian restaurant that opened recently near the cinema" isSent={false} time="10:00" />
+										<ChatMessage message="An evening show sounds perfect. And trying out the new Italian restaurant is a great idea. I've heard they serve an excellent lasagna. Looking forward to it. Let's meet at the restaurant around 6?" isSent={true} time="10:05" />
+										<ChatMessage message="Hi there!" isSent={false} time="10:00" />
+										<ChatMessage message="Hello! How are you?" isSent={true} time="10:05" />
+										<ChatMessage message="I was thinking we could go see that new movie. It's the latest one by that director we both like. I've heard it's a mix of suspense and da, which sounds like it could be interesting. Plus, the lead actor has won several awards for his past performances, so I'm expecting some solid acting." isSent={false} time="10:00" />
+										<ChatMessage message="That sounds like a great idea. I've been wanting to see that movie too. I've read some reviews and they all praise the storyline and the performances. It's been a while since we've seen a good movie. Plus, it would be nice to catch up. Let's do it." isSent={true} time="10:05" />
+										<ChatMessage message="Awesome, I'll get the tickets. Do you prefer a matinee or an evening show? Personally, I prefer evening shows. There's something about ending the day with a good movie. Plus, we could grab dinner before the movie. There's a new Italian restaurant that opened recently near the cinema" isSent={false} time="10:00" />
+										<ChatMessage message="An evening show sounds perfect. And trying out the new Italian restaurant is a great idea. I've heard they serve an excellent lasagna. Looking forward to it. Let's meet at the restaurant around 6?" isSent={true} time="10:05" />
+
+									</div>
 								</div>
 								<div className="absolute bottom-0 left-0 right-0 p-2 h-[80px] bg-[#303030]">
 									<div className="flex flex-row items-end justify-end">

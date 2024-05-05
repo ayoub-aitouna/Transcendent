@@ -67,12 +67,16 @@ export const ProfileIcon = () => {
 
 	return (
 		<div className='relative z-50'>
-			<button className=" flex-row items-center justify-between rounded-md overflow-hidden bg-[#292929] p-1 h-[46.9px] min-w-40 "
+			<button className="flex  flex-row items-center justify-between rounded-md overflow-hidden bg-[#292929] p-1 h-[46.9px] min-w-40 "
 				onClick={handleClick} aria-label="Navigate to game">
 				<div className="flex items-center">
 
 					<div className="rounded-ful flex items-start ">
-						<Image className="bg-white  w-10 h-[38.9px] rounded-full" src="/assets/images/profile.jpg" alt="Profile Image" width={40} height={38.9} />
+						<Image
+							className="bg-white  w-10 h-[38.9px] rounded-full"
+							src='/assets/images/profile.jpg'
+							alt="Profile Image"
+							width={40} height={38.9} />
 					</div>
 					<div className="flex flex-col items-start max-w-[80px]">
 						<div className="ml-[5px] text-white truncate font-semibold text-[15px]"> aaitouna</div>
@@ -92,11 +96,16 @@ export const ProfileIcon = () => {
 				</div>
 			</button >
 			{isClicked && (
-				<div className="mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] h-[145px] p-4 rounded-md ">
+				<div className="mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] h-[145px] p-4 rounded-md">
 					<div className="flex items-start">
 						<div className="rounded-full flex items-start">
 							<div className="rounded-full flex items-start w-[30px] h-[30px]">
-								<Image className="bg-white w-[30px] h-[30px] rounded-full" src="/assets/images/profile.jpg" alt="Profile Image" width={30} height={30} />
+								<Image
+									className="bg-white w-[30px] h-[30px] rounded-full"
+									src='/assets/images/profile.jpg'
+									alt="Profile Image"
+									width={30} height={30}
+								/>
 							</div>
 						</div>
 						<div className="flex flex-col items-start ml-[5px]">
