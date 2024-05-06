@@ -55,27 +55,32 @@ export const ProfileIcon = () => {
 	const handleClick = () => {
 		setIsClicked(!isClicked);
 	};
-	useEffect(() => {
-		const handleOutsideClick = (event: MouseEvent) => {
-		  const target = event.target as HTMLElement;
-		  const panel = document.getElementById('profile-panel');
-	
-		  if (panel && !panel.contains(target)) {
-			setIsClicked(false);
-		  }
-		};
-	
-		document.addEventListener('mousedown', handleOutsideClick);
-	
-		return () => {
-		  document.removeEventListener('mousedown', handleOutsideClick);
-		};
-	  }, []);
+
+    useEffect(() => {
+        const handleOutsideClick = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            const panel = document.getElementById('profile-panel');
+            const button = document.getElementById('profile-icon');
+
+            if (
+                panel &&
+                !panel.contains(target) &&
+                (!button || !button.contains(target))
+            ) {
+                setIsClicked(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, []);
 
 	return (
 		<div className='relative z-50'>
-			<button className="flex  flex-row items-center justify-between rounded-md overflow-hidden bg-[#292929] p-1 h-[46.9px] min-w-40 "
-				onClick={handleClick} aria-label="Navigate to game">
+			<button  className="flex  flex-row items-center justify-between rounded-md overflow-hidden bg-[#292929] p-1 h-[46.9px] min-w-40 " aria-label="Navigate to game">
 				<div className="flex items-center">
 
 					<div className="rounded-ful flex items-start ">
@@ -90,7 +95,7 @@ export const ProfileIcon = () => {
 						<div className="ml-[5px] items-start font-normal text-white text-[8px] truncate ">Level 55</div>
 					</div>
 				</div>
-				<div className="ml-2 bg-black rounded-full overflow-hidden w-7 h-7 flex items-center justify-center" onClick={handleClick}>
+				<div id='profile-icon' className="ml-2 bg-black rounded-full overflow-hidden w-7 h-7 flex items-center justify-center" onClick={handleClick}>
 					{isClicked ?
 						<svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
 							<path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7" />
@@ -118,19 +123,19 @@ export const ProfileIcon = () => {
 						<div className="flex flex-col items-start ml-[5px]">
 							<div className="truncate text-white font-bold text-[14px]">Ayoub Aitouna</div>
 							<div className="truncate text-[#A2A2A2] text-[8px]">@aaitouna</div>
-							<Link href="/profile" className="mt-1 truncate text-[#FD4106] text-[8px]">View Your Profile</Link>
+							<Link href="/profile" className="mt-1 truncate text-[#FD4106] text-[8px]" onClick={() => setIsClicked(false)}>View Your Profile</Link>
 						</div>
 					</div>
 
 
 					<div className=" w-[160px]   mt-2 border-t border-[#363636] pt-2"></div>
 					<Link href = "/auth" className="flex items-center justify-between  flex-row  w-[55px] h-[14px]">
-						<div className="items-start"><Sttings /></div>
-						<div className="items-end text-[8px]">Settings</div>
+						<div className="items-start" ><Sttings /></div>
+						<div className="items-end text-[8px]" onClick={() => setIsClicked(false)}>Settings</div>
 					</Link>
 					<Link href = "/" className="pt-4 flex items-center justify-between  flex-row  w-[55px] h-[14px]">
 						<div className="items-start"><LogOut /></div>
-						<div className="items-end text-[8px]" >Sing out</div>
+						<div className="items-end text-[8px]" onClick={() => setIsClicked(false)}>Sing out</div>
 					</Link>
 				</div>
 			)}

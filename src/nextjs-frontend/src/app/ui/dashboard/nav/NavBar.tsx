@@ -124,22 +124,27 @@ const NavBar = () => {
 		if (href === "") setClickedIndex(!clickedIndex);
 	};
 
-	useEffect(() => {
-		const handleOutsideClick = (event: MouseEvent) => {
-		  const target = event.target as HTMLElement;
-		  const panel = document.getElementById('notification-panel'); // Replace with your actual panel ID
-	
-		  if (panel && !panel.contains(target)) {
-			setClickedIndex(false);
-		  }
-		};
-	
-		document.addEventListener('mousedown', handleOutsideClick);
-	
-		return () => {
-		  document.removeEventListener('mousedown', handleOutsideClick);
-		};
-	  }, []);
+    useEffect(() => {
+        const handleOutsideClick = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            const panel = document.getElementById('notification-panel');
+            const button = document.getElementById('notification-icon');
+
+            if (
+                panel &&
+                !panel.contains(target) &&
+                (!button || !button.contains(target))
+            ) {
+                setClickedIndex(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, []);
 
 	return (
 		<div className='w-full mt-[40px] mb-[40px] flex flex-row justify-between items-center mx-auto max-w-[100vw]'>
@@ -164,10 +169,11 @@ const NavBar = () => {
 						<div key={index} className='relative'>
 							<div className={``} onClick={() => handleIconClick(item.href)}>
 								<div
+									id='notification-icon'
 									className={`rounded-full ${clickedIndex && item.href === ""
 											? "bg-[#111111]"
 											: "bg-[#303030]"
-										} h-[40px] w-[40px] aspect-square`}>
+										} h-[40px] w-[40px] aspect-square`} >
 									<NavBtnR href={item.href} Icon={item.Icon} />
 									{item.href === "" && clickedIndex ? (
 											<NotificationPanel/>
