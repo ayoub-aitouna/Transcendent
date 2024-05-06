@@ -15,7 +15,7 @@ export function TournamentsContainer({
 }) {
 	return (
 		<div
-			className={` w-full bg-[#373737] h-[97px] flex items-center justify-between rounded-lg overflow-hidden  p-2  mt-2 cursor-pointer`}
+			className={` w-full bg-[#373737] h-[97px] flex items-center justify-between rounded-lg overflow-hidden  p-2 cursor-pointer`}
 			aria-label='Navigate to game'>
 			<div className='flex items-center justify-between w-full '>
 				<Image

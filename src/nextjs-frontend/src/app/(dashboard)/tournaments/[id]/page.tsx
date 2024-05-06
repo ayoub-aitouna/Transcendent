@@ -4,6 +4,12 @@ import Link from "next/link";
 import { user } from "@/type/auth/user";
 import clsx from "clsx";
 import { BracketData, StreamingData } from "@/constant/dashboard";
+import Empty from "@/app/ui/dashboard/Empty";
+import {
+	ProfileImage,
+	UserDetails,
+	StreamingCard,
+} from "@/app/ui/dashboard/tournament/index";
 
 const FilterButton = () => {
 	return (
@@ -19,40 +25,6 @@ const FilterButton = () => {
 				<p className='uppercase text-sm tracking-[5%] font-semibold'>filter</p>
 			</div>
 		</button>
-	);
-};
-
-const ProfileImage = ({
-	className,
-	image_url,
-}: {
-	className?: string;
-	image_url?: string;
-}) => {
-	return (
-		<div className={className}>
-			<Image
-				src={image_url || ""}
-				alt='profile'
-				layout='fill'
-				className='object-cover'
-			/>
-		</div>
-	);
-};
-
-const UserDetails = ({ name, level }: { name?: string; level?: number }) => {
-	return (
-		<div className='flex flex-col items-start justify-center capitalize max-w-full'>
-			<div
-				className='font-bold text-lg tracking-tight max-w-24 truncate'
-				title={name}>
-				{name}
-			</div>
-			<div className='text-secondary-100 text-sm truncate font-normal tracking-tight'>
-				Level <span>{level}</span>
-			</div>
-		</div>
 	);
 };
 
@@ -83,7 +55,7 @@ const BracketCard = ({
 						src={player1?.image_url || ""}
 						alt='profile'
 						layout='fill'
-						objectFit='cover'
+						className='object-cover'
 					/>
 				</div>
 				<div className=''>
@@ -98,42 +70,6 @@ const BracketCard = ({
 				</div>
 			</div>
 		</>
-	);
-};
-
-const StreamingCard = ({
-	user1,
-	user2,
-}: {
-	user1: Partial<user>;
-	user2: Partial<user>;
-}) => {
-	return (
-		<div className='flex flex-row items-center justify-between w-full h-20 px-3 py-4 bg-secondary-300 rounded-lg'>
-			<div className='flex flex-row gap-2 items-center'>
-				<div className='flex flex-row items-center justify-center flex-nowrap'>
-					<ProfileImage
-						image_url={user1.image_url}
-						className='relative w-12 h-12  rounded-full border border-[#A2A2A2] overflow-hidden '
-					/>
-					<ProfileImage
-						image_url={user2.image_url}
-						className='relative w-12 h-12 ml-[-20px] rounded-full border border-[#A2A2A2] overflow-hidden'
-					/>
-				</div>
-				<UserDetails name={user1.username} level={user1.level} />
-				<p className='text-md font-bold'>VS</p>
-				<UserDetails name={user2.username} level={user2.level} />
-			</div>
-
-			<Image
-				src='/assets/icons/ArrowRight.svg'
-				alt='play'
-				className='w-5 aspect-square'
-				width={20}
-				height={20}
-			/>
-		</div>
 	);
 };
 
@@ -280,17 +216,6 @@ const Bracket = () => {
 	);
 };
 
-const Empty = () => {
-	return (
-		<div className='w-full flex-1 flex flex-col justify-center items-center gap-5'>
-			<Image src='/assets/icons/empty.svg' alt='empty' width={50} height={50} />
-			<p className='capitalize text-xs text-secondary-100'>
-				no Game are available right now
-			</p>
-		</div>
-	);
-};
-
 const page = () => {
 	return (
 		<div className='h-full w-full flex flex-col gap-5'>
@@ -340,7 +265,9 @@ const page = () => {
 							))}
 						</ul>
 					)}
-					{StreamingData.length === 0 && <Empty />}
+					{StreamingData.length === 0 && (
+						<Empty text='no Game are available right now' />
+					)}
 					<button className='self-center h-10 bg-primary px-3 py-2 rounded-sm'>
 						<p className='flex flex-row uppercase'>
 							Register Now - <span className='ml-1 lowercase'> 1h32m</span>

@@ -13,27 +13,44 @@ function Tournaments() {
 		window.location.href = '/tournaments';
 	}
 	return (
-		<div className='relative h-full' >
-			<div className="pb-8 flex items-center justify-between" onClick={handleClick} aria-label="Navigate to profile">
-				<div className=" text-white  truncate font-bold text-base">Tournaments</div>
-				<button className={`${styles.create_new_trn} rounded-md w-[165px] h-[35px] text-[12px] font-semibold`} onClick={handleClick}> CREATE TOURNAMENTS </button>
+		<div className='relative h-full'>
+			<div
+				className='pb-8 flex items-center justify-between'
+				onClick={handleClick}
+				aria-label='Navigate to profile'>
+				<div className=' text-white  truncate font-bold text-base'>
+					Tournaments
+				</div>
+				<button
+					className={`${styles.create_new_trn} rounded-md w-[165px] h-[35px] text-[12px] font-semibold`}
+					onClick={handleClick}>
+					{" "}
+					CREATE TOURNAMENTS{" "}
+				</button>
 			</div>
-			{tournamentLinks.map((item, index) => (
-				<TournamentsContainer
-					key={index}
-					href={item.href}
-					name={item.name}
-					followers={item.followers}
-					SecName={item.secName}
-				/>
-			))}
-			<div className="w-full absolute bottom-0">
-				<div className="w-full grid place-content-end">
-					<div className='flex flex-row items-end justify-end' onClick={handleClickAll}> <ViewAll /> </div>
+			<ul className='flex flex-col gap-3'>
+				{tournamentLinks.map((item, index) => (
+					<TournamentsContainer
+						key={index}
+						href={item.href}
+						name={item.name}
+						followers={item.followers}
+						SecName={item.secName}
+					/>
+				))}
+			</ul>
+
+			<div className='w-full absolute bottom-0'>
+				<div className='w-full grid place-content-end'>
+					<div
+						className='flex flex-row items-end justify-end'
+						onClick={handleClickAll}>
+						{" "}
+						<ViewAll />{" "}
+					</div>
 				</div>
 			</div>
 		</div>
-
 	);
 };
 

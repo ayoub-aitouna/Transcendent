@@ -14,6 +14,7 @@ import twitch from "@/app/ui/dashboard/icons/nav/twitch";
 import Intra from "@/app/ui/dashboard/icons/nav/intra";
 import Discord from "@/app/ui/dashboard/icons/nav/discord";
 import Notification from "@/app/ui/dashboard/icons/nav/notification";
+import { Achievement } from "@/type/dashboard";
 
 export const navLinks: navItem[] = [
 	{
@@ -83,14 +84,14 @@ export const MessengerLinks: MessengerItem[] = [
 		name: "kmahdi",
 		LastMessage: "chat number 1 ?",
 		time: "20.50",
-		messagesNbr: 4
+		messagesNbr: 4,
 	},
 	{
 		href: "/assets/images/profile.jpg",
 		name: "icybrilliant",
 		LastMessage: "chat number 2 ?",
 		time: "20.50",
-		messagesNbr: 0
+		messagesNbr: 0,
 	},
 	{
 		href: "/assets/images/kmahdi.jpg",
@@ -493,9 +494,49 @@ export const StreamingData = [
 	},
 ];
 
+export const TopAchievementsList: Achievement[] = [
+	{
+		icon: "/assets/badges/Mars-2020-Contributor.png",
+		name: "Decathlon Dominator",
+		description: "Secure a streak of 10 victorious games in a row.",
+	},
+	{
+		icon: "/assets/badges/OpenSourcerer.png",
+		name: "Wizard's Triumph",
+		description:
+			"Master the art of the game by winning a match using only curve shots, leaving your opponent spellbound.",
+	},
+	{
+		icon: "/assets/badges/HeartOnYourSleeve.png",
+		name: "Survival Specialist",
+		description:
+			"Achieve a perfect win in a game of ping pong without conceding a single point.",
+	},
+];
+
+export const UserInfoList = [
+	{
+		src: "/assets/icons/fluent_games.png",
+		value: "+212 6 36 04 78 60",
+	},
+	{
+		src: "/assets/icons/email.png",
+		value: "Aitounaayoub@gmail.com",
+	},
+	{
+		src: "/assets/icons/location-filled.png",
+		value: "Benguerir",
+	},
+	{
+		src: "/assets/icons/connected.png",
+		value: "Online",
+	},
+];
+
 export const Messages: MessagesItem[] = [
 	{
-		message: "Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose",
+		message:
+			"Android Developers uploaded: Android Developer Story: Google Drive cut code and development time in half with Compose",
 		time: "2 hours ago",
 	},
 	{

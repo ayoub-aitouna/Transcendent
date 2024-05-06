@@ -7,7 +7,8 @@ from user.serializers import (
     UserSerializer,
     UserDetailSerializer,
     UserUpdateImageSerializer,
-    FriendsSerializer
+    FriendsSerializer,
+    OnlineUserSerializer
 )
 from django.db.models import Q
 from channels.layers import get_channel_layer
@@ -16,6 +17,7 @@ from asgiref.sync import async_to_sync
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
+from transcendent.consumers import NotifyUser
 
 
 class UsersList(generics.ListAPIView):
@@ -94,6 +96,38 @@ class BlockUser(generics.UpdateAPIView):
         serializer.save(is_blocked=True)
 
 
+class OnlineFriendsList(generics.ListAPIView):
+    serializer_class = OnlineUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        friends_as_requester = User.objects.filter(
+            Q(requster__addressee=self.request.user) & Q(requster__is_accepted=True))
+        friends_as_addresse = User.objects.filter(
+            Q(addressee__addressee=self.request.user) & Q(addressee__is_accepted=True))
+        friends = friends_as_requester | friends_as_addresse
+        return friends.exclude(id=self.request.user.id).distinct()
+
+
+
+class InvitePlayer(APIView):
+    serializer_class = FriendsSerializer
+    queryset = Friends.objects.all()
+
+    def _create_notification(self, addresse):
+        notification = Notification(
+            title='You have a new invitation',
+            icon='fa fa-user-plus',
+            recipient=addresse)
+        send_notification(notification)
+        notification.save()
+
+    def get(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        self._create_notification(user)
+        return Response({'message': 'Invitation sent'})
+
+
 class SendTestNotification(APIView):
     def get(self, request):
         print('user', )
@@ -113,10 +147,4 @@ def send_notification(notification):
         'title': notification.title,
         'icon': notification.icon,
     })
-    async_to_sync(channel_layer.group_send)(
-        f'notification_{notification.recipient.id}',
-        {
-            'type': 'notification',
-            'notification': str_obj
-        }
-    )
+    NotifyUser(notification.recipient.id, str_obj, channel_layer)

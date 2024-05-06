@@ -95,7 +95,7 @@ const page = () => {
 						Create tournement
 					</button>
 				</div>
-				<ul className='flex flex-col items-center justify-start w-full overflow-y-scroll hide-scrollbar'>
+				<ul className='flex flex-col items-center justify-start gap-3 w-full overflow-y-scroll hide-scrollbar'>
 					{tournamentLinks.map((item, index) => (
 						<li key={item.id} className='w-full'>
 							<Link href={`/tournaments/${index}`}>
