@@ -32,7 +32,6 @@ function OptionLink({
 	return (
 		<Link
 			href={href ? href : "/"}
-			nonce="option-link"
 			className='flex flex-row justify-between items-center p-2'>
 			<div className='flex flex-col items-start justify-center gap-2'>
 				<h6
