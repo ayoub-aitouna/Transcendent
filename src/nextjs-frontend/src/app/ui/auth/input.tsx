@@ -1,4 +1,5 @@
 "use client";
+import clsx from "clsx";
 import React from "react";
 
 type inputProps = {
@@ -10,6 +11,8 @@ type inputProps = {
 	helperText?: string | null;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	register: any;
+	additionalStyles?: string;
+	props?: any;
 };
 
 const Input = React.forwardRef<HTMLInputElement | null, inputProps>(
@@ -23,22 +26,29 @@ const Input = React.forwardRef<HTMLInputElement | null, inputProps>(
 			helperText,
 			onChange,
 			register,
+			props,
+			additionalStyles,
 		},
 		ref
 	) => {
+		const handle_register = register !== null ? register(name) : null;
 		return (
 			<div className='flex flex-col w-full gap-[10px]'>
 				<label className='text-[14px] text-[#a2a2a2]' htmlFor={type}>
 					{title}
 				</label>
 				<input
-					className='w-full h-[50px] bg-[#606060]/50 outline-none px-2'
+					className={clsx(
+						"w-full h-[50px] bg-[#606060]/50 outline-none px-2",
+						additionalStyles
+					)}
 					onChange={onChange}
 					placeholder={placeholder}
 					type={type}
 					name={name}
+					{...props}
 					id={type}
-					{...register(name)}
+					{...handle_register}
 				/>
 				{error && (
 					<p className='mt-2 text-sm text-start text-red-600 dark:text-red-500'>
