@@ -128,11 +128,11 @@ export const ProfileIcon = () => {
 
 
 					<div className=" w-[160px]   mt-2 border-t border-[#363636] pt-2"></div>
-					<Link href = "/auth" className="flex items-center justify-between  flex-row  w-[55px] h-[14px]">
+					<Link href = "/settings" className="flex items-center justify-between  flex-row  w-[55px] h-[14px]">
 						<div className="items-start" ><Sttings /></div>
 						<div className="items-end text-[8px]" onClick={() => setIsClicked(false)}>Settings</div>
 					</Link>
-					<Link href = "/" className="pt-4 flex items-center justify-between  flex-row  w-[55px] h-[14px]">
+					<Link href = "/auth" className="pt-4 flex items-center justify-between  flex-row  w-[55px] h-[14px]">
 						<div className="items-start"><LogOut /></div>
 						<div className="items-end text-[8px]" onClick={() => setIsClicked(false)}>Sing out</div>
 					</Link>

@@ -92,7 +92,7 @@ const page = () => {
 						Tournmanets
 					</h6>
 					<button className={`${styles.create_new_trn} w-40 h-9 rounded-md`}>
-						<Link href='/tournaments/createTournament'>
+						<Link href='/tournaments/create_tournament'>
 							Create tournament
 						</Link>  
 					</button>

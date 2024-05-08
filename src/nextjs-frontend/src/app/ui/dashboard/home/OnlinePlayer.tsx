@@ -31,6 +31,35 @@ export const InviteIcon = () => (
 )
 
 
+export function PlayersContainer1({ name, href, number }: {
+	name: string;
+	href: string;
+	number: Number;
+}) {
+	return (
+		
+		<div className='flex flex-col sm:flex-row h-[69px] w-full'>
+		<div className='flex items-start justify-start mt-2 w-full p-2 mb-[10px] sm:mb-0 sm:w-auto'>
+			<Image className="bg-white w-[53px] h-[53px] rounded-full" src={href} alt="Profile Image" width={53} height={53} />
+			<div className="flex flex-col ml-2 sm:ml-4">
+				<div className="text-white truncate text-[18px] font-bold">{name}</div>
+				<div className={`text-[#878787] text-[12px] truncate font-medium`}>Level {String(number)}</div>
+			</div>
+		</div>
+		<div className="flex flex-row items-center justify-end w-full sm:justify-end">
+				{number && (
+					<div
+						className={`flex-row items-center rounded-[4px]  bg-[#FF3D00] w-[87px] h-[27px]`}>
+						<div className='flex items-center justify-between ml-2 mx-auto text-white text-[16px] font-medium"'> <InviteIcon /> <div />
+							<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> Invite </div>
+						</div>
+					</div>
+
+				)}
+			</div>
+		</div>
+	);
+};
 
 export function PlayersContainer({ name, href, number }: {
 	name: string;
@@ -100,7 +129,7 @@ function OnlinePlayers() {
 							<div className='flex flex-row items-center justify-center'>
 								<button className="flex  flex-row  rounded-[4px] bg-[#444444] p-2 h-[28px] min-w-[73px] ">
 									<div className="flex flex-row max-w-[80px] items-center justify-between mx-auto">
-										<div className="font-semibold text-[#A5A5A5] tracking-[.025] text-[10px]">{ViewALlClicked ? "SHOW LESS" : "VIEW ALL"}</div>
+										<div className="font-semibold text-[#A5A5A5] tracking-[.025] text-[10px]">{ViewALlClicked ? "SHOW LESS" : "VIEW MORE"}</div>
 									</div>
 								</button>
 							</div>
