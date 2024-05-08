@@ -29,34 +29,42 @@ export const UploadIcon = () => (
 	</svg>
 )
 
+export function ToggleSwitch1() {
+	return (
+		<label className='switch'>
+			<input type='checkbox' />
+			<span className='slider'></span>
+		</label>
+	);
+}
 
 function ToggleSwitch() {
 	const [isClicked, setIsClicked] = useState(false);
-
+  
 	const handleClick = () => {
-		setIsClicked(prevState => !prevState);
+	  setIsClicked(prevState => !prevState);
 	};
-
+  
 	return (
-		<div className="relative" onClick={handleClick}>
-			{isClicked ? (
-				<>
-					<input type="checkbox" className="hidden" />
-					<div className="absolute top-0 right-0 w-[50px] h-[24px] bg-[#262626] rounded-full shadow flex items-center">
-						<div className="ml-auto w-[24px] h-[24px] bg-white rounded-full"></div>
-					</div>
-				</>
-			) : (
-				<>
-					<input type="checkbox" className="hidden" />
-					<div className="absolute w-[50px] h-[24px] bg-white rounded-full shadow right-0 ">
-						<div className="mr-auto w-[24px] h-[24px] bg-[#262626] rounded-full"></div>
-					</div>
-				</>
-			)}
-		</div>
+	  <div className="relative" onClick={handleClick}>
+		{isClicked ? (
+		  <>
+			<input type="checkbox" className="hidden" />
+			<div className="absolute top-0 right-0 w-[50px] h-[24px] bg-[#262626] rounded-full shadow flex items-center transition-transform duration-3000 transform">
+			  <div className="ml-auto w-[24px] h-[24px] bg-white rounded-full"></div>
+			</div>
+		  </>
+		) : (
+		  <>
+			<input type="checkbox" className="hidden" />
+			<div className="absolute w-[50px] h-[24px] bg-white rounded-full right-0  transition-shadow  duration-3000 transform">
+			  <div className="mr-auto w-[24px] h-[24px] bg-[#262626] rounded-full"></div>
+			</div>
+		  </>
+		)}
+	  </div>
 	);
-}
+  }
 
 
 
@@ -142,7 +150,7 @@ const page = () => {
 								</div>
 							</div>
 							<div className="flex items-center justify-end">
-								<ToggleSwitch />
+								<ToggleSwitch  />
 							</div>
 						</div>
 						<div className='flex flex-row justify-end items-end space-x-2 pt-6 ml-auto'>

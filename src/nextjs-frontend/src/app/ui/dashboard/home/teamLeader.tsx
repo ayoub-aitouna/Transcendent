@@ -11,7 +11,7 @@ import Empty from '../Empty';
 
 export const ChartComponent = () => {
 	return (
-		<div style={{ width: '340px', height: '162px', position: 'relative', overflow: 'hidden' }}>
+		<div className="h-40 relative overflow-hidden w-full">
 			<div className="flex h-full w-full justify-center items-center">
 				<Empty text="no Data are available right now" />
 			</div>
@@ -39,13 +39,13 @@ function TeamLeader() {
 				<div className=' text-[10px] font-light'>My Level</div>
 				<div className="ml-auto text-[10px] font-light">7.9000/9000</div>
 			</div>
-			<div className='mt-5 h-[161px] w-[340px]'>
+			<div className='mt-5 h-[161px] w-full'>
 				<ChartComponent />
 			</div >
 			<div className='mt-5'>
 				<div className='flex flex-row justify-between items-center'>
 					<div
-						className={` flex items-center justify-between rounded w-[170px] overflow-hidden bg-[#323232] p-2 h-[44px] mb-[10px]`}>
+						className={` flex items-center justify-between rounded w-1/2 overflow-hidden  bg-[#323232] p-2 h-[44px] mb-[10px]`}>
 						<div className='flex items-center justify-between  '> <Rank /> <div />
 							<div className="flex items-center justify-between ml-2">
 								<div className="text-white  text-[12px] font-medium">Rank</div>
@@ -59,7 +59,7 @@ function TeamLeader() {
 
 					</div>
 					<div
-						className={` flex items-center justify-between rounded w-[170px] overflow-hidden bg-[#323232] p-2 h-[44px] mb-[10px]`}>
+						className={` flex items-center justify-between rounded w-1/2 overflow-hidden bg-[#323232] p-2 ml-2 h-[44px] mb-[10px]`}>
 						<div className='flex items-center justify-between  '> <Coins /> <div />
 							<div className="flex items-center justify-between">
 								<div className="text-white text-[12px] font-medium ml-2">Coins</div>

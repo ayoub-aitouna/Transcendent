@@ -6,11 +6,19 @@ import ViewAll from './content_area/viewAll';
 import { AllOnlinePlayers } from '@/constant/dashboard';
 import Empty from '../Empty';
 import Link from 'next/link';
+import styles from "@/app/ui/dashboard/nav/nav.module.css";
 
 function TeamRanking({ }) {
 	return (
-		<div className='relative h-full'>
-			<FilterBtn name='Friends' />
+		<div className='relative h-full w-full'>
+			<div className="mb-8 flex items-center justify-between">
+				<div className=" text-white  truncate font-bold text-base">Friends</div>
+				<button
+					className={` ${styles.create_new_trn} flex-row items-center rounded-md  w-[93px] h-[32px]`}>
+					<div className={` mx-auto text-white text-xs font-semibold`}> VIEW ALL<div />
+					</div>
+				</button>
+			</div>
 			<div>
 				{!AllOnlinePlayers.length ? (
 					<div className="flex h-[320px] w-full justify-center items-center">

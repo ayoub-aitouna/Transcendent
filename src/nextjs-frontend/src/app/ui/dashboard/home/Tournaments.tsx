@@ -13,7 +13,7 @@ function Tournaments() {
 			<div className='pb-8 flex items-center justify-between'>
 				<div className=' text-white  truncate font-bold text-base'>Tournaments</div>
 				<button className={`${styles.create_new_trn} rounded-md w-[165px] h-[35px] text-[12px] font-semibold`}>
-					<Link href='/tournaments/createTournament'>CREATE TOURNAMENTS</Link>
+					<Link href='/tournaments/create_tournament'>CREATE TOURNAMENTS</Link>
 				</button>
 			</div>
 			{!tournamentLinks.length ?
