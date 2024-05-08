@@ -82,7 +82,7 @@ function NotificationPanel(){
 		<div className='flex flex-col items-center'>
 			<div
 				className={`${ViewALlClicked
-						? "h-[300px] overflow-y-scroll hide-scrollbar pl-2 "
+						? "h-[300px] overflow-y-scroll hide-scrollbar"
 						: "h-[300px]"
 					}`}>
 				{Notifications.map((item, index) => (
@@ -96,10 +96,7 @@ function NotificationPanel(){
 							time={item.time}
 						/>
 					</div>
-				)).slice(
-					0,
-					ViewALlClicked ? Notifications.length : 5
-				)}
+				)).slice( 0, ViewALlClicked ? Notifications.length : 5)}
 			</div>
 			{Notifications.length > 5 && (
 				<button

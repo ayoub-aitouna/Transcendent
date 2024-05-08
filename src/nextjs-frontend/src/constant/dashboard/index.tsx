@@ -15,6 +15,7 @@ import Intra from "@/app/ui/dashboard/icons/nav/intra";
 import Discord from "@/app/ui/dashboard/icons/nav/discord";
 import Notification from "@/app/ui/dashboard/icons/nav/notification";
 import { Achievement } from "@/type/dashboard";
+import { number } from "yup";
 
 export const navLinks: navItem[] = [
 	{
@@ -77,6 +78,7 @@ export const tournamentLinks: TournamentsItem[] = [
 		secName: "Fortnite S14",
 	},
 ];
+
 
 export const MessengerLinks: MessengerItem[] = [
 	{
@@ -325,7 +327,7 @@ export const Notifications: NotificationItem[] = [
 	},
 ];
 
-// FOR DEBUGING
+
 
 export const BracketData = [
 	[
@@ -532,6 +534,35 @@ export const UserInfoList = [
 		value: "Online",
 	},
 ];
+
+export const AllOnlinePlayers = [
+	{
+		href: "/assets/images/kmahdi.jpg",
+		name: "kmahdi",
+		number: 6,
+	},
+	{
+		name: "Aaitouna",
+		href: "/assets/images/aaitouna.jpg",
+		number: 254,
+	},
+	{
+		href: "/assets/images/girl.png",
+		name: "scrums",
+		number: 128,
+	},
+	{
+		href: "/assets/images/profile.jpg",
+		name: "icybrilliant",
+		number: 112,
+	},
+	{
+		name: "kmahdi",
+		href: "/assets/images/profile.jpg",
+		number: 855,
+	},
+
+]
 
 export const Messages: MessagesItem[] = [
 	{

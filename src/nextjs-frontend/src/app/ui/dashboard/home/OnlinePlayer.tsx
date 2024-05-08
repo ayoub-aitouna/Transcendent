@@ -1,10 +1,12 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import { FilterBtn } from './content_area/filterBtn';
 import Image from 'next/image';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import ViewAll from './content_area/viewAll';
+import { AllOnlinePlayers } from "@/constant/dashboard";
+import Empty from "../Empty";
 
 
 export const InviteIcon = () => (
@@ -30,11 +32,10 @@ export const InviteIcon = () => (
 
 
 
-export function UserContainer({ name, href, number }: {
+export function PlayersContainer({ name, href, number }: {
 	name: string;
 	href: string;
 	number: Number;
-	index: Number;
 }) {
 	const handleClick = () => {
 		window.location.href = href;
@@ -46,18 +47,18 @@ export function UserContainer({ name, href, number }: {
 			onClick={handleClick}
 			aria-label="Navigate to game">
 			<div className='flex items-center justify-between '>
-				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src="/assets/images/profile.jpg" alt="Profile Image" width={53} height={53} />
+				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={href} alt="Profile Image" width={53} height={53} />
 				<div />
 				<div className="flex items-start flex-col max-w-[80px]">
-					<div className="ml-[10px]  text-white truncate font-semibold">{name}</div>
-					<div className={`ml-[10px]  text-white text-xs truncate font-medium`}>Level {number}</div>
+					<div className="ml-[10px]  text-white truncate text-[18px] font-bold">{name}</div>
+					<div className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>Level {String(number)}</div>
 				</div>
 			</div>
 			{number && (
 				<div
 					className={`flex-row items-center rounded-[4px]  bg-[#FF3D00] w-[87px] h-[27px]`}>
 					<div className='flex items-center justify-between ml-2 mx-auto text-white text-[16px] font-medium"'> <InviteIcon /> <div />
-					<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> Invite </div>
+						<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> Invite </div>
 					</div>
 				</div>
 
@@ -67,27 +68,47 @@ export function UserContainer({ name, href, number }: {
 	);
 };
 function OnlinePlayers() {
-	const handleClick = () => {
-		window.location.href = "/profile";
+	const [ViewALlClicked, setViewALlClicked] = useState(false);
+	const handleViewAll = () => {
+		setViewALlClicked(!ViewALlClicked);
 	};
-	const arr = new Array(4).fill(undefined);
 	return (
 		<div className='relative h-full' >
 			<FilterBtn name='Online Players' />
-			{Array(4).fill(0).map((_, index) => (
-				<UserContainer
-					key={index}
-					name='Aaitouna'
-					href='/profile'
-					number={165}
-					index={index + 1}
-				/>
-			))}
-			<div className="w-full absolute bottom-0">
-				<div className="w-full grid place-content-center">
-					<div className='flex flex-row items-center justify-center'> <ViewAll /> </div>
+			{!AllOnlinePlayers.length ? 
+				<div className="flex h-[320px] w-full justify-center items-center">
+					<Empty text="no Online Players are available right now"/>
+				</div> 
+				:
+				<div className={`${ViewALlClicked
+					? "h-[308px] overflow-y-scroll hide-scrollbar"
+					: "h-[308px] "
+					}`}>
+					{AllOnlinePlayers.map((item, index) => (
+						<div>
+							<PlayersContainer
+								key={index}
+								name={item.name}
+								href={item.href}
+								number={item.number}
+							/>
+						</div>
+					)).slice(0, ViewALlClicked ? AllOnlinePlayers.length : 4)}
+					{AllOnlinePlayers.length > 4 && (
+					<div className="w-full absolute bottom-0" onClick={handleViewAll}>
+						<div className="w-full grid place-content-center">
+							<div className='flex flex-row items-center justify-center'>
+								<button className="flex  flex-row  rounded-[4px] bg-[#444444] p-2 h-[28px] min-w-[73px] ">
+									<div className="flex flex-row max-w-[80px] items-center justify-between mx-auto">
+										<div className="font-semibold text-[#A5A5A5] tracking-[.025] text-[10px]">{ViewALlClicked ? "SHOW LESS" : "VIEW ALL"}</div>
+									</div>
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
 				</div>
-			</div>
+			}
 		</div>
 	);
 }

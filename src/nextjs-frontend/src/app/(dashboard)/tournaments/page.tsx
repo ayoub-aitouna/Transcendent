@@ -92,7 +92,9 @@ const page = () => {
 						Tournmanets
 					</h6>
 					<button className={`${styles.create_new_trn} w-40 h-9 rounded-md`}>
-						Create tournement
+						<Link href='/tournaments/createTournament'>
+							Create tournament
+						</Link>  
 					</button>
 				</div>
 				<ul className='flex flex-col items-center justify-start gap-3 w-full overflow-y-scroll hide-scrollbar'>

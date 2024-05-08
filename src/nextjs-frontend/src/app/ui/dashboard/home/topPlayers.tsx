@@ -2,20 +2,33 @@
 import React from 'react';
 import { FilterBtn } from './content_area/filterBtn';
 import { UserContainer } from './content_area/userContainer';
+import { AllOnlinePlayers } from '@/constant/dashboard';
+import Empty from '../Empty';
 
 function TopPlayers() {
 	return (
 		<div className='' >
 			<FilterBtn name='Top Players' />
-			{Array(4).fill(0).map((_, index) => (
-				<UserContainer
-					key={index} // Add a unique key for each component
-					name='Aaitouna'
-					href='/profile'
-					number={165}
-					index={index + 1} // Use the index variable to set the index prop dynamically
-				/>
-			))}
+			<div>
+		  {!AllOnlinePlayers.length ? (
+			<div className="flex h-[320px] w-full justify-center items-center">
+			  <Empty text="No Top players are available right now" />
+			</div>
+		  ) : (
+			<div>
+			  { AllOnlinePlayers.slice(0, 4).map((item, index) => (
+				<div key={index}>
+				  <UserContainer
+					name={item.name}
+					href={item.href}
+					number={item.number}
+					index={index + 1}
+				  />
+				</div>
+			  ))}
+			</div>
+		  )}
+		</div>
 		</div>
 	);
 }

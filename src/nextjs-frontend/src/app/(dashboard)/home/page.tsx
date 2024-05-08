@@ -3,7 +3,7 @@ import TeamLeader from '@/app/ui/dashboard/home/teamLeader';
 import OnlinePlayers from '@/app/ui/dashboard/home/OnlinePlayer';
 import TopPlayers from '@/app/ui/dashboard/home/topPlayers';
 import Tournaments from '@/app/ui/dashboard/home/Tournaments';
-import TeamRanking from '@/app/ui/dashboard/home/teamRanking';
+import TeamRanking from '@/app/ui/dashboard/home/friends';
 import NewTournaments from '@/app/ui/dashboard/home/newTournament';
 
 
