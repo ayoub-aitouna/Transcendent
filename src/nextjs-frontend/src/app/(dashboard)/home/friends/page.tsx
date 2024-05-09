@@ -4,12 +4,10 @@ import React, { useState } from 'react'
 import Image from 'next/image';
 import { AllOnlinePlayers } from '@/constant/dashboard';
 import Link from 'next/link';
+import RightArrow from '@/app/ui/dashboard/icons/content_area/RightArrow';
 import { UsersListWrapper } from '@/app/ui/dashboard/home/content_area/user-list-wrapper';
 
-
-
-
-export function BlocksContainer({ name, href, number}: {
+export function FriendContainer({ name, href, number}: {
 	name: string;
 	href: string;
 	number: number;
@@ -32,11 +30,11 @@ export function BlocksContainer({ name, href, number}: {
 					<div className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>Level {String(number)}</div>
 				</div>
 			</div>
-			<div className={`flex  items-center justify-center rounded-[4px]  bg-[#FD4106] w-[108px] h-[35px]`} onClick={() => handleClicked()}>
+			<div className={`flex  items-center justify-center `} onClick={() => handleClicked()}>
 				{clicked ?
-					<Link href={'/home'} className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> block </Link>
+					<Link href={'/profile'} className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> <RightArrow /> </Link>
 						:
-					<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> Unblock </div>
+					<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> <RightArrow /> </div>
 				}
 			</div>
 
@@ -52,7 +50,7 @@ const page = () => {
 			<UsersListWrapper >
 				{AllOnlinePlayers.map((item, index) => (
 					<div key={index}>
-						<BlocksContainer
+						<FriendContainer
 							name={item.name}
 							href={item.href}
 							number={item.number}

@@ -2,9 +2,9 @@ import React from "react";
 import Input from "@/app/ui/auth/input";
 import clsx from "clsx";
 import Link from "next/link";
-import RightArrow from "@/app/ui/dashboard/icons/right-arrow";
 import UploadButton from "@/app/ui/dashboard/Upload-Button";
 import ToggleSwitch from "@/app/ui/dashboard/Toggle-switch";
+import RightArrow from "@/app/ui/dashboard/icons/content_area/right-arrow";
 
 function ToggleOption({ title, desc }: { title: string; desc: string }) {
 	return (
