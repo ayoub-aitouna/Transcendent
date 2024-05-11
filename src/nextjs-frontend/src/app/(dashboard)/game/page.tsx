@@ -23,7 +23,7 @@ const page = () => {
 									</div>
 								</div>
 								<div className="text-center flex flex-col items-center">
-									<Link href='/game/making-machine' className={`${styles.play_now_button} h-9 w-36 grid place-content-center text-sm font-semibold`}>Play Now</Link>
+									<Link href='/making-machine' className={`${styles.play_now_button} h-9 w-36 grid place-content-center text-sm font-semibold`}>Play Now</Link>
 								</div>
 							</div>
 						</div>
