@@ -16,10 +16,12 @@
             "registration_method": "email",
             "image_url": null,
             "groups": [],
+            "friends": [
+                3,
+                4
+            ],
             "user_permissions": [],
-            "achivments": [
-                1
-            ]
+            "achievements": []
         }
     },
     {
@@ -39,10 +41,12 @@
             "registration_method": "email",
             "image_url": null,
             "groups": [],
+            "friends": [
+                3,
+                4
+            ],
             "user_permissions": [],
-            "achivments": [
-                1
-            ]
+            "achievements": []
         }
     },
     {
@@ -62,10 +66,12 @@
             "registration_method": "email",
             "image_url": null,
             "groups": [],
+            "friends": [
+                1,
+                2
+            ],
             "user_permissions": [],
-            "achivments": [
-                1
-            ]
+            "achievements": []
         }
     },
     {
@@ -85,40 +91,32 @@
             "registration_method": "email",
             "image_url": null,
             "groups": [],
+            "friends": [
+                1,
+                2
+            ],
             "user_permissions": [],
-            "achivments": [
-                1
-            ]
+            "achievements": []
         }
     },
     {
-        "model": "user.friends",
+        "model": "user.Friends_Request",
         "pk": 1,
         "fields": {
-            "requster": 1,
+            "requester": 1,
             "addressee": 2,
-            "is_accepted": true,
-            "created_at": "2024-04-24T02:04:51.557Z"
+            "created_at": "2024-04-24T02:04:51.557Z",
+            "updated_at": "2024-04-24T02:04:51.557Z"
         }
     },
     {
-        "model": "user.friends",
-        "pk": 2,
-        "fields": {
-            "requster": 3,
-            "addressee": 1,
-            "is_accepted": true,
-            "created_at": "2024-04-24T02:04:51.557Z"
-        }
-    },
-    {
-        "model": "user.friends",
+        "model": "user.Friends_Request",
         "pk": 3,
         "fields": {
-            "requster": 3,
+            "requester": 3,
             "addressee": 4,
-            "is_accepted": false,
-            "created_at": "2024-04-24T02:04:51.557Z"
+            "created_at": "2024-04-24T02:04:51.557Z",
+            "updated_at": "2024-04-24T02:04:51.557Z"
         }
     }
 ]
