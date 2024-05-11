@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Input from "@/app/ui/auth/input";
 import clsx from "clsx";
@@ -6,14 +8,24 @@ import RightArrow from "@/app/ui/dashboard/icons/right-arrow";
 import UploadButton from "@/app/ui/dashboard/Upload-Button";
 import ToggleSwitch from "@/app/ui/dashboard/Toggle-switch";
 
-function ToggleOption({ title, desc }: { title: string; desc: string }) {
+function ToggleOption({
+	title,
+	desc,
+	checked,
+	onCheck,
+}: {
+	title: string;
+	desc: string;
+	checked?: boolean;
+	onCheck?: () => void;
+}) {
 	return (
 		<div className='flex flex-row justify-between items-center p-2'>
 			<div className='flex flex-col items-start justify-center gap-2'>
 				<h6 className='text-lg font-semibold tracking-wide'>{title}</h6>
 				<p className='text-[#94969C] font-light text-sm'>{desc}</p>
 			</div>
-			<ToggleSwitch />
+			<ToggleSwitch checked={checked} onCheck={() => onCheck && onCheck()} />
 		</div>
 	);
 }
@@ -152,6 +164,11 @@ const page = () => {
 						desc='Add an additional Layer of security to your account during login'
 					/>
 					<ToggleOption
+						onCheck={() => {
+							console.log("requestPermission");
+							Notification.requestPermission();
+						}}
+						checked={Notification.permission === 'granted'}
 						title='Desktop Notification'
 						desc='Receive desktop notifications for critical events.'
 					/>

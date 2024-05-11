@@ -5,9 +5,6 @@
 - get (game or tournament) history, statue
 
 ### USER 
-- change friend-list database 
-    [article](https://medium.com/analytics-vidhya/add-friends-with-689a2fa4e41d)
-
 * invite users create looby for game 
    - if after 2 min invited user didn't join the game room kill the inviter
 
@@ -27,13 +24,9 @@
 
 
 # FRONTEND
-- Profile page
-- setting page
 - notification toast
 - invitation toast
 - game looby
 
 - ## Forms
-    - create tournament
     - create chat group
-    - update user info
