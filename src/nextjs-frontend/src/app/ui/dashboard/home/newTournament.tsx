@@ -1,50 +1,106 @@
 'use client'
-
 import Image from 'next/image';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import Link from "next/link";
-import { Carousel } from 'react-bootstrap';
-import Slider from 'react-slick';
-import SliderSettings from 'react-slick';
+import { useEffect, useRef } from 'react';
 
-function NewTournaments() {
+
+function SliderContent() {
+	const buttonStyles = {
+		borderRadius: '4px',
+		width: '145px',
+		height: '23px',
+		fontSize: '12px',
+		fontWeight: 'bold',
+		color: '#FF3D00',
+	};
+	const images = [
+		'/assets/images/valorant1.jpg',
+		'/assets/images/valorant_img.jpg',
+		'/assets/images/valorant_img0.jpg',
+	]
+	let index = Math.floor(Math.random() * images.length);
+	const current_image = images[index]
 	return (
-		<div className='relative h-full '>
+		<div className='position-relative h-100 '>
 			<div className='p-4 '>
 				<div className="pt-16 flex items-center bg">
-					<button className={`${styles.highlighted} rounded-[4px] w-[145px] h-[23px] text-[12px] font-bold  text-[#FF3D00]`} >  REGISTRATION OPENS </button>
+					<button className={` ${styles.highlighted}`} style={buttonStyles} >  REGISTRATION OPENS </button>
 				</div>
-				<div className="ml-2 pt-10 flex flex-col justify-center  w-[334px] h-[101px]">
+				<div className=" pt-10 flex flex-col justify-center  w-[334px] h-[101px]">
 					<div className=' text-[42px] font-bold'> VALORANT VCT </div>
-					<div className='text-[42px] font-bold m-0'> CUP 2024 </div>
+					<div className='text-[42px] font-bold m-0 p-0'> CUP 2024 </div>
 				</div>
 				<div className="pt-16 flex items-center w-[334px] h-[45px] ">
 					<div className='text-[12px] font-normal text-[#999999] tracking-tighter'>Valorant is a free-to-play first-person tactical hero shooter developed and published by Riot Games, for Windows. Teased under the codename Project A in October 2019, the game...</div>
 				</div>
 				<div className='pt-[63px]'>
-					<Link href='/tournaments' className=" flex items-center " aria-label="Navigate to profile">
-						<button className={`${styles.create_new_trn} rounded-md w-[104px] h-[37px] text-[14px] font-semibold`} >Register now</button>
-						<div className="pl-2"><button className={`bg-[#3F3F3F] rounded-md w-[93px] h-[37px] text-[14px] font-semibold`}>Learn more</button></div>
-					</Link>
+					<div className=" flex items-center " aria-label="Navigate to profile">
+						<Link href='/tournaments' style={{
+							zIndex: 99
+						}}> <button className={`${styles.create_new_trn} font-semibold `} style={{ borderRadius: '4px', width: '104px', height: '37px', fontSize: '14px' }} >Register now</button></Link>
+						<Link href='/tournaments' className="pl-2"><button className={`bg-[#3F3F3F] rounded-md w-[93px] h-[37px] font-semibold`} style={{ borderRadius: '4px', fontSize: '14px' }}>Learn more</button></Link>
+					</div>
 				</div>
 			</div>
 
 			<div className="absolute top-[0px] right-[0px]  ">
 				<div className="relative  h-[844.63px] w-[500.08px]" >
-					<Image className=" blur-3xl" src="/assets/images/valorant_img.jpg" fill alt="Profile Image" />
+					<Image className=" blur-3xl" src={current_image} fill alt="Profile Image" />
 				</div>
 			</div>
 			<div className="absolute top-[-30px] right-[44px]  ">
 				<div className="relative  h-[544.63px] w-[363.08px]" >
-					<Image className="rotate-[12.13deg] " src="/assets/images/valorant_img.jpg" fill alt="Profile Image" />
+					<Image className="rotate-[12.13deg] " src={current_image} fill alt="Profile Image" />
 				</div>
 			</div>
-
-
 		</div>
 	);
 }
 
 
-  
+
+function NewTournaments() {
+	const btn = useRef<HTMLButtonElement>(null);
+	useEffect(() => {
+		btn?.current?.click();
+	},
+		[btn])
+
+	return (
+		<div className="bootstrap-namespace position-relative ">
+			<div id="carouselExampleIndicators" className="carousel slide" style={{ maxWidth: '100%', height: '456px', overflow: 'hidden' }} data-bs-ride="true">
+				<div className="carousel-indicators">
+					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+				</div>
+				<div className="carousel-inner bg-white" >
+					<div className="carousel-item active" style={{ height: '456px', userSelect: 'none' }}>
+						<SliderContent />
+					</div>
+					<div className="carousel-item" style={{ height: '456px', userSelect: 'none' }}>
+						<SliderContent />
+					</div>
+					<div className="carousel-item" style={{ height: '456px', userSelect: 'none' }}>
+						<SliderContent />
+					</div>
+				</div>
+				<button ref={btn} className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+					<span className="visually-hidden  carousel-control-prev-icon" aria-hidden="true"></span>
+					<span className="visually-hidden">Previous</span>
+				</button>
+				<button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+					<span className="visually-hidden carousel-control-next-icon" aria-hidden="true"></span>
+					<span className="visually-hidden">Next</span>
+				</button>
+			</div>
+
+		</div>
+
+	)
+}
+
+
+
 export default NewTournaments;

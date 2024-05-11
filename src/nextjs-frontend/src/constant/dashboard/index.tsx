@@ -561,6 +561,56 @@ export const AllOnlinePlayers = [
 		href: "/assets/images/profile.jpg",
 		number: 855,
 	},
+	{
+		href: "/assets/images/kmahdi.jpg",
+		name: "kmahdi",
+		number: 6,
+	},
+	{
+		name: "Aaitouna",
+		href: "/assets/images/aaitouna.jpg",
+		number: 254,
+	},
+	{
+		href: "/assets/images/girl.png",
+		name: "scrums",
+		number: 128,
+	},
+	{
+		href: "/assets/images/profile.jpg",
+		name: "icybrilliant",
+		number: 112,
+	},
+	{
+		name: "kmahdi",
+		href: "/assets/images/profile.jpg",
+		number: 855,
+	},
+	{
+		href: "/assets/images/kmahdi.jpg",
+		name: "kmahdi",
+		number: 6,
+	},
+	{
+		name: "Aaitouna",
+		href: "/assets/images/aaitouna.jpg",
+		number: 254,
+	},
+	{
+		href: "/assets/images/girl.png",
+		name: "scrums",
+		number: 128,
+	},
+	{
+		href: "/assets/images/profile.jpg",
+		name: "icybrilliant",
+		number: 112,
+	},
+	{
+		name: "kmahdi",
+		href: "/assets/images/profile.jpg",
+		number: 855,
+	},
 
 ]
 

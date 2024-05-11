@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
-import RightArrow from "../../icons/content_area/RightArrow";
+import RightArrow from "../../icons/content_area/right-arrow";
+
 
 export function TournamentsContainer({
 	href,

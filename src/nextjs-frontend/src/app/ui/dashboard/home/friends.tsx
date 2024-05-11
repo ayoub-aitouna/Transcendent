@@ -15,8 +15,7 @@ function TeamRanking({ }) {
 				<div className=" text-white  truncate font-bold text-base">Friends</div>
 				<button
 					className={` ${styles.create_new_trn} flex-row items-center rounded-md  w-[93px] h-[32px]`}>
-					<div className={` mx-auto text-white text-xs font-semibold`}> VIEW ALL<div />
-					</div>
+					<Link href={'/home/all-players'} className={` mx-auto text-white text-xs font-semibold`}> VIEW ALL </Link>
 				</button>
 			</div>
 			<div>
@@ -42,7 +41,7 @@ function TeamRanking({ }) {
 					<div className='w-full grid place-content-center'>
 						<div
 							className='flex flex-row items-center justify-center'>
-							<Link href={'/tournaments'}>  <ViewAll /> </Link>
+							<Link href={'/home/friends'}>  <ViewAll /> </Link>
 						</div>
 					</div>
 				</div>
