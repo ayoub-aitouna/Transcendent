@@ -93,7 +93,6 @@ class Achievements(models.Model):
     def __str__(self) -> str:
         return self.name
 
-
 class Ranks(models.Model):
     name = models.CharField(max_length=200)
     icon = models.CharField(max_length=200)
