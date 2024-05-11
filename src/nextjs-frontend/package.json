@@ -26,6 +26,7 @@
     "react-redux": "^9.1.0",
     "react-slick": "^0.30.2",
     "react18-input-otp": "^1.1.4",
+    "sass": "^1.77.0",
     "tw-elements": "^2.0.0",
     "yup": "^1.4.0"
   },

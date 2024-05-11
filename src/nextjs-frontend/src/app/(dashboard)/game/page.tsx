@@ -2,7 +2,6 @@
 
 import React from "react";
 import OnlinePlayers from '@/app/ui/dashboard/home/OnlinePlayer';
-import Image from 'next/image';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import Tournaments from "@/app/ui/dashboard/home/Tournaments";
 import Link from "next/link";
@@ -24,7 +23,7 @@ const page = () => {
 									</div>
 								</div>
 								<div className="text-center flex flex-col items-center">
-									<Link href='/game/ingame' className={`${styles.play_now_button} h-9 w-36 grid place-content-center text-sm font-semibold`}>Play Now</Link>
+									<Link href='/game/making-machine' className={`${styles.play_now_button} h-9 w-36 grid place-content-center text-sm font-semibold`}>Play Now</Link>
 								</div>
 							</div>
 						</div>
