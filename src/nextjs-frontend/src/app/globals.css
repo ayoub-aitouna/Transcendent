@@ -188,3 +188,48 @@ input:checked+.slider::before {
   right: 0;
   transform: translateX(26px);
 }
+
+.scroll-parent {
+	position: relative;
+	width: 300px;
+	height: 900px;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	margin-left: 128px;
+  }
+  
+  .scroll-element {
+	width: inherit;
+	height: inherit;
+	position: absolute;
+	left: 0%;
+	top: 0%;
+	animation: primary 5s linear infinite;
+  }
+
+
+  .primary {
+	animation: primary 5s linear infinite;
+  }
+  
+  .secondary {
+	animation: secondary 5s linear infinite;
+  }
+  
+  @keyframes primary {
+	from {
+	  transform: translateY(0);
+	}
+	to {
+		transform: translateY(-100%);
+	}
+  }
+  
+  @keyframes secondary {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+	  transform: translateY(0);
+	}
+  }
