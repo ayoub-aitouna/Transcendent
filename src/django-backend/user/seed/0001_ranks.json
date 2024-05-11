@@ -1,0 +1,302 @@
+[
+  {
+    "model": "user.ranks",
+    "pk": 1,
+    "fields": {
+      "name": "Iron I",
+      "icon": "media/public/ranks/Iron_1_Rank.png",
+      "hierarchy_order": 1,
+      "xp_required": 1000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 2,
+    "fields": {
+      "name": "Iron II",
+      "icon": "media/public/ranks/Iron_2_Rank.png",
+      "hierarchy_order": 2,
+      "xp_required": 2000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 3,
+    "fields": {
+      "name": "Iron III",
+      "icon": "media/public/ranks/Iron_3_Rank.png",
+      "hierarchy_order": 3,
+      "xp_required": 3000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 4,
+    "fields": {
+      "name": "Bronze I",
+      "icon": "media/public/ranks/Bronze_1_Rank.png",
+      "hierarchy_order": 4,
+      "xp_required": 4000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 5,
+    "fields": {
+      "name": "Bronze II",
+      "icon": "media/public/ranks/Bronze_2_Rank.png",
+      "hierarchy_order": 5,
+      "xp_required": 5000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 6,
+    "fields": {
+      "name": "Bronze III",
+      "icon": "media/public/ranks/Bronze_3_Rank.png",
+      "hierarchy_order": 6,
+      "xp_required": 6000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 7,
+    "fields": {
+      "name": "Silver I",
+      "icon": "media/public/ranks/Silver_1_Rank.png",
+      "hierarchy_order": 7,
+      "xp_required": 7000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 8,
+    "fields": {
+      "name": "Silver II",
+      "icon": "media/public/ranks/Silver_2_Rank.png",
+      "hierarchy_order": 8,
+      "xp_required": 8000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 9,
+    "fields": {
+      "name": "Silver III",
+      "icon": "media/public/ranks/Silver_3_Rank.png",
+      "hierarchy_order": 9,
+      "xp_required": 9000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 10,
+    "fields": {
+      "name": "Gold I",
+      "icon": "media/public/ranks/Gold_1_Rank.png",
+      "hierarchy_order": 10,
+      "xp_required": 10000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 11,
+    "fields": {
+      "name": "Gold II",
+      "icon": "media/public/ranks/Gold_2_Rank.png",
+      "hierarchy_order": 11,
+      "xp_required": 11000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 12,
+    "fields": {
+      "name": "Gold III",
+      "icon": "media/public/ranks/Gold_3_Rank.png",
+      "hierarchy_order": 12,
+      "xp_required": 12000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 13,
+    "fields": {
+      "name": "Platinum I",
+      "icon": "media/public/ranks/Platinum_1_Rank.png",
+      "hierarchy_order": 13,
+      "xp_required": 13000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 14,
+    "fields": {
+      "name": "Platinum II",
+      "icon": "media/public/ranks/Platinum_2_Rank.png",
+      "hierarchy_order": 14,
+      "xp_required": 14000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 15,
+    "fields": {
+      "name": "Platinum III",
+      "icon": "media/public/ranks/Platinum_3_Rank.png",
+      "hierarchy_order": 15,
+      "xp_required": 15000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 16,
+    "fields": {
+      "name": "Diamond I",
+      "icon": "media/public/ranks/Diamond_1_Rank.png",
+      "hierarchy_order": 16,
+      "xp_required": 16000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 17,
+    "fields": {
+      "name": "Diamond II",
+      "icon": "media/public/ranks/Diamond_2_Rank.png",
+      "hierarchy_order": 17,
+      "xp_required": 17000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 18,
+    "fields": {
+      "name": "Diamond III",
+      "icon": "media/public/ranks/Diamond_3_Rank.png",
+      "hierarchy_order": 18,
+      "xp_required": 18000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 19,
+    "fields": {
+      "name": "Ascendant I",
+      "icon": "media/public/ranks/Ascendant_1_Rank.png",
+      "hierarchy_order": 19,
+      "xp_required": 19000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 20,
+    "fields": {
+      "name": "Ascendant II",
+      "icon": "media/public/ranks/Ascendant_2_Rank.png",
+      "hierarchy_order": 20,
+      "xp_required": 20000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 21,
+    "fields": {
+      "name": "Ascendant III",
+      "icon": "media/public/ranks/Ascendant_3_Rank.png",
+      "hierarchy_order": 21,
+      "xp_required": 21000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 22,
+    "fields": {
+      "name": "Immortal I",
+      "icon": "media/public/ranks/Immortal_1_Rank.png",
+      "hierarchy_order": 22,
+      "xp_required": 22000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 23,
+    "fields": {
+      "name": "Immortal II",
+      "icon": "media/public/ranks/Immortal_2_Rank.png",
+      "hierarchy_order": 23,
+      "xp_required": 23000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 24,
+    "fields": {
+      "name": "Immortal III",
+      "icon": "media/public/ranks/Immortal_3_Rank.png",
+      "hierarchy_order": 24,
+      "xp_required": 24000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  },
+  {
+    "model": "user.ranks",
+    "pk": 25,
+    "fields": {
+      "name": "Radiant",
+      "icon": "media/public/ranks/Radiant_Rank.png",
+      "hierarchy_order": 25,
+      "xp_required": 25000,
+      "created_at": "2024-05-11T19:01:54Z",
+      "updated_at": "2024-05-11T19:01:54Z"
+    }
+  }
+]
