@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   nextjs_frontend:
     restart: always
@@ -25,8 +25,12 @@ services:
       - "8000:8000"
     volumes:
       - django_backend_volume:/var/app
+    depends_on:
+      - db
+      - redis
 
   redis:
+    restart: always
     container_name: redis
     build:
       context: ./redis
@@ -35,23 +39,40 @@ services:
     expose:
       - 6379
 
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    networks:
+      - mynetwork
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
 volumes:
   django_backend_volume:
     driver: local
     driver_opts:
       type: "none"
-      o: 'bind'
-      device: '${PWD}/src/django-backend/'
+      o: "bind"
+      device: "${PWD}/src/django-backend/"
 
   nextjs_frontend_volume:
     driver: local
     driver_opts:
       type: "none"
-      o: 'bind'
-      device: '${PWD}/src/nextjs-frontend'
-
-
+      o: "bind"
+      device: "${PWD}/src/nextjs-frontend"
+  db_volume:
 
 networks:
   mynetwork:

@@ -4,6 +4,19 @@ from .managers import UserManager
 from django.db.models import Q, CheckConstraint, UniqueConstraint, F
 
 
+class Ranks(models.Model):
+    name = models.CharField(max_length=200)
+    icon = models.CharField(max_length=200)
+    hierarchy_order = models.IntegerField(default=0)
+    xp_required = models.IntegerField(default=1000)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False)
     REGISTRATION_CHOICE = [
@@ -27,8 +40,10 @@ class User(AbstractUser):
     image_url = models.URLField(blank=True, null=True)
     achievements = models.ManyToManyField('Achievements', blank=True)
     friends = models.ManyToManyField('self', symmetrical=False)
-    ranking_logs = models.ManyToManyField('Ranks', through='RankingLogs')
+    ranking_logs = models.ManyToManyField('Ranks')
     coins = models.IntegerField(default=0)
+    rank = models.ForeignKey(Ranks, on_delete=models.CASCADE,
+                             related_name='user_rank', null=True, default=None)
     current_xp = models.IntegerField(default=0)
     enabled_2fa = models.BooleanField(default=False)
 
@@ -92,27 +107,3 @@ class Achievements(models.Model):
 
     def __str__(self) -> str:
         return self.name
-
-class Ranks(models.Model):
-    name = models.CharField(max_length=200)
-    icon = models.CharField(max_length=200)
-    hierarchy_order = models.IntegerField(default=0)
-    xp_required = models.IntegerField(default=1000)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self) -> str:
-        return self.name
-
-
-class RankingLogs(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    rank = models.ForeignKey(
-        Ranks, on_delete=models.CASCADE, related_name='rankinglogs')
-    xp = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self) -> str:
-        return f'{self.user_id.username} - {self.rank.name}'

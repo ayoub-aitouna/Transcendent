@@ -105,6 +105,11 @@ class OnlineFriendsList(generics.ListAPIView):
         return User.objects.filter(status='online')
 
 
+class TopPlayers(generics.ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all().order_by('current_xp')[:10]
+
+
 class InvitePlayer(APIView):
     serializer_class = FriendsSerializer
     queryset = Friends_Request.objects.all()

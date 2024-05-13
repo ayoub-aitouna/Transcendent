@@ -14,8 +14,9 @@
             "date_joined": "2024-04-24T02:04:06.438Z",
             "email": "ayoub@gmail.com",
             "registration_method": "email",
-            "image_url": null,
+            "image_url": "/media/public/profile-images/00_img.jpg",
             "groups": [],
+            "rank": 1,
             "friends": [
                 3,
                 4
@@ -39,8 +40,9 @@
             "date_joined": "2024-04-24T02:04:06.438Z",
             "email": "aitouna@gmail.com",
             "registration_method": "email",
-            "image_url": null,
+            "image_url": "/media/public/profile-images/00_img.jpg",
             "groups": [],
+            "rank": 1,
             "friends": [
                 3,
                 4
@@ -64,8 +66,9 @@
             "date_joined": "2024-04-24T02:04:06.438Z",
             "email": "mehdi@gmail.com",
             "registration_method": "email",
-            "image_url": null,
+            "image_url": "/media/public/profile-images/00_img.jpg",
             "groups": [],
+            "rank": 1,
             "friends": [
                 1,
                 2
@@ -89,8 +92,9 @@
             "date_joined": "2024-04-24T02:04:06.438Z",
             "email": "khadija@gmail.com",
             "registration_method": "email",
-            "image_url": null,
+            "image_url": "/media/public/profile-images/00_img.jpg",
             "groups": [],
+            "rank": 1,
             "friends": [
                 1,
                 2

@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('online-player', view=views.OnlineFriendsList.as_view(),
          name='online-player'),
-
+    path('top-players', view=views.TopPlayers.as_view(), name='top-players'),
     path('invite-player/<int:pk>', view=views.InvitePlayer.as_view(),
          name='invite-player'),
 

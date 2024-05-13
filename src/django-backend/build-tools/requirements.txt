@@ -9,3 +9,4 @@ django-cors-headers
 daphne
 channels
 channels_redis
+psycopg2-binary

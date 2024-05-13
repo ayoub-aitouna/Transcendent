@@ -1,82 +1,54 @@
 [
     {
-        "model": "user.achivmentsrequirment",
-        "pk": 1,
-        "fields": {
-            "requirement_value": 5,
-            "requirement_type": "win strick",
-            "created_at": "2024-04-24T13:28:55.976Z"
-        }
-    },
-    {
-        "model": "user.achivmentsrequirment",
-        "pk": 2,
-        "fields": {
-            "requirement_value": 10,
-            "requirement_type": "win_with_zero_loss",
-            "created_at": "2024-04-24T13:28:55.976Z"
-        }
-    },
-    {
-        "model": "user.achivmentsrequirment",
-        "pk": 3,
-        "fields": {
-            "requirement_value": 20,
-            "requirement_type": "total_wins",
-            "created_at": "2024-04-24T13:28:55.976Z"
-        }
-    },
-    {
-        "model": "user.achivmentsrequirment",
-        "pk": 4,
-        "fields": {
-            "requirement_value": 200,
-            "requirement_type": "total_points",
-            "created_at": "2024-04-24T13:28:55.976Z"
-        }
-    },
-    {
-        "model": "user.achivments",
+        "model": "user.Achievements",
         "pk": 1,
         "fields": {
             "name": "Win Strick",
-            "icon": "https://",
-            "description": "You won yout first Lucky strick",
-            "requirment": 1,
-            "created_at": "2024-04-24T13:30:16.345Z"
+            "icon": "/media/public/badges/Arctic-Code-Vault-Contributor.png",
+            "description": "You won your first Lucky strick",
+            "requirement_value": 5,
+            "requirement_type": "win strick",
+            "created_at": "2024-04-24T13:30:16.345Z",
+            "updated_at": "2024-04-24T13:30:16.345Z"
         }
     },
     {
-        "model": "user.achivments",
+        "model": "user.Achievements",
         "pk": 2,
         "fields": {
             "name": "Win With Zero Loss",
-            "icon": "https://",
-            "description": "You won yout first Win With Zero Loss",
-            "requirment": 2,
-            "created_at": "2024-04-24T13:30:16.345Z"
+            "icon": "/media/public/badges/GalaxyBrain.png",
+            "description": "You won your first Win With Zero Loss",
+            "requirement_value": 10,
+            "requirement_type": "win_with_zero_loss",
+            "created_at": "2024-04-24T13:30:16.345Z",
+            "updated_at": "2024-04-24T13:30:16.345Z"
         }
     },
     {
-        "model": "user.achivments",
+        "model": "user.Achievements",
         "pk": 3,
         "fields": {
             "name": "Total Wins",
-            "icon": "https://",
-            "description": "You won yout first Total Wins",
-            "requirment": 3,
-            "created_at": "2024-04-24T13:30:16.345Z"
+            "icon": "/media/public/badges/HeartOnYourSleeve.png",
+            "description": "You won your first Total Wins",
+            "requirement_value": 20,
+            "requirement_type": "total_wins",
+            "created_at": "2024-04-24T13:30:16.345Z",
+            "updated_at": "2024-04-24T13:30:16.345Z"
         }
     },
     {
-        "model": "user.achivments",
+        "model": "user.Achievements",
         "pk": 4,
         "fields": {
             "name": "Total Points",
-            "icon": "https://",
-            "description": "You won yout first Total Points",
-            "requirment": 4,
-            "created_at": "2024-04-24T13:30:16.345Z"
+            "icon": "/media/public/badges/OpenSourcerer.png",
+            "description": "You won your first Total Points",
+            "requirement_value": 200,
+            "requirement_type": "total_points",
+            "created_at": "2024-04-24T13:30:16.345Z",
+            "updated_at": "2024-04-24T13:30:16.345Z"
         }
     }
 ]

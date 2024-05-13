@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from user.models import User, Friends_Request, Achievements, RankingLogs, BlockList
+from user.models import User, Friends_Request, Ranks, Achievements, BlockList
 from rest_framework.reverse import reverse
 from django.db.models import Q
 
@@ -10,10 +10,18 @@ class AchievementsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RankingLoginSerializer(serializers.ModelSerializer):
+class RankSerializer(serializers.ModelSerializer):
+    icon = serializers.SerializerMethodField()
+
     class Meta:
-        model = RankingLogs
+        model = Ranks
         fields = '__all__'
+
+    def get_icon(self, obj):
+        host = self.context.get('request').get_host()
+        protocol = 'https' if self.context.get(
+            'request').is_secure() else 'http'
+        return f'{protocol}://{host}/{obj.icon}'
 
 
 class UserFriendsSerializer(serializers.ModelSerializer):
@@ -33,7 +41,7 @@ class UserFriendsSerializer(serializers.ModelSerializer):
                   'url', 'unfriend', 'block', 'message']
 
     def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'
+        return f'{obj.first_name} {obj.last_name}'.strip()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,13 +50,21 @@ class UserSerializer(serializers.ModelSerializer):
         view_name='user', lookup_field='pk')
     send_request = serializers.HyperlinkedIdentityField(
         view_name='send-friend-request', lookup_field='pk')
+    xp = serializers.IntegerField(read_only=True, source='current_xp')
+    rank = RankSerializer(read_only=True)
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['image_url', 'fullname', 'username', 'url', 'send_request']
+        fields = ['image_url', 'fullname',
+                  'username', 'rank', 'xp', 'coins', 'url', 'send_request']
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_url)
 
     def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'
+        return f'{obj.first_name} {obj.last_name}'.strip()
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -63,7 +79,11 @@ class UserDetailSerializer(serializers.ModelSerializer):
     friends = UserFriendsSerializer(many=True, read_only=True)
     friend_requests = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
-    ranking_logs = RankingLoginSerializer(read_only=True, many=True)
+    ranking_logs = RankSerializer(read_only=True, many=True)
+    rank = RankSerializer(read_only=True)
+    coins = serializers.IntegerField(read_only=True)
+    current_xp = serializers.IntegerField(read_only=True)
+    image_url = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         super(UserDetailSerializer, self).__init__(*args, **kwargs)
@@ -73,11 +93,15 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['fullname', 'username', 'first_name', 'last_name',
-                  'email', 'password', 'image_url', 'registration_method', 'coins', 'current_xp',
+                  'email', 'password', 'image_url', 'registration_method', 'coins', 'rank', 'current_xp',
                   'friends', 'friend_requests', 'achievements', 'ranking_logs', 'send_request']
 
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_url)
+
     def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'
+        return f'{obj.first_name} {obj.last_name}'.strip()
 
     def get_friend_requests(self, obj):
         user_id = self.context.get('view').kwargs.get('pk')
@@ -95,6 +119,7 @@ class OnlineUserSerializer(serializers.ModelSerializer):
         view_name='user', lookup_field='pk')
     send_invitation = serializers.HyperlinkedIdentityField(
         view_name='invite-player', lookup_field='pk')
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -102,7 +127,11 @@ class OnlineUserSerializer(serializers.ModelSerializer):
                   'username', 'url', 'send_invitation']
 
     def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'
+        return f'{obj.first_name} {obj.last_name}'.strip()
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_url)
 
 
 class BlockListSerializer(serializers.ModelSerializer):
@@ -134,7 +163,8 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     decline_fiend_request = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name='user', lookup_field='pk')
-
+    image_url = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
         fields = ['username', 'fullname', 'image_url',
@@ -148,6 +178,10 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 
     def get_accept_fiend_request(self, obj):
         return reverse('accept-friend-request', kwargs={"pk": obj.id},  request=self.context.get('request'))
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_url)
 
     def get_url(self, obj):
         return reverse('user', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
