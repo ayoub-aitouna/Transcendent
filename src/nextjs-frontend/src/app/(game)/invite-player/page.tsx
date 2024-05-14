@@ -27,23 +27,8 @@ const page = () => {
 							<PlayerCard href='/assets/images/girl.jpg' name='Helqwdmn' lvl={'498'} />
 						</div>
 						<div className=' font-black text-[60px] text-[#A2A2A2] '>VS</div>
-						<div className="scroll-parent p-32 max-h-[600px]">
-							<div className="scroll-element primary my-4">
-								<div className="text-white my-4">
-									<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} />
-								</div>
-								<div className="text-white my-4">
-									<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} />
-								</div>
-							</div>
-							<div className="scroll-element secondary my-4">
-								<div className="text-white my-4">
-									<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} />
-								</div>
-								<div className="text-white my-4">
-									<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} />
-								</div>
-							</div>
+						<div className="text-white m-32 ">
+							<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} />
 						</div>
 					</div>
 				</div>

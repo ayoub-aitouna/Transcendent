@@ -8,6 +8,7 @@ import ViewAll from './content_area/viewAll';
 import { AllOnlinePlayers } from "@/constant/dashboard";
 import Empty from "../Empty";
 import InviteIcon from "../icons/invite";
+import Link from "next/link";
 
 
 export function PlayersContainer1({ name, href, number }: {
@@ -45,15 +46,12 @@ export function PlayersContainer({ name, href, number }: {
 	href: string;
 	number: Number;
 }) {
-	const handleClick = () => {
-		window.location.href = href;
-	};
+
+
 	return (
 		<button
 			className={`mt-2 w-[341px] h-[69px] flex items-center justify-between rounded-lg
-			 overflow-hidden  p-2 mb-[10px]`}
-			onClick={handleClick}
-			aria-label="Navigate to game">
+			 overflow-hidden  p-2 mb-[10px]`}>
 			<div className='flex items-center justify-between '>
 				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={href} alt="Profile Image" width={53} height={53} />
 				<div />
@@ -62,15 +60,13 @@ export function PlayersContainer({ name, href, number }: {
 					<div className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>Level {String(number)}</div>
 				</div>
 			</div>
-			{number && (
-				<div
+
+				<Link href="/invite-player"
 					className={`flex-row items-center rounded-[4px]  bg-[#FF3D00] w-[87px] h-[27px]`}>
 					<div className='flex items-center justify-between ml-2 mx-auto text-white text-[16px] font-medium"'> <InviteIcon /> <div />
 						<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> Invite </div>
 					</div>
-				</div>
-
-			)}
+				</Link>
 
 		</button>
 	);
