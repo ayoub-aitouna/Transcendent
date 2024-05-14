@@ -8,16 +8,9 @@ import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import Link from 'next/link';
 import Empty from '../Empty';
+import ChartComponent from './content_area/chartComponent';
 
-export const ChartComponent = () => {
-	return (
-		<div className="h-40 relative overflow-hidden w-full">
-			<div className="flex h-full w-full justify-center items-center">
-				<Empty text="no Data are available right now" />
-			</div>
-		</div>
-	);
-};
+
 
 
 function TeamLeader() {

@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import Filter from "@/app/ui/dashboard/icons/content_area/filters";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Link from "next/link";
 import { MessengerLinks } from '@/constant/dashboard';
 import SearchIcon from '@/app/ui/dashboard/icons/messenger/search';
@@ -16,18 +16,26 @@ import SendIcon from '@/app/ui/dashboard/icons/messenger/send';
 
 const page = () => {
 	const [clickedIndex, setClickedIndex] = useState<number | null>(null);
-	const [clickedUpload, setClickedUpload] = useState(false);
 	const [selectedChat, setSelectedChat] = useState<any | null>(null);
 	const [clickedThreePoints, setClickedThreePoints] = useState(false);
+	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
 	const handleThreePoints = () => {
 		console.log("Three points clicked");
 		setClickedThreePoints(!clickedThreePoints);
 	};
 
-	const handleUpload = () => {
-		console.log("Three points clicked");
-		setClickedUpload(!clickedUpload);
+
+	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files && e.target.files[0];
+		if (file) {
+			console.log('Uploaded file:', file);
+			setSelectedImage(URL.createObjectURL(file));
+		}
+	};
+
+	const removeImage = () => {
+		setSelectedImage(null);
 	};
 
 	const handleIconClick = (index: number) => {
@@ -135,10 +143,21 @@ const page = () => {
 											<div className='pt-2'><EmojiIcon /></div>
 											<div className='text-[10px] text-[#878787]'>Invite </div>
 										</div>
-										<div className="p-2 pr-8">
-											<div className='p-1'><Upload /> </div>
-											<div className='text-[10px] text-[#878787]'>Upload</div>
-										</div>
+										{selectedImage ?
+											<div className="p-2 pr-8" onClick={removeImage}>
+												<div className='p-2'><Upload color=' #3342ff ' /> </div>
+												<div className='text-[10px] text-[#3342ff]'>Uploaded</div>
+											</div> :
+											<label className="p-2 pr-8">
+												<div className='p-1'><Upload color='#878787' /> </div>
+												<div className='text-[10px] text-[#878787]'>Upload</div>
+												<input
+													type="file"
+													className="hidden"
+													onChange={handleImageUpload}
+													accept="image/*" />
+											</label>
+										}
 										<input
 											className="flex-grow bg-[#464646] pl-3 h-[50px] p-3 rounded-lg"
 											type="text"
