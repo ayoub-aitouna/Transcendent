@@ -22,11 +22,9 @@
  - score is stored in cache
  - when game is ended the score get flushed to db
 
-
 # FRONTEND
 - notification toast
 - invitation toast
-- game looby
 
 - ## Forms
     - create chat group

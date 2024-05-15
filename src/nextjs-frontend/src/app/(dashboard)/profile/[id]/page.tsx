@@ -16,7 +16,7 @@ import {
 } from "@/constant/dashboard";
 import { AchievementCard } from "@/app/ui/dashboard/profile/AchievementCard";
 import { Achievement } from "@/type/dashboard";
-
+import { useToast } from "@/app/provider/ToastProvider";
 const HistoryWrapper = ({
 	children,
 	title,
@@ -60,9 +60,22 @@ const Cta = ({
 	height?: number;
 	width?: number;
 }) => {
+	const { addToast } = useToast();
+	const handleClick = () => {
+		addToast({
+			id: Math.floor(Math.random() * 100),
+			title: "Friend Request",
+			message: "ooussama invited you into a Ping-pong game",
+			icon: "/assets/icons/light_close.png",
+			color: "bg-blue-500",
+		});
+	};
 	if (!visible) return null;
 	return (
 		<button
+			onClick={() => {
+				handleClick();
+			}}
 			className='w-[200px] h-[44px] bg-[#323232] rounded
 											flex flex-row justify-center items-center gap-2 p-3'>
 			<Image

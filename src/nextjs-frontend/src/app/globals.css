@@ -31,6 +31,7 @@ a {
 }
 
 body {
+  position: relative;
   color: rgb(var(--foreground-rgb));
   height: 100vh;
   background: linear-gradient(to bottom,
@@ -128,6 +129,26 @@ body {
   animation: loading-progress-bar 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.loading-progress-bar-10 {
+  animation: loading-progress-bar 11s linear;
+}
+
+
+.dropdown-animation {
+  animation: dropdown-animation 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdown-animation {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
 @keyframes loading-progress-bar {
   0% {
@@ -190,46 +211,48 @@ input:checked+.slider::before {
 }
 
 .scroll-parent {
-	position: relative;
-	width: 300px;
-	height: 900px;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	margin-left: 128px;
-  }
-  
-  .scroll-element {
-	width: inherit;
-	height: inherit;
-	position: absolute;
-	left: 0%;
-	top: 0%;
-	animation: primary 5s linear infinite;
-  }
+  position: relative;
+  width: 300px;
+  height: 900px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  margin-left: 128px;
+}
+
+.scroll-element {
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  left: 0%;
+  top: 0%;
+  animation: primary 5s linear infinite;
+}
 
 
-  .primary {
-	animation: primary 5s linear infinite;
+.primary {
+  animation: primary 5s linear infinite;
+}
+
+.secondary {
+  animation: secondary 5s linear infinite;
+}
+
+@keyframes primary {
+  from {
+    transform: translateY(0);
   }
-  
-  .secondary {
-	animation: secondary 5s linear infinite;
+
+  to {
+    transform: translateY(-100%);
   }
-  
-  @keyframes primary {
-	from {
-	  transform: translateY(0);
-	}
-	to {
-		transform: translateY(-100%);
-	}
+}
+
+@keyframes secondary {
+  from {
+    transform: translateY(100%);
   }
-  
-  @keyframes secondary {
-	from {
-		transform: translateY(100%);
-	}
-	to {
-	  transform: translateY(0);
-	}
+
+  to {
+    transform: translateY(0);
   }
+}

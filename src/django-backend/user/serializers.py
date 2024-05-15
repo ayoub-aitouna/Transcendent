@@ -163,7 +163,6 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     decline_fiend_request = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name='user', lookup_field='pk')
-    image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = User
