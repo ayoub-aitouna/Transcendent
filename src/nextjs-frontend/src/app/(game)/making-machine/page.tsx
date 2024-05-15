@@ -1,11 +1,16 @@
+'use client'
 import React from 'react'
 import Image from 'next/image'
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import Link from 'next/link'
 import PlayerCard from '../player-card'
-
+import { useSearchParams } from 'next/navigation'
 
 const page = () => {
+	const searchParams = useSearchParams()
+
+	const player = searchParams.get('player')
+	console.log('player name', player);
 	return (
 
 		<div className=''>

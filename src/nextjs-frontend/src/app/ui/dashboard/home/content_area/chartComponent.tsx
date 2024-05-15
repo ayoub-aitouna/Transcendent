@@ -16,13 +16,13 @@ const LineChart: React.FC = () => {
 				const inputs = {
 					min: 0,
 					max: 100,
-					count: 8,
+					count: 16,
 					decimals: 2,
 					continuity: 1,
 				};
 
 				const generateLabels = () => {
-					return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+					return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
 				};
 
 				const generateData = () => {

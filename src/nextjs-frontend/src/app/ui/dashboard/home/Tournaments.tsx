@@ -25,13 +25,16 @@ function Tournaments() {
 
 					<div className='flex flex-col gap-3'>
 						{tournamentLinks.map((item, index) => (
-							<TournamentsContainer
-								key={index}
-								href={item.href}
-								name={item.name}
-								followers={item.followers}
-								SecName={item.secName}
-							/>
+							<Link href={`/tournaments/${index}`}>
+								<TournamentsContainer
+									key={index}
+									href={item.href}
+									name={item.name}
+									followers={item.followers}
+									SecName={item.secName}
+								/>
+							</Link>
+
 						))}
 					</div>
 					<div className='w-full absolute bottom-0'>
