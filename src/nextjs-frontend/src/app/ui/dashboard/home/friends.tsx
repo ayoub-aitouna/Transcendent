@@ -7,6 +7,7 @@ import { AllOnlinePlayers } from '@/constant/dashboard';
 import Empty from '../Empty';
 import Link from 'next/link';
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
+import { FriendContainer } from '@/app/(dashboard)/home/friends/page';
 
 function TeamRanking({ }) {
 	return (
@@ -27,11 +28,10 @@ function TeamRanking({ }) {
 					<div>
 						{AllOnlinePlayers.slice(0, 4).map((item, index) => (
 							<div key={index}>
-								<UserContainer
+								<FriendContainer
 									name={item.name}
 									href={item.href}
 									number={item.number}
-									index={index + 1}
 								/>
 							</div>
 						))}

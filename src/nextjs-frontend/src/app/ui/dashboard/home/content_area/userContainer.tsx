@@ -18,7 +18,7 @@ export function UserContainer({ name, href, number, index }: {
 	return (
 		<button
 			className={`mt-2 w-[341px] h-[69px] flex items-center justify-between rounded-lg
-			${isMessage ? styles.highlight  : "bg-[#323232]"} overflow-hidden  p-2 h-[44px] mb-[10px]`}
+			${isMessage ? styles.highlight  : "bg-[#373737]"} overflow-hidden  p-2 h-[44px] mb-[10px]`}
 			onClick={handleClick}
 			aria-label="Navigate to game">
 			<div className='flex items-center justify-between '>

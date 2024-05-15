@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
+import Chart, { ChartConfiguration, Point } from 'chart.js/auto';
 
 const LineChart: React.FC = () => {
 	const chartRef = useRef<HTMLCanvasElement | null>(null);
-	const chartInstanceRef = useRef<Chart<"line"> | null>(null); // Store Chart instance
+	const chartInstanceRef = useRef<Chart<"line"> | null>(null);
 
 
 	useEffect(() => {
@@ -49,12 +49,12 @@ const LineChart: React.FC = () => {
 					options: {
 						scales: {
 							y: {
-								suggestedMin: 0, // Set minimum value for y-axis
-								suggestedMax: 100, // Set maximum value for y-axis
-								display: false, // Remove the y-axis scale
+								suggestedMin: 0,
+								suggestedMax: 100,
+								display: false,
 							},
 							x: {
-								display: false, // Remove the y-axis scale
+								display: false,
 							},
 						},
 						plugins: {
@@ -63,7 +63,9 @@ const LineChart: React.FC = () => {
 							},
 							title: {
 								display: false,
-								// text: (ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill,
+							},
+							legend: {
+								display: false,
 							},
 						},
 						interaction: {
@@ -71,36 +73,37 @@ const LineChart: React.FC = () => {
 						},
 						elements: {
 							line: {
-								tension: 0.4, // Adjust line tension for smoothing
+								tension: 0.4,
 							},
 							point: {
-								radius: 0, // Remove data points
+								radius: 0,
 							},
 						},
 						layout: {
 							padding: {
-								top: 0, // Remove top padding
-							},
-						},
-						plugins: {
-							legend: {
-								display: false, // Remove legend
+								top: 0,
 							},
 						},
 					},
 				};
-
-				// Destroy existing chart instance if it exists
 				if (chartInstanceRef.current) {
 					chartInstanceRef.current.destroy();
 				}
-
-				// Create new chart instance
-				chartInstanceRef.current = new Chart(ctx, config);
+				chartInstanceRef.current = new Chart<"line">(ctx, {
+					...config,
+					data: {
+						...config.data,
+						datasets: [
+							{
+								...config.data.datasets[0],
+								data: generateData() as (number | Point | null)[],
+							},
+						],
+					},
+				} as ChartConfiguration<"line", (number | Point | null)[], unknown>);
 			}
 		}
 
-		// Cleanup function to destroy the chart instance
 		return () => {
 			if (chartInstanceRef.current) {
 				chartInstanceRef.current.destroy();
