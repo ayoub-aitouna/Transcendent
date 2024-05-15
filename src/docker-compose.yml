@@ -19,6 +19,7 @@ services:
     container_name: django_backend
     build:
       context: ./django-backend/build-tools
+    command: python3 -u manage.py runserver 0.0.0.0:8000
     networks:
       - mynetwork
     ports:
@@ -27,6 +28,20 @@ services:
       - django_backend_volume:/var/app
     depends_on:
       - db
+      - redis
+      - celery
+
+  celery:
+    restart: always
+    container_name: celery
+    build:
+      context: ./django-backend/build-tools
+    command: celery -A transcendent  worker --loglevel=info
+    networks:
+      - mynetwork
+    volumes:
+      - django_backend_volume:/var/app
+    depends_on:
       - redis
 
   redis:
@@ -58,6 +73,7 @@ services:
       - 8080:8080
     depends_on:
       - db
+
 volumes:
   django_backend_volume:
     driver: local

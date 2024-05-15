@@ -21,4 +21,3 @@ COPY start.sh /var/app/start.sh
 
 # Run the Django project
 ENTRYPOINT [ "sh", "build-tools/start.sh" ]
-CMD ["python3", "-u", "manage.py", "runserver", "0.0.0.0:8000"]

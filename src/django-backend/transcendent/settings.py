@@ -202,6 +202,9 @@ CACHES = {
     }
 }
 
+# Celery settings
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
 EMAIL_HOST= os.getenv('Email_HOST')
 EMAIL_PORT= 465
 EMAIL_USE_SSL= True
