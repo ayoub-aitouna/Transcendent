@@ -67,7 +67,7 @@ const Cta = ({
 			title: "Friend Request",
 			message: "ooussama invited you into a Ping-pong game",
 			icon: "/assets/icons/light_close.png",
-			color: "bg-blue-500",
+			backgroundColor: "bg-blue-500",
 		});
 	};
 	if (!visible) return null;

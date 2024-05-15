@@ -2,18 +2,11 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 import ToastContainer from "@/app/ui/dashboard/Toast/toast-container";
-import { randomInt } from "crypto";
-type ToastItem = {
-	id: number;
-	title: string;
-	message: string;
-	icon: string;
-	color: string;
-};
+import { Toast } from "@/type/dashboard/index";
 
 type ToastContextType = {
-	toasts: ToastItem[];
-	addToast: (toast: ToastItem) => void;
+	toasts: Toast[];
+	addToast: (toast: Toast) => void;
 	removeToast: (id: number) => void;
 };
 
@@ -30,18 +23,16 @@ export const useToast = () => {
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
-	const [toasts, setToasts] = useState<ToastItem[]>([]);
-	const [toastQueue, setToastQueue] = useState<ToastItem[]>([]);
+	const [toasts, setToasts] = useState<Toast[]>([]);
+	const [toastQueue, setToastQueue] = useState<Toast[]>([]);
 
-	const addToast = useCallback((toast: ToastItem) => {
+	const addToast = useCallback((toast: Toast) => {
 		toast.id = window.crypto.getRandomValues(new Uint32Array(1))[0];
 		setToasts((prev) => {
 			if (prev.length < 3) {
 				return [...prev, toast];
 			} else {
-				console.log("queue");
 				setToastQueue((prevQueue) => {
-					console.log("queue", prevQueue);
 					return [...prevQueue, toast];
 				});
 				return prev;
@@ -51,7 +42,6 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const removeToast = useCallback(
 		(id: number) => {
-			console.log(id);
 			setToasts((prev) => prev.filter((toast) => toast.id !== id));
 		},
 		[toastQueue]
