@@ -19,7 +19,8 @@ services:
     container_name: django_backend
     build:
       context: ./django-backend/build-tools
-    command: python3 -u manage.py runserver 0.0.0.0:8000
+    user: django-user
+    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
     networks:
       - mynetwork
     ports:
@@ -36,7 +37,8 @@ services:
     container_name: celery
     build:
       context: ./django-backend/build-tools
-    command: celery -A transcendent  worker --loglevel=info
+    user: django-user
+    command: ["celery", "-A", "transcendent", "worker", "--loglevel=info"]
     networks:
       - mynetwork
     volumes:

@@ -33,6 +33,7 @@ urlpatterns = [
     path('change-email', view=views.ChangeEmail.as_view(), name='change-email'),
     path('update-profile', view=views.UpdateProfile.as_view(), name='update-profile'),
     path('toggle-2fa', view=views.Toggle2FA.as_view(), name='toggle-2fa'),
+    path('test-celery', view=views.Test.as_view(), name='test-celery'),
 ]
 
 

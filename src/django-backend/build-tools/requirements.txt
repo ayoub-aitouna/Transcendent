@@ -11,3 +11,4 @@ channels
 channels_redis
 psycopg2-binary
 celery
+django-celery-beat

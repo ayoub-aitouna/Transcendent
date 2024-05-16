@@ -22,6 +22,17 @@ from transcendent.consumers import NotifyUser
 import json
 import random
 from django.core.files.storage import default_storage
+from transcendent.tasks import my_task
+from game.tasks import NotifyTournamentUsers
+from django.utils import timezone
+from datetime import timedelta
+
+
+class Test(APIView):
+    def get(self, request):
+        launch_date = timezone.now() + timedelta(minutes=1)  # example launch date
+        task_id = NotifyTournamentUsers.apply_async((1,), eta=launch_date)
+        return Response({'message': f'task_id {task_id} started'})
 
 
 class UsersList(generics.ListAPIView):
