@@ -22,7 +22,6 @@ const verify = ({ NextStep }: { NextStep: () => void }) => {
   const handleSubmit = (e: any) => {
     e.preventDefault()
     const email = getFormValues().email;
-    console.log(email);
     try {
       const data = VerifyEmail({ email, code: otp.value })
       NextStep()

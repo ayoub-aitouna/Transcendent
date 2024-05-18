@@ -22,7 +22,6 @@ from transcendent.consumers import NotifyUser
 import json
 import random
 from django.core.files.storage import default_storage
-from transcendent.tasks import my_task
 from game.tasks import NotifyTournamentUsers
 from django.utils import timezone
 from datetime import timedelta

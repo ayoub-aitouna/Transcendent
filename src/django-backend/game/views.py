@@ -14,6 +14,8 @@ class listTournaments(ListCreateAPIView):
     serializer_class = TournamentSerializer
     queryset = Tournament.objects.all()
 
+    # def post(self, request):
+    #     return Response(status=201)
 
 class RetrieveTournament(RetrieveDestroyAPIView):
     serializer_class = TournamentDetailsSerializer

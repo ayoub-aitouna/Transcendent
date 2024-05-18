@@ -10,7 +10,6 @@ export default function UploadButton() {
 		const reader = new FileReader();
 		reader.onload = () => {
 			const dataURL = reader.result;
-			console.log(dataURL);
 			setSrc(dataURL as string);
 		};
 		reader.readAsDataURL(e.target.files[0]);

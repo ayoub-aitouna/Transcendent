@@ -4,6 +4,19 @@ from rest_framework.reverse import reverse
 from django.db.models import Q
 
 
+class BaseUserSerializer():
+    def get_image_url(self, obj):
+        if obj.image_url is None:
+            return None
+        if not obj.image_url.startswith('/media'):
+            return obj.image_url
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_url)
+
+    def get_fullname(self, obj):
+        return f'{obj.first_name} {obj.last_name}'.strip()
+
+
 class AchievementsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Achievements
@@ -24,7 +37,7 @@ class RankSerializer(serializers.ModelSerializer):
         return f'{protocol}://{host}/{obj.icon}'
 
 
-class UserFriendsSerializer(serializers.ModelSerializer):
+class UserFriendsSerializer(serializers.ModelSerializer, BaseUserSerializer):
     fullname = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name='user', lookup_field='pk')
@@ -34,17 +47,15 @@ class UserFriendsSerializer(serializers.ModelSerializer):
         view_name='block-user', lookup_field='pk')
     message = serializers.HyperlinkedIdentityField(
         view_name='block-user', lookup_field='pk')
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['image_url', 'fullname', 'username',
                   'url', 'unfriend', 'block', 'message']
 
-    def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'.strip()
 
-
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer, BaseUserSerializer):
     fullname = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name='user', lookup_field='pk')
@@ -59,18 +70,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['image_url', 'fullname',
                   'username', 'rank', 'xp', 'coins', 'url', 'send_request']
 
-    def get_image_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_url)
 
-    def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'.strip()
-
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     password = serializers.CharField(write_only=True)
     registration_method = serializers.CharField(read_only=True)
     send_request = serializers.HyperlinkedIdentityField(
@@ -96,24 +97,14 @@ class UserDetailSerializer(serializers.ModelSerializer):
                   'email', 'password', 'image_url', 'registration_method', 'coins', 'rank', 'current_xp',
                   'friends', 'friend_requests', 'achievements', 'ranking_logs', 'send_request']
 
-    def get_image_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_url)
-
-    def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'.strip()
-
     def get_friend_requests(self, obj):
         user_id = self.context.get('view').kwargs.get('pk')
         current_user = User.objects.get(pk=user_id)
         q = Friends_Request.objects.filter(addressee=current_user).distinct()
         return FriendRequestSerializer(q, many=True, context=self.context).data
 
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
 
-
-class OnlineUserSerializer(serializers.ModelSerializer):
+class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
     fullname = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name='user', lookup_field='pk')
@@ -125,13 +116,6 @@ class OnlineUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['image_url', 'fullname',
                   'username', 'url', 'send_invitation']
-
-    def get_fullname(self, obj):
-        return f'{obj.first_name} {obj.last_name}'.strip()
-
-    def get_image_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_url)
 
 
 class BlockListSerializer(serializers.ModelSerializer):
@@ -148,14 +132,8 @@ class UserUpdateImageSerializer(serializers.ModelSerializer):
         model = User
         fields = ['image_url', 'image']
 
-    def get_image_url(self, obj):
-        request = self.context.get("request")
-        print(f'obj.image.url => {obj.image}')
-        return 'http://'
-        # return request.build_absolute_uri(obj.image.url)
 
-
-class FriendRequestSerializer(serializers.ModelSerializer):
+class FriendRequestSerializer(serializers.ModelSerializer, BaseUserSerializer):
     image_url = serializers.CharField(source='requester.image_url')
     fullname = serializers.SerializerMethodField()
     username = serializers.CharField(source='requester.username')
@@ -163,24 +141,17 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     decline_fiend_request = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name='user', lookup_field='pk')
-    
+
     class Meta:
         model = User
         fields = ['username', 'fullname', 'image_url',
                   'url', 'accept_fiend_request', 'decline_fiend_request']
-
-    def get_fullname(self, obj):
-        return f'{obj.requester.first_name} {obj.requester.last_name}'
 
     def get_decline_fiend_request(self, obj):
         return reverse('decline-friend-request', kwargs={"pk": obj.id},  request=self.context.get('request'))
 
     def get_accept_fiend_request(self, obj):
         return reverse('accept-friend-request', kwargs={"pk": obj.id},  request=self.context.get('request'))
-
-    def get_image_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_url)
 
     def get_url(self, obj):
         return reverse('user', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))

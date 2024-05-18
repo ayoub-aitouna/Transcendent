@@ -11,6 +11,7 @@ class Game(models.Model):
 
 
 class Tournament(models.Model):
+    icon = models.URLField(blank=True, null=True)
     name = models.CharField(max_length=200, blank=False, null=False)
     description = models.TextField(blank=False, null=False)
     max_players = models.IntegerField(default=16)
@@ -20,7 +21,7 @@ class Tournament(models.Model):
     streams = models.ManyToManyField('stream', blank=True)
     is_public = models.BooleanField(default=False)
     is_monetized = models.BooleanField(default=False)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -7,7 +7,6 @@ from rest_framework_simplejwt.views import (
 )
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth/', views.AuthApi.as_view(), name='AuthApi'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('google/', view=views.MixinsGoogleLoginApi.as_view(), name='google-login'),
     path('intra/', view=views.IntraLoginApi.as_view(), name='inta-login'),

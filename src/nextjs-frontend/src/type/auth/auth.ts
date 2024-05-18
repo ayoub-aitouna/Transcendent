@@ -1,5 +1,6 @@
-export type ApiResponse = {
+export type AuthApiResponse = {
     details?: string;
-    access: string;
-    refresh: string;
+    access_token: string;
+    refresh_token: string;
 };
+

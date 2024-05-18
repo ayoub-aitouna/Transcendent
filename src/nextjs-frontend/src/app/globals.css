@@ -72,6 +72,18 @@ body {
   /* Firefox */
 }
 
+.tournament-board {
+  cursor: grab;
+  user-select: none;
+    overflow: auto;
+    height: 100%;
+}
+
+.grabbing {
+  cursor: grabbing;
+}
+
+
 .lead::after {
   content: "";
   width: 20px;
@@ -84,7 +96,7 @@ body {
 .lead-to::after {
   border-width: 1px 1px 0px 0px;
   transform: translate(-50%, -50%);
-  left: 100%;
+  left: 110%;
   top: 100%;
   border-top-right-radius: 8px;
 }
@@ -101,7 +113,7 @@ body {
 .lead-to-left::after {
   border-width: 1px 0px 0px 1px;
   transform: translate(50%, -50%);
-  right: 100%;
+  right: 110%;
   top: 100%;
   border-top-left-radius: 8px;
 }

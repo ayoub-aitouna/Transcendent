@@ -8,7 +8,7 @@ import { user } from "@/type/auth/user";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ApiResponse } from "@/type/auth/auth";
+import { AuthApiResponse } from "@/type/auth/auth";
 
 const schema = yup.object().shape({
 	username: yup
@@ -51,7 +51,7 @@ const Info = () => {
 			last_name: data.fullname.split(" ")[1],
 		} as user;
 		try {
-			const res: Partial<ApiResponse> = await RegisterUser({ ...user });
+			const res: Partial<AuthApiResponse> = await RegisterUser({ ...user });
 			router.replace("/");
 		} catch (e) {
 			console.log(e);

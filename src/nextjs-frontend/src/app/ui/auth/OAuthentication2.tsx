@@ -21,7 +21,6 @@ const OAuthentication2 = ({ children, provider, AuthUrl, scope, client_id }: Rea
             scope
         })
         const url = `${AuthUrl}?${params}`;
-        console.log(url);
         window.location.href = url
     }, []);
 

@@ -11,7 +11,7 @@ export function TournamentsContainer({
 }: {
 	href: string;
 	name: string;
-	followers: string;
+	followers: number;
 	SecName: string;
 }) {
 	return (
