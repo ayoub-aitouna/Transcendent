@@ -6,15 +6,29 @@ from django.db.models import Q
 
 class BaseUserSerializer():
     def get_image_url(self, obj):
+        request = self.context.get("request")
         if obj.image_url is None:
             return None
         if not obj.image_url.startswith('/media'):
             return obj.image_url
-        request = self.context.get("request")
         return request.build_absolute_uri(obj.image_url)
 
     def get_fullname(self, obj):
         return f'{obj.first_name} {obj.last_name}'.strip()
+
+    def get_is_friend(self, obj):
+        user = self.context.get('request').user
+        if user is None:
+            return False
+        return user.friends.contains(obj)
+
+    def get_is_blocked(self, obj):
+        user = self.context.get('request').user
+        if user is None or user == obj:
+            return False
+        blocked_me_query = BlockList.objects.filter(user=user, blocked_user=obj)
+        blocked_query = BlockList.objects.filter(user=obj, blocked_user=user)
+        return blocked_me_query.exists() or blocked_query.exists()
 
 
 class AchievementsSerializer(serializers.ModelSerializer):
@@ -61,14 +75,14 @@ class UserSerializer(serializers.ModelSerializer, BaseUserSerializer):
         view_name='user', lookup_field='pk')
     send_request = serializers.HyperlinkedIdentityField(
         view_name='send-friend-request', lookup_field='pk')
-    xp = serializers.IntegerField(read_only=True, source='current_xp')
+    current_xp = serializers.IntegerField(read_only=True)
     rank = RankSerializer(read_only=True)
     image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['image_url', 'fullname',
-                  'username', 'rank', 'xp', 'coins', 'url', 'send_request']
+        fields = ['id', 'image_url', 'fullname',
+                  'username', 'rank', 'current_xp', 'coins', 'url', 'send_request']
 
 
 class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
@@ -85,6 +99,9 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     coins = serializers.IntegerField(read_only=True)
     current_xp = serializers.IntegerField(read_only=True)
     image_url = serializers.SerializerMethodField()
+    rankProgressPercentage = serializers.SerializerMethodField()
+    is_friend = serializers.SerializerMethodField()
+    is_blocked = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         super(UserDetailSerializer, self).__init__(*args, **kwargs)
@@ -93,15 +110,25 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['fullname', 'username', 'first_name', 'last_name',
-                  'email', 'password', 'image_url', 'registration_method', 'coins', 'rank', 'current_xp',
-                  'friends', 'friend_requests', 'achievements', 'ranking_logs', 'send_request']
+        fields = ['id', 'fullname', 'username', 'first_name', 'last_name', 'is_friend', 'is_blocked',
+                  'email', 'password', 'image_url', 'registration_method', 'status', 'coins', 'rank',
+                  'current_xp', 'rankProgressPercentage', 'friends', 'friend_requests', 'achievements',
+                  'ranking_logs', 'send_request']
+
+    def get_rankProgressPercentage(self, obj):
+        if obj.rank is None:
+            return 0
+        return (obj.current_xp / obj.rank.xp_required) * 100
 
     def get_friend_requests(self, obj):
         user_id = self.context.get('view').kwargs.get('pk')
-        current_user = User.objects.get(pk=user_id)
-        q = Friends_Request.objects.filter(addressee=current_user).distinct()
-        return FriendRequestSerializer(q, many=True, context=self.context).data
+        try:
+            current_user = User.objects.get(pk=user_id)
+            q = Friends_Request.objects.filter(
+                addressee=current_user).distinct()
+            return FriendRequestSerializer(q, many=True, context=self.context).data
+        except Exception as e:
+            return []
 
 
 class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
@@ -133,7 +160,7 @@ class UserUpdateImageSerializer(serializers.ModelSerializer):
         fields = ['image_url', 'image']
 
 
-class FriendRequestSerializer(serializers.ModelSerializer, BaseUserSerializer):
+class FriendRequestSerializer(serializers.ModelSerializer):
     image_url = serializers.CharField(source='requester.image_url')
     fullname = serializers.SerializerMethodField()
     username = serializers.CharField(source='requester.username')
@@ -155,6 +182,9 @@ class FriendRequestSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     def get_url(self, obj):
         return reverse('user', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
+
+    def get_fullname(self, obj):
+        return f'{obj.requester.first_name} {obj.requester.last_name}'.strip()
 
 
 class FriendsSerializer(serializers.ModelSerializer):

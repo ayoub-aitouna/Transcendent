@@ -27,11 +27,11 @@ const AuthForm: React.FC<{
 				</form>
 			</div>
 			<p className='w-[306px] text-[14px] text-center text-[#a2a2a2]'>
-				By continuing, you agree to Transcendent's{" "}
+				By continuing, you agree to Transcendent's
 				<Link href='' className='underline'>
 					Terms of Service
-				</Link>{" "}
-				and{" "}
+				</Link>
+				and
 				<Link href='' className='underline'>
 					Privacy Policy
 				</Link>

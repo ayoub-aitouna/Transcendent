@@ -59,28 +59,19 @@ class TournamentsRegisteredPlayers(models.Model):
 
 
 class Matchup(models.Model):
-    game = models.ForeignKey(
-        Game, on_delete=models.CASCADE, related_name='game')
-    first_player = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='first_player')
-    second_player = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='second_player')
-    tournament = models.ForeignKey(
-        Tournament, on_delete=models.CASCADE, related_name='tournament_match_up', null=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-class MatchStatus(models.Model):
-    Winner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='winner', null=True)
-    matchup = models.ForeignKey(
-        Matchup, on_delete=models.CASCADE, related_name='matchup')
+    game = models.ForeignKey(Game, on_delete=models.CASCADE,
+                             related_name='game')
+    first_player = models.ForeignKey(User, on_delete=models.CASCADE,
+                                     related_name='first_player')
+    second_player = models.ForeignKey(User, on_delete=models.CASCADE,
+                                      related_name='second_player')
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE,
+                                   related_name='tournament_match_up', null=True)
+    Winner = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='winner', null=True)
+    game_over = models.BooleanField(default=False)
     first_player_score = models.IntegerField(null=False, default=0)
     second_player_score = models.IntegerField(null=False, default=0)
-    game_over = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

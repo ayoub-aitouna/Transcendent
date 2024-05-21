@@ -56,9 +56,9 @@ export const StreamingCard = ({
 						className='relative w-12 h-12 ml-[-20px] rounded-full border border-[#A2A2A2] overflow-hidden'
 					/>
 				</div>
-				<UserDetails name={user1.username} level={user1.level} />
+				<UserDetails name={user1.username} level={user1.current_xp} />
 				<p className='text-md font-bold'>VS</p>
-				<UserDetails name={user2.username} level={user2.level} />
+				<UserDetails name={user2.username} level={user2.current_xp} />
 			</div>
 
 			<Image

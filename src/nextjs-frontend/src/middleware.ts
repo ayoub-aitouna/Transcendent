@@ -4,10 +4,9 @@ import { cookies } from 'next/headers'
 const protectedRoutes = [
     '/',
     '/home',
-    '/tournements',
-    '/tournements',
+    '/tournaments',
     '/game',
-    '/meessanger',
+    '/messenger',
     '/profile',
     '/settings'
 ]

@@ -1,50 +1,10 @@
 "use client";
 import { useDragToScroll } from "@/hooks/drag-to-scroll";
+import { processBracketData } from "@/lib/bracket-data-processer";
 import { user } from "@/type/auth/user";
 import { Brackets } from "@/type/dashboard/tournament";
 import clsx from "clsx";
 import Image from "next/image";
-import { useRef } from "react";
-const RoundList = (
-	list: Brackets[],
-	size: number,
-	round_number?: number
-): Brackets[] => {
-	if (!list) list = [];
-	for (let i = list.length; i < size; i++) {
-		list.push({
-			player: {},
-			round_number: round_number || -1,
-		});
-	}
-	return list;
-};
-
-const get_max_round = (max_player: number) => {
-	let count = 0;
-	let result = max_player;
-	while (true) {
-		result = result / 2;
-		count++;
-		if (result < 1) return count;
-	}
-};
-
-const processBracketData = (
-	data: Brackets[],
-	max_players: number
-): Brackets[][] => {
-	data = RoundList(data, max_players, 1);
-	const result: Brackets[][] = [];
-	for (let i = 0; i < data.length; i++) {
-		const index = (data[i]?.round_number || 1) - 1;
-		if (!result[index]) result[index] = [];
-		result.at(index)?.push(data[i]);
-	}
-	for (let i = 1; i < get_max_round(max_players); i++)
-		result[i] = RoundList(result[i], max_players / Math.pow(2, i));
-	return result;
-};
 
 const BracketCard = ({
 	player1,
@@ -92,7 +52,7 @@ const BracketCard = ({
 						{player1?.username || "User"}
 					</div>
 					<div className='text-secondary-100 text-xs truncate font-normal tracking-tight'>
-						Level <span>{player1?.level}</span>
+						Level <span>{player1?.current_xp}</span>
 					</div>
 				</div>
 			</div>
@@ -108,14 +68,14 @@ export const Bracket = ({
 	max_players: number;
 }) => {
 	const ref = useDragToScroll();
-	const BracketData = processBracketData(data || [], max_players);
+	const [first_half, second_half] = processBracketData(data || [], max_players);
 	return (
 		<div
 			ref={ref}
-			className='rounded-xl bg-secondary-400 flex-1 max-h-full tournament-board hide-scrollbar'>
-			<div className='flex flex-row justify-between items-center min-h-full gap-4 p-3'>
+			className='relative rounded-xl bg-secondary-400 flex-1 max-h-full  tournament-board hide-scrollbar'>
+			<div className=' flex mx-auto flex-row justify-between items-center min-h-full h-fit w-fit gap-4 p-3'>
 				<div className='flex-1 h-full flex flex-row gap-6'>
-					{BracketData.map((data, index) => (
+					{first_half.map((data, index) => (
 						<ul
 							key={index}
 							className='flex-1 w-28 flex flex-col items-start justify-around gap-4 lead-to-parent'>
@@ -132,8 +92,8 @@ export const Bracket = ({
 				<div className='h-full grid place-content-center'>
 					<h6 className='text-xl font-bold'>VS</h6>
 				</div>
-				<div className='flex-1 h-full flex flex-row-reverse gap-6'>
-					{BracketData.map((data, index) => (
+				<div className='flex-1 h-full flex  flex-row-reverse gap-6'>
+					{second_half.map((data, index) => (
 						<ul
 							key={index}
 							className='flex-1 w-28 flex flex-col items-start justify-around gap-4 lead-to-parent'>

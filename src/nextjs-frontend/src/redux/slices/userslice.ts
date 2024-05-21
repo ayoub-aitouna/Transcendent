@@ -1,4 +1,4 @@
-import { user } from '@/type/auth/user'
+import { Friend, FriendRequest, Rank, user } from '@/type/auth/user'
 import { createSlice } from '@reduxjs/toolkit'
 
 type userState = {
@@ -9,13 +9,24 @@ type userState = {
 
 const initialState: userState = {
     user: {
-        email: "",
-        password: "",
-        image_url: "",
-        username: "",
-        first_name: "",
-        last_name: "",
-        level: 0,
+        id: 0,
+        fullname: '',
+        username: '',
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        image_url: '',
+        registration_method: '',
+        coins: 0,
+        status: 'offline',
+        rank: {} as Rank,
+        current_xp: 0,
+        friends: [] as Friend[],
+        friend_requests: [] as FriendRequest[],
+        achievements: [] as any[],
+        ranking_logs: [] as any[],
+        send_request: ''
     },
     token: "",
     isAuth: false,

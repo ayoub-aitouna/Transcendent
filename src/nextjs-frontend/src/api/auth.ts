@@ -47,16 +47,8 @@ export const HandleSocialAuth = async ({ provider, params }: { provider: string,
     return data;
 }
 
-export const GetMe = async (): Promise<Partial<AuthApiResponse>> => {
-    const Response = await apiMock.get(`/auth/me/`);
-    const data: Partial<AuthApiResponse> = Response.data;
-    if (Response.status != 200)
-        throw new Error(data.details || "Failed To Get Me");
-    return data;
-}
-
 const setCookies = (data: Partial<AuthApiResponse>) => {
-    setCookie(null, 'access', data.access_token  as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
+    setCookie(null, 'access', data.access_token as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
     setCookie(null, 'refresh', data.refresh_token as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
 }
 

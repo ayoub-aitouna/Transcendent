@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+	createContext,
+	useContext,
+	useState,
+	useCallback,
+	useEffect,
+	useRef,
+} from "react";
 import ToastContainer from "@/app/ui/dashboard/Toast/toast-container";
 import { Toast } from "@/type/dashboard/index";
 
@@ -25,7 +32,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
 	const [toasts, setToasts] = useState<Toast[]>([]);
 	const [toastQueue, setToastQueue] = useState<Toast[]>([]);
-
+	const ws = useRef<WebSocket | null>(null);
 	const addToast = useCallback((toast: Toast) => {
 		toast.id = window.crypto.getRandomValues(new Uint32Array(1))[0];
 		setToasts((prev) => {
@@ -46,6 +53,31 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 		},
 		[toastQueue]
 	);
+
+	useEffect(() => {
+		console.log("connecting to ws");
+		if (!ws.current) {
+			ws.current = new WebSocket("ws://localhost:8000/ws/user/connect/");
+			ws.current.onopen = () => {
+				console.log("connected to ws");
+			};
+			ws.current.onclose = () => {
+				console.log("disconnected from ws");
+			};
+			ws.current.onmessage = (event) => {
+				const data = JSON.parse(event.data);
+				console.log(data);
+				addToast({
+					id: data.id || 0,
+					title: data.title,
+					message: data.extra_content || "",
+					icon: data.icon || "fa fa-info-circle",
+					backgroundColor:
+						data.type === "notification" ? "bg-blue-500" : "bg-primary",
+				});
+			};
+		}
+	}, []);
 
 	return (
 		<ToastContext.Provider value={{ toasts, addToast, removeToast }}>

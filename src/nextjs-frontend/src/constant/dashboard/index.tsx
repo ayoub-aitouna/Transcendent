@@ -516,24 +516,7 @@ export const TopAchievementsList: Achievement[] = [
 	},
 ];
 
-export const UserInfoList = [
-	{
-		src: "/assets/icons/fluent_games.png",
-		value: "+212 6 36 04 78 60",
-	},
-	{
-		src: "/assets/icons/email.png",
-		value: "Aitounaayoub@gmail.com",
-	},
-	{
-		src: "/assets/icons/location-filled.png",
-		value: "Benguerir",
-	},
-	{
-		src: "/assets/icons/connected.png",
-		value: "Online",
-	},
-];
+
 
 export const AllOnlinePlayers = [
 	{

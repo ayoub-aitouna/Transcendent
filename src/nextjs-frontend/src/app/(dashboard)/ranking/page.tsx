@@ -1,9 +1,8 @@
-import { TournamentsContainer } from "@/app/ui/dashboard/home/content_area/tournamentContainer";
-import { tournamentLinks } from "@/constant/dashboard";
-import Link from "next/link";
+import { getRanking } from "@/api/user";
 import React from "react";
 
-const page = () => {
+const page = async () => {
+	const data = await getRanking();
 	return (
 		<div className='w-full h-full'>
 			<div className='bg-secondary-400 rounded-xl h-[87vh] flex flex-col gap-7 px-2 py-4'>
@@ -34,13 +33,13 @@ const page = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{Array.from({ length: 30 }).map((_, index) => (
+							{data.results.map((user, index) => (
 								<tr>
 									<td className='text-start px-2 py-3'>
 										<p>{index + 1}</p>
 									</td>
 									<td className='text-start px-2 py-3'>
-										<p>Ayoub Aitouna</p>
+										<p>{user.fullname ? user.fullname : user.username}</p>
 									</td>
 									<td className='text-start px-2 py-3'>
 										<p>{Math.round(Math.random() * 100)}</p>
@@ -56,7 +55,7 @@ const page = () => {
 										</p>
 									</td>
 									<td className='text-start px-2 py-3'>
-										<p>{Math.round(Math.random() * 10000)}</p>
+										<p>{user.current_xp}</p>
 									</td>
 								</tr>
 							))}

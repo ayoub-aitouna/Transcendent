@@ -25,6 +25,7 @@ from django.core.files.storage import default_storage
 from game.tasks import NotifyTournamentUsers
 from django.utils import timezone
 from datetime import timedelta
+from api.serializers import NotificationSerializer
 
 
 class Test(APIView):
@@ -45,6 +46,15 @@ class UsersList(generics.ListAPIView):
 class UsersDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
+
+
+class Profile(generics.RetrieveAPIView):
+    serializer_class = UserDetailSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+
+    def get_object(self):
+        return self.request.user
 
 
 class UpdateImageApi(generics.UpdateAPIView):
@@ -117,7 +127,12 @@ class OnlineFriendsList(generics.ListAPIView):
 
 class TopPlayers(generics.ListAPIView):
     serializer_class = UserSerializer
-    queryset = User.objects.all().order_by('current_xp')[:10]
+    queryset = User.objects.all().order_by('current_xp').reverse()[:5]
+
+
+class Ranking(generics.ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all().order_by('current_xp').reverse()
 
 
 class InvitePlayer(APIView):
@@ -129,8 +144,9 @@ class InvitePlayer(APIView):
             title='You have a new invitation',
             icon='fa fa-user-plus',
             recipient=addressee)
-        send_notification(notification, 'invitation', extra_content=game_room)
         notification.save()
+        send_notification(notification=notification,
+                          type='invitation', request=self.request)
 
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
@@ -141,12 +157,14 @@ class InvitePlayer(APIView):
 
 class SendTestNotification(APIView):
     def get(self, request):
-        print('user', )
+        user = User.objects.get(id=1)
         notification = Notification(
             title='Test notification',
-            icon='fa fa-user-plus',
-            recipient=self.request.user)
-        send_notification(notification)
+            description='This is a test notification',
+            sender=user,
+            recipient=user)
+        notification.save()
+        send_notification(notification=notification, request=request)
         return Response({'message': 'Notification sent'})
 
 
@@ -217,15 +235,10 @@ class Toggle2FA(APIView):
         return Response({'message': '2FA enabled successfully'})
 
 
-def send_notification(notification, type='notification', extra_content=None):
+def send_notification(notification, type='notification', request=None):
     channel_layer = get_channel_layer()
-
-    print(f'send to group notifications_{notification.recipient.id}')
-    str_obj = json.dumps({
-        'type': type,
-        'id': notification.id,
-        'title': notification.title,
-        'icon': notification.icon,
-        'extra_content': extra_content
-    })
-    NotifyUser(notification.recipient.id, str_obj, channel_layer)
+    notification_serialized = NotificationSerializer(
+        notification,  context={'request': request}).data
+    str_obj = json.dumps(notification_serialized)
+    NotifyUser(notification_serialized['recipient']
+               ['id'], str_obj, channel_layer)

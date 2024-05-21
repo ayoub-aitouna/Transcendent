@@ -6,7 +6,6 @@ import Link from "next/link";
 
 const getData = async () => {
 	const res = await GetTournaments();
-	console.log(res);
 	return res;
 };
 const page = async () => {
@@ -28,9 +27,7 @@ const page = async () => {
 							<Link href={`/tournaments/${item.id}`}>
 								<TournamentsContainer
 									key={index}
-									href={
-										item.icon || "https://via.placeholder.com/150/92c952.png"
-									}
+									href={item.icon || "https://placehold.co/400x400.png"}
 									name={item.name}
 									followers={item.max_players || 0}
 									SecName={item.description}

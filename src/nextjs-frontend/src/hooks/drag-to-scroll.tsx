@@ -9,21 +9,17 @@ export const useDragToScroll = ():
 	const ref = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		console.log("useEffect");
 		setIsClient(true);
 	}, []);
 
 	useEffect(() => {
 		if (!isClient) return;
 		if (ref && !ref.current) return;
-		console.log("isClient passed Ok.");
 		const scrollContainer = ref.current;
 		let isDown = false;
 		let StartX: number, StartY: number;
 		let scrollLeft: number, scrollTop: number;
-		console.log("scrollContainer > ", scrollContainer);
 		const handleMouseDown = (e: any) => {
-			console.log("mousedown");
 			isDown = true;
 			scrollContainer?.classList.add("grabbing");
 			StartX = e.clientX - (scrollContainer?.offsetLeft || 0);

@@ -44,7 +44,6 @@ const page = () => {
 				provider: provider,
 				params: location.search,
 			});
-			console.log(res);
 			Dispatch(
 				Login({
 					user: res.user,

@@ -165,10 +165,10 @@ const page = () => {
 					/>
 					<ToggleOption
 						onCheck={() => {
-							console.log("requestPermission");
 							Notification.requestPermission();
 						}}
-						checked={Notification.permission === 'granted'}
+						//Notification.permission === "granted"
+						checked={false}
 						title='Desktop Notification'
 						desc='Receive desktop notifications for critical events.'
 					/>

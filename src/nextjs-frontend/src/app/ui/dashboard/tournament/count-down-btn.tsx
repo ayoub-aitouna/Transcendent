@@ -2,7 +2,13 @@
 import { useCountdown } from "@/hooks/count-down";
 import { useEffect, useState } from "react";
 
-export const CountDownTimerButton = ({ targetDate }: { targetDate: Date }) => {
+export const CountDownTimerButton = ({
+	targetDate,
+	Onclick,
+}: {
+	targetDate: Date;
+	Onclick?: () => void;
+}) => {
 	const [isClient, setIsClient] = useState(false);
 	const [days, hours, minutes, seconds] = useCountdown(new Date(targetDate));
 
@@ -11,7 +17,9 @@ export const CountDownTimerButton = ({ targetDate }: { targetDate: Date }) => {
 	}, []);
 
 	return (
-		<button className='self-center h-10 bg-primary px-3 py-2 rounded-sm'>
+		<button
+			className='self-center h-10 bg-primary px-3 py-2 rounded-sm'
+			onClick={Onclick}>
 			<p className='flex flex-row uppercase'>
 				Register Now -{" "}
 				<span className='ml-1 lowercase'>

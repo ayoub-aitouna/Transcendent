@@ -1,19 +1,9 @@
 "use client";
+import { inputProps } from "@/type";
 import clsx from "clsx";
 import React from "react";
 
-type inputProps = {
-	type: string;
-	placeholder: string;
-	title: string;
-	name: string;
-	error: boolean;
-	helperText?: string | null;
-	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	register: any;
-	additionalStyles?: string;
-	props?: any;
-};
+
 
 const Input = React.forwardRef<HTMLInputElement | null, inputProps>(
 	(

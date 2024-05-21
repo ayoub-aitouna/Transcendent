@@ -1,8 +1,15 @@
 
-from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveAPIView, RetrieveDestroyAPIView, CreateAPIView
-from .serializers import GameSerializer, TournamentSerializer, TournamentDetailsSerializer, TournamentsRegisteredPlayersSerializer
-from .models import Game, Tournament, TournamentsRegisteredPlayers, Brackets
-from rest_framework.response import Response
+from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveDestroyAPIView, CreateAPIView
+from .serializers import (
+    GameSerializer,
+    MatchUpSerializer,
+    TournamentSerializer,
+    TournamentDetailsSerializer,
+    TournamentsRegisteredPlayersSerializer)
+
+from .models import Game, Tournament, TournamentsRegisteredPlayers, Brackets, Matchup
+from user.models import User
+from rest_framework.permissions import IsAuthenticated
 
 
 class ListGame(ListAPIView):
@@ -14,8 +21,6 @@ class listTournaments(ListCreateAPIView):
     serializer_class = TournamentSerializer
     queryset = Tournament.objects.all()
 
-    # def post(self, request):
-    #     return Response(status=201)
 
 class RetrieveTournament(RetrieveDestroyAPIView):
     serializer_class = TournamentDetailsSerializer
@@ -35,6 +40,29 @@ class RegisterToTournament(CreateAPIView):
             return
         Brackets(tournament=tournament, player=self.request.user).save()
         serializer.save(user=self.request.user, tournament=tournament)
+
+
+class MatchHistory(ListAPIView):
+    serializer_class = MatchUpSerializer
+    queryset = Matchup.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            user = User.objects.get(pk=pk)
+            return Matchup.objects.filter(first_player=user, second_player=user)
+        except User.DoesNotExist:
+            return []
+
+
+class TournamentHistory(ListAPIView):
+    serializer_class = TournamentsRegisteredPlayersSerializer
+    queryset = TournamentsRegisteredPlayers.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return TournamentsRegisteredPlayers.objects.filter(user=self.request.user)
 
 
 class JoinGameLooby():
