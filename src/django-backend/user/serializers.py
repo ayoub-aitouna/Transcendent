@@ -1,7 +1,10 @@
+import os
+from django.conf import settings
 from rest_framework import serializers
 from user.models import User, Friends_Request, Ranks, Achievements, BlockList
 from rest_framework.reverse import reverse
 from django.db.models import Q
+from django.core.files.storage import default_storage
 
 
 class BaseUserSerializer():
@@ -12,6 +15,15 @@ class BaseUserSerializer():
         if not obj.image_url.startswith('/media'):
             return obj.image_url
         return request.build_absolute_uri(obj.image_url)
+
+    def create_avatar(self, validated_data):
+        avatar = validated_data['image_file']
+        save_path = os.path.join(settings.MEDIA_ROOT,
+                                 'public/profile-images', avatar.name)
+        path = default_storage.save(save_path, avatar)
+        validated_data['image_url'] = f'/media/{path}'
+        del validated_data['image_file']
+        return validated_data
 
     def get_fullname(self, obj):
         return f'{obj.first_name} {obj.last_name}'.strip()
@@ -26,7 +38,8 @@ class BaseUserSerializer():
         user = self.context.get('request').user
         if user is None or user == obj:
             return False
-        blocked_me_query = BlockList.objects.filter(user=user, blocked_user=obj)
+        blocked_me_query = BlockList.objects.filter(
+            user=user, blocked_user=obj)
         blocked_query = BlockList.objects.filter(user=obj, blocked_user=user)
         return blocked_me_query.exists() or blocked_query.exists()
 
@@ -98,10 +111,12 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     rank = RankSerializer(read_only=True)
     coins = serializers.IntegerField(read_only=True)
     current_xp = serializers.IntegerField(read_only=True)
+    image_file = serializers.ImageField(write_only=True, required=False)
     image_url = serializers.SerializerMethodField()
     rankProgressPercentage = serializers.SerializerMethodField()
     is_friend = serializers.SerializerMethodField()
     is_blocked = serializers.SerializerMethodField()
+    password = serializers.CharField(write_only=True, required=False)
 
     def __init__(self, *args, **kwargs):
         super(UserDetailSerializer, self).__init__(*args, **kwargs)
@@ -110,10 +125,16 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'fullname', 'username', 'first_name', 'last_name', 'is_friend', 'is_blocked',
+        fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'is_friend', 'is_blocked',
                   'email', 'password', 'image_url', 'registration_method', 'status', 'coins', 'rank',
                   'current_xp', 'rankProgressPercentage', 'friends', 'friend_requests', 'achievements',
                   'ranking_logs', 'send_request']
+
+    def update(self, instance, validated_data):
+        return super().update(instance, self.create_avatar(validated_data))
+
+    def create(self, validated_data):
+        return super().create(self.create_avatar(validated_data))
 
     def get_rankProgressPercentage(self, obj):
         if obj.rank is None:

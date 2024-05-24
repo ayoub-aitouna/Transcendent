@@ -111,6 +111,9 @@ DATABASES = {
         'PASSWORD': '123456',
         'HOST': 'db',
         'PORT': '5432'
+    },
+    'test':{
+        'NAME': f'test_postgres'
     }
 }
 

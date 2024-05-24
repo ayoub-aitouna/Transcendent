@@ -1,4 +1,5 @@
 
+from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveDestroyAPIView, CreateAPIView
 from .serializers import (
     GameSerializer,
@@ -6,7 +7,7 @@ from .serializers import (
     TournamentSerializer,
     TournamentDetailsSerializer,
     TournamentsRegisteredPlayersSerializer)
-
+from rest_framework import serializers
 from .models import Game, Tournament, TournamentsRegisteredPlayers, Brackets, Matchup
 from user.models import User
 from rest_framework.permissions import IsAuthenticated
@@ -28,18 +29,23 @@ class RetrieveTournament(RetrieveDestroyAPIView):
 
 
 class RegisterToTournament(CreateAPIView):
-    serializer_class = TournamentsRegisteredPlayersSerializer
+    class RegisterToTournamentSerializer(serializers.Serializer):
+        pass
+    
+    serializer_class = RegisterToTournamentSerializer
     queryset = TournamentsRegisteredPlayers.objects.all()
+    permission_classes = [IsAuthenticated]
+
 
     def perform_create(self, serializer):
-        tournament = Tournament.objects.get(pk=self.kwargs.get('pk'))
+        tournament = get_object_or_404(Tournament, pk=self.kwargs.get('pk'))
         bracket = Brackets.objects.filter(
             tournament=tournament
         ).filter(player=self.request.user).filter(round_number=1)
         if bracket.exists():
             return
         Brackets(tournament=tournament, player=self.request.user).save()
-        serializer.save(user=self.request.user, tournament=tournament)
+        TournamentsRegisteredPlayers.objects.create(user=self.request.user, tournament=tournament)
 
 
 class MatchHistory(ListAPIView):
@@ -54,7 +60,6 @@ class MatchHistory(ListAPIView):
             return Matchup.objects.filter(first_player=user, second_player=user)
         except User.DoesNotExist:
             return []
-
 
 class TournamentHistory(ListAPIView):
     serializer_class = TournamentsRegisteredPlayersSerializer

@@ -1,50 +1,51 @@
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.cache import cache
 from user.models import User
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
+from channels.db import database_sync_to_async
+import json
 
 
-class ConnectedConsumer(WebsocketConsumer):
-    def connect(self):
+class ConnectedConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
         self.user = self.scope['user']
         cache.delete(self.get_connected_devices_prefix())
-        connected_devices = cache.get(self.get_connected_devices_prefix(), 0)
-        cache.set(self.get_connected_devices_prefix(), connected_devices + 1)
-
-        async_to_sync(self.channel_layer.group_add)(
-            notification_group(self.user.id), self.channel_name
-        )
-
+        connected_devices = self.get_update_cache(1)
+        await self.channel_layer.group_add(
+            notification_group(self.user.id), self.channel_name)
         if connected_devices == 0:
-            user = User.objects.get(id=self.user.id)
-            user.status = 'online'
-            user.save()
-            print(f'user: {user.status}')
-        self.accept()
+            await self.update_user_status('online')
+        await self.accept()
 
-    def disconnect(self, close_code):
-        connected_devices = cache.get(self.get_connected_devices_prefix(), 0)
-        cache.set(self.get_connected_devices_prefix(), connected_devices - 1)
-
-        async_to_sync(self.channel_layer.group_discard)(
-            notification_group(self.user.id), self.channel_name
-        )
-        print(
-            f'connected_devices: {connected_devices} __ user_id: {self.user.id}')
+    async def disconnect(self, close_code):
+        connected_devices = self.get_update_cache(-1)
+        await self.channel_layer.group_discard(notification_group(self.user.id), self.channel_name)
         if connected_devices == 1:
-            user = User.objects.get(id=self.user.id)
-            user.status = 'offline'
-            user.save()
-            print(f'user: {user.status}')
+            await self.update_user_status('offline')
 
-    def receive(self, text_data):
-        self.send(text_data=f'user_fullname: {self.user.email}')
+    async def receive(self, text_data):
+        await self.send(text_data=json.dumps({
+            'message': 'Message received',
+            'email': self.user.email
+        }))
 
-    def notification(self, event):
-        self.send(text_data=event['notification'])
+    async def notification(self, event):
+        await self.send(text_data=event['notification'])
 
     def get_connected_devices_prefix(self):
         return f'connected_devices_{self.user.id}'
+
+    def get_update_cache(self, variant):
+        connected_devices = cache.get(self.get_connected_devices_prefix(), 0)
+        cache.set(self.get_connected_devices_prefix(),
+                  connected_devices + variant)
+        return connected_devices
+
+    @database_sync_to_async
+    def update_user_status(self, status):
+        user = User.objects.get(id=self.user.id)
+        user.status = status
+        user.save()
 
 
 def NotifyUser(user_id, notification, channel_layer):

@@ -1,6 +1,4 @@
-import os
-
-from django.conf import settings
+import uuid
 from user.models import User, Friends_Request, BlockList
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -20,7 +18,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from transcendent.consumers import NotifyUser
 import json
-import random
 from django.core.files.storage import default_storage
 from game.tasks import NotifyTournamentUsers
 from django.utils import timezone
@@ -35,6 +32,17 @@ class Test(APIView):
         return Response({'message': f'task_id {task_id} started'})
 
 
+class BaseNotification():
+    def _create_notification(self, addressee, title, description):
+        notification = Notification(
+            title=title,
+            description=description,
+            sender=self.request.user,
+            recipient=addressee)
+        notification.save()
+        send_notification(notification)
+
+
 class UsersList(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -46,6 +54,9 @@ class UsersList(generics.ListAPIView):
 class UsersDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
+
+    def perform_update(self, serializer):
+        return super().perform_update(serializer)
 
 
 class Profile(generics.RetrieveAPIView):
@@ -69,10 +80,11 @@ class Send_friend_request(generics.CreateAPIView):
     def _create_notification(self, addressee):
         notification = Notification(
             title='You have a new friend request',
-            icon='fa fa-user-plus',
+            description=f'{self.request.user.username} sent you a friend request',
+            sender=self.request.user,
             recipient=addressee)
-        send_notification(notification)
         notification.save()
+        send_notification(notification)
 
     def perform_create(self, serializer):
         pk = self.kwargs.get("pk")
@@ -108,12 +120,14 @@ class Decline_friend_request(generics.DestroyAPIView):
         instance.delete()
 
 
-class BlockUser(generics.UpdateAPIView):
+class BlockUser(generics.CreateAPIView):
     serializer_class = BlockListSerializer
     queryset = BlockList.objects.all()
 
-    def perform_update(self, serializer):
-        serializer.save(is_blocked=True)
+    def perform_create(self, serializer):
+        pk = self.kwargs.get("pk")
+        blocked_user = get_object_or_404(User, pk=pk)
+        serializer.save(user=self.request.user, blocked_user=blocked_user)
 
 
 class OnlineFriendsList(generics.ListAPIView):
@@ -121,8 +135,8 @@ class OnlineFriendsList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # friends = self.request.user.friends.all()
-        return User.objects.filter(status='online')
+        friends = self.request.user.friends.all()
+        return friends.filter(status='online')
 
 
 class TopPlayers(generics.ListAPIView):
@@ -135,23 +149,16 @@ class Ranking(generics.ListAPIView):
     queryset = User.objects.all().order_by('current_xp').reverse()
 
 
-class InvitePlayer(APIView):
+class InvitePlayer(APIView, BaseNotification):
     serializer_class = FriendsSerializer
     queryset = Friends_Request.objects.all()
-
-    def _create_notification(self, addressee, game_room):
-        notification = Notification(
-            title='You have a new invitation',
-            icon='fa fa-user-plus',
-            recipient=addressee)
-        notification.save()
-        send_notification(notification=notification,
-                          type='invitation', request=self.request)
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
-        game_room = f'ws://{self.request.META["HTTP_HOST"]}/ws/game/{random.randint(1000, 9999)}{random.randint(1000, 9999)}/'
-        self._create_notification(user, game_room)
+        game_room = f'/ws/game/{uuid.uuid4()}/'
+        self._create_notification(
+            user, 'Game invitation', f'{self.request.user.username} invited you to a game room {game_room}')
         return Response({'message': 'Invitation sent', 'game_room': game_room})
 
 
@@ -168,21 +175,14 @@ class SendTestNotification(APIView):
         return Response({'message': 'Notification sent'})
 
 
-class ChangePassword(APIView):
-    def post(self, request):
-        user = request.user
-        password = request.data.get('password')
-        user.set_password(password)
-        user.save()
-        return Response({'message': 'Password changed successfully'})
-
-
 class DestroyFriendShip(generics.DestroyAPIView):
-    serializer_class = FriendsSerializer
-    queryset = Friends_Request.objects.all()
+    queryset = User.objects.all()
 
     def perform_destroy(self, instance):
-        instance.delete()
+        pk = self.kwargs.get("pk")
+        friend = get_object_or_404(User, pk=pk)
+        self.request.user.friends.remove(friend)
+        return
 
 
 class SearchUser(generics.ListAPIView):
@@ -191,54 +191,16 @@ class SearchUser(generics.ListAPIView):
 
     def get_queryset(self):
         query = self.request.query_params.get('query')
+        if query is None:
+            return User.objects.none()
         return User.objects.filter(Q(username__icontains=query) | Q(email__icontains=query))
-
-
-class ChangeEmail(APIView):
-    def put(self, request):
-        user = request.user
-        email = request.data.get('email')
-        user.email = email
-        user.save()
-        return Response({'message': 'Email changed successfully'})
-
-
-class UpdateProfile(APIView):
-    def put(self, request):
-        user = request.user
-        image = request.FILES['image']
-        save_path = os.path.join(
-            settings.MEDIA_ROOT, 'public/profile-images', image.name)
-        path = default_storage.save(save_path, image)
-        image_url = f'/media/{path}'
-        username = request.data.get('username')
-        first_name = request.data.get('first_name')
-        last_name = request.data.get('last_name')
-
-        if image_url:
-            user.image_url = image_url
-        if username:
-            user.username = username
-        if first_name:
-            user.first_name = first_name
-        if last_name:
-            user.last_name = last_name
-        user.save()
-        return Response({'message': 'Profile updated successfully'})
-
-
-class Toggle2FA(APIView):
-    def put(self, request):
-        user = request.user
-        user.enabled_2fa = not user.enabled_2fa
-        user.save()
-        return Response({'message': '2FA enabled successfully'})
 
 
 def send_notification(notification, type='notification', request=None):
     channel_layer = get_channel_layer()
     notification_serialized = NotificationSerializer(
         notification,  context={'request': request}).data
+    notification_serialized['type'] = type  # type of notification
     str_obj = json.dumps(notification_serialized)
     NotifyUser(notification_serialized['recipient']
                ['id'], str_obj, channel_layer)

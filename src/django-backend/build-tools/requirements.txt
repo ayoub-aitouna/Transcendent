@@ -12,3 +12,7 @@ channels_redis
 psycopg2-binary
 celery
 django-celery-beat
+pillow
+
+pytest-django
+pytest-asyncio

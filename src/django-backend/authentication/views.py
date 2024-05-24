@@ -64,7 +64,6 @@ class RegisterEmailApi(generics.CreateAPIView):
 
     def send_mail(self, serializer):
         validated_data = serializer.validated_data
-        print(f'validated-data => {validated_data}')
         email = validated_data.get('email')
         code = random.randint(1000, 9999)
         cache.set(email, code, timeout=5*60)
@@ -75,8 +74,6 @@ class RegisterEmailApi(generics.CreateAPIView):
             recipient_list=[email],
             fail_silently=False,
         )
-        print(f'status => {status}')
-
 
 class VerifyEmailApi(generics.CreateAPIView):
     class VerifySerializer(serializers.Serializer):
@@ -104,6 +101,14 @@ class VerifyEmailApi(generics.CreateAPIView):
 
 
 class RegisterUserApi(generics.CreateAPIView):
-    serializer_class = UserSerializer
+    class RegisterSerializer(serializers.Serializer):
+        username = serializers.CharField()
+        password = serializers.CharField()
+        email = serializers.EmailField()
+
+    serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
     queryset = User.objects.all()
+
+    def perform_create(self, serializer):
+        User.objects.create_user(**serializer.validated_data)

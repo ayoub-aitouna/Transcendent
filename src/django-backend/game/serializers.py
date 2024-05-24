@@ -52,7 +52,6 @@ class TournamentSerializer(serializers.ModelSerializer, BaseTournamentSerializer
                   'max_players', 'url', 'register']
 
     def create(self, validated_data):
-        print(f'validate data >>> {validated_data}\n-----\n')
         icon = validated_data['icon_file']
         save_path = os.path.join(
             settings.MEDIA_ROOT, 'public/profile-images', icon.name)

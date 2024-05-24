@@ -1,108 +1,113 @@
 
-from channels.generic.websocket import WebsocketConsumer
-from django.core.cache import cache
-from django.core.cache.backends.redis import RedisCache
-from rest_framework import serializers
-from user.models import User
-from asgiref.sync import async_to_sync
-import json
+from channels.generic.websocket import AsyncWebsocketConsumer
 from random import randint
-from django.core.cache import cache, caches
+import json
+import asyncio
+import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 registered_users = []
 
-class GameLobby(WebsocketConsumer):
-    def connect(self):
+
+class GameLobby(AsyncWebsocketConsumer):
+    async def connect(self):
         self.user = self.scope['user']
         if not self.user:
             self.close()
         self.room_group_name = self.get_group_name(self.user.id)
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name, self.channel_name
-        )
-        self.accept()
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
+        self.lock = asyncio.Lock()
+        await self.matchmaking()
 
-        compatible_users = [user for user in registered_users if user.current_xp in range(
-            user.current_xp - 1000, user.current_xp + 1000)]
-        if not compatible_users:
-            registered_users.append(self.user)
-        else:
-            matched_user = compatible_users[0]
-            game_started_obj = self.create_game()
-            try:
-                async_to_sync(self.channel_layer.group_send)(
-                    self.get_group_name(matched_user.id), game_started_obj
-                )
-                async_to_sync(self.channel_layer.group_send)(
-                    self.room_group_name, game_started_obj
-                )
+    async def matchmaking(self):
+        global registered_users
+        async with self.lock:
+            compatible_users = [user for user in registered_users if user.current_xp in range(
+                user.current_xp - 1000, user.current_xp + 1000)]
+            if not compatible_users:
+                registered_users.append(self.user)
+            else:
+                matched_user = compatible_users[0]
                 registered_users.remove(matched_user)
-            except Exception as e:
-                print(e)
+                game_started_obj = self.create_game()
+                try:
+                    await self.channel_layer.group_send(
+                        self.get_group_name(matched_user.id), game_started_obj
+                    )
+                    await self.channel_layer.group_send(
+                        self.room_group_name, game_started_obj
+                    )
+                except Exception as e:
+                    print(f'Error: {e}')
+                    await self.close()
 
-    def disconnect(self, close_code):
-        user = self.scope['user']
-        registered_users.remove(user)
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name, self.channel_name
-        )
-
-    def receive(self, text_data=None, bytes_data=None):
+    async def receive(self, text_data=None, bytes_data=None):
         pass
 
-    def broadcast(self, event):
+    async def broadcast(self, event):
         message = event['message']
-        self.send(text_data=json.dumps({
+        await self.send(text_data=json.dumps({
             'message': message
         }))
 
     def create_game(self):
-        print('scope \n', self.scope, '\n-----------\n')
-        random_game_id = randint(10000, 99999)
-        game_room_url = f"ws://{self.scope['host']}/ws/game/{random_game_id}/"
+        game_id = str(uuid.uuid4())
+        game_room_url = f"ws://{self.scope['host']}/ws/game/{game_id}/"
         return {
             "type": 'broadcast',
             'message': {
                 'game_room_url':  game_room_url,
-                'game_id': random_game_id,
+                'game_id': game_id,
             }
         }
 
     def get_group_name(self, id):
         return f'game_lobby_group_{id}'
 
-class InGame(WebsocketConsumer):
-    def connect(self):
+    async def disconnect(self, close_code):
+        try:
+            registered_users.remove(self.scope['user'])
+        except ValueError:
+            pass
+        await self.channel_layer.group_discard(
+            self.room_group_name, self.channel_name
+        )
+
+
+class InGame(AsyncWebsocketConsumer):
+    async def connect(self):
         self.user = self.scope['user']
         if not self.user:
             self.close()
         room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"game_{room_name}"
-        async_to_sync(self.channel_layer.group_add)(
+        await self.channel_layer.group_add(
             self.room_group_name, self.channel_name
         )
-        self.accept()
+        await self.accept()
 
-    def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
 
-    def receive(self, text_data=None, bytes_data=None):
-        # text_data_json = json.loads(text_data)
-        # message = text_data_json['message']
-        async_to_sync(self.channel_layer.group_send)(
+    async def receive(self, text_data=None, bytes_data=None):
+        await self.channel_layer.group_send(
             self.room_group_name, {
                 "type": 'broadcast',
                 'message': text_data
             }
         )
 
-    def broadcast(self, event):
+    async def broadcast(self, event):
         message = event['message']
-        self.send(text_data=json.dumps({
+        await self.send(text_data=json.dumps({
             'message': message
         }))
+
 
 def classification_by_players_xp(xp):
     if xp < 1000:

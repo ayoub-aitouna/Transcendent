@@ -9,7 +9,8 @@ class NotificationSerializer(serializers.ModelSerializer):
     sender = UserSerializer(many=False, read_only=True)
     action = serializers.SerializerMethodField()
     icon = serializers.CharField(read_only=True, source='sender.image_url')
-
+    seen = serializers.BooleanField(read_only=True)
+    
     class Meta:
         model = Notification
         fields = ['recipient', 'sender', 'title', 'description', 'icon',

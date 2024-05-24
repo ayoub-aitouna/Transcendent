@@ -55,10 +55,12 @@ apiMock.interceptors.response.use(
         const originalRequest = error.config;
         const { refresh } = await getAccessTokens()
         if (error.response.status === 403 && !originalRequest._retry) {
+            console.log('error.response.status === 403 && !originalRequest._retry')
             originalRequest._retry = true;
             return axios.post(BACKEND_API_URL + '/auth/token/refresh/', {
                 refresh: refresh
             }).then(res => {
+                console.log('res ', res)
                 if (res.status === 200) {
                     originalRequest.headers['Authorization'] = `Bearer ${res.data.access}`;
                     setAccessTokens(res.data.access)
