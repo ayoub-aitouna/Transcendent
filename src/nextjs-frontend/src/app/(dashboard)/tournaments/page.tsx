@@ -27,10 +27,10 @@ const page = async () => {
 							<Link href={`/tournaments/${item.id}`}>
 								<TournamentsContainer
 									key={index}
-									href={item.icon || "https://placehold.co/400x400.png"}
-									name={item.name}
-									followers={item.max_players || 0}
-									SecName={item.description}
+									Tournaments={{
+										...item,
+										icon: item.icon || "" 
+									}}
 								/>
 							</Link>
 						</li>
