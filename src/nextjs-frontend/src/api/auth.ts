@@ -48,8 +48,8 @@ export const HandleSocialAuth = async ({ provider, params }: { provider: string,
 }
 
 const setCookies = (data: Partial<AuthApiResponse>) => {
-    setCookie(null, 'access', data.access_token as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
-    setCookie(null, 'refresh', data.refresh_token as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
+    setCookie(null, 'access', data.access as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
+    setCookie(null, 'refresh', data.refresh as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
 }
 
 export const clearCookies = () => {
