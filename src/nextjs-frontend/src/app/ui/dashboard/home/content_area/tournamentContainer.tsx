@@ -8,15 +8,16 @@ import { Tournament } from "@/type/dashboard/tournament";
 export function TournamentsContainer(Tournaments: Partial<Tournament>) {
 	return (
 		<div
-			className={` w-full bg-[#373737] h-[97px] flex items-center justify-between rounded-lg overflow-hidden  p-2 cursor-pointer`}
-			aria-label='Navigate to game'>
-			<div className='flex items-center justify-between w-full '>
+			className={` w-full bg-[#373737] h-[97px] flex items-center justify-between rounded-lg overflow-hidden  p-2 cursor-pointer`}>
+			<div className='flex items-center justify-between '>
 				<Image
-					className=''
+					className='w-[73px] h-[73px]'
 					src={Tournaments.icon || "https://placehold.co/400x400.png"}
 					alt='Profile Image'
 					width={73}
 					height={73}
+					objectFit="cover"
+					quality={100}
 				/>
 				<div />
 				<div className='w-full flex items-start flex-col'>

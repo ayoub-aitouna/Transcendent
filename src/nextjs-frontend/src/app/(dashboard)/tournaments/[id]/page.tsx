@@ -11,7 +11,7 @@ import { GetTournamentDetails } from "@/api/Tournament";
 import { CountDownTimerButton } from "@/app/ui/dashboard/tournament/count-down-btn";
 import { Bracket } from "@/app/ui/dashboard/tournament/bracket-board";
 import { MatchUp, Tournament } from "@/type/dashboard/tournament";
-import Error from "@/app/ui/dashboard/Error";
+import Error from "@/app/ui/dashboard/component/Error";
 function StatusTable({ data }: { data: Array<MatchUp> }) {
 	return (
 		<div className='w-full overflow-x-scroll hide-scrollbar'>

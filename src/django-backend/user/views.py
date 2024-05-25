@@ -210,15 +210,31 @@ class DestroyFriendShip(generics.DestroyAPIView):
 
 
 class SearchUser(generics.ListAPIView):
+    class QuerySerializer(serializers.Serializer):
+        search_query = serializers.CharField(required=False)
+        none_friend_only = serializers.BooleanField(required=False)
+        
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
     def get_queryset(self):
-        query = self.request.query_params.get('query')
-        if query is None:
-            return User.objects.none()
-        return User.objects.filter(Q(username__icontains=query) | Q(email__icontains=query))
+        user = self.request.user
+        none_friend_only = False
+        search_query = ""
 
+        query_serializer = self.QuerySerializer(data=self.request.query_params)
+        if query_serializer.is_valid():
+            none_friend_only = query_serializer.validated_data.get('none_friend_only')
+            search_query = query_serializer.validated_data.get('search_query')
+        search_query  = search_query if search_query is not None else ""
+        base_query = User.objects.filter(Q(username__icontains=search_query) | Q(email__icontains=search_query))
+        if user.is_anonymous:
+            return base_query 
+        elif not none_friend_only:
+            return base_query.exclude(id=user.id)
+        else:
+            return base_query.exclude(id__in=user.friends.all()).exclude(id=user.id)
+		
 
 def send_notification(notification, type='notification', request=None):
     channel_layer = get_channel_layer()

@@ -39,7 +39,7 @@ function Tournaments() {
 					<Link href='/tournaments/create_tournament'>CREATE TOURNAMENTS</Link>
 				</button>
 			</div>
-			{!tournamentLinks.length ?
+			{!Tournament?.results.length ?
 				<div className="flex h-[320px] w-full justify-center items-center">
 					<Empty text="no tournaments are available right now" />
 				</div>
@@ -55,7 +55,7 @@ function Tournaments() {
 							</Link>
 						))}
 					</div>
-					{tournamentLinks.length > 3 && (
+					{Tournament?.results.length > 3 && (
 						<div className='w-full absolute bottom-0'>
 							<div className='w-full grid place-content-end'>
 								<div
