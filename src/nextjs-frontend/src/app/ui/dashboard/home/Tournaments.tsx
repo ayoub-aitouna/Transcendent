@@ -1,13 +1,36 @@
 'use client'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import { TournamentsContainer } from './content_area/tournamentContainer';
 import ViewAll from './content_area/viewAll';
 import { tournamentLinks } from '@/constant/dashboard';
 import Link from 'next/link';
 import Empty from '../Empty';
+import { PaginationApiResponse } from '@/type';
+import apiMock from '@/lib/axios-mock';
+import { Player, TournamentType } from '@/type/dashboard/players';
+
+Tournaments
 
 function Tournaments() {
+	const [Tournament, setTournament] = useState<PaginationApiResponse<Player>>();
+
+	useEffect(() => {
+        const fetchTournament = async () => {
+            try {
+                const response = await apiMock.get('/game/Tournament/');
+
+                if (response.status === 200) {
+                    setTournament(response.data);
+                } else {
+                    console.error('Failed to fetch Tournaments');
+                }
+            } catch (error) {
+                console.error('Error fetching Tournaments:', error);
+            }
+        };
+        fetchTournament();
+	}, []);
 	return (
 		<div className='relative h-full'>
 			<div className='pb-8 flex items-center justify-between'>
@@ -24,17 +47,13 @@ function Tournaments() {
 				<div>
 
 					<div className='flex flex-col gap-3'>
-						{tournamentLinks.map((item, index) => (
+						{Tournament?.results.map((item, index) => (
 							<Link href={`/tournaments/${index}`}>
 								<TournamentsContainer
 									key={index}
-									href={item.href}
-									name={item.name}
-									followers={item.followers}
-									SecName={item.secName}
+									Tournaments={item as unknown as TournamentType} // Change the type of the prop here
 								/>
 							</Link>
-
 						))}
 					</div>
 					<div className='w-full absolute bottom-0'>

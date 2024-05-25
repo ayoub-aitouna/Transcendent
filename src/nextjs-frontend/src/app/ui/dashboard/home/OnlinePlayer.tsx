@@ -1,37 +1,29 @@
 'use client'
-
 import React, { useState, useEffect } from "react";
+import { parseCookies } from 'nookies';
 import { FilterBtn } from './content_area/filterBtn';
 import Image from 'next/image';
-import styles from '@/app/ui/dashboard/nav/nav.module.css'
-import ViewAll from './content_area/viewAll';
-import { AllOnlinePlayers } from "@/constant/dashboard";
 import Empty from "../Empty";
 import InviteIcon from "../icons/invite";
 import Link from "next/link";
+import { PaginationApiResponse } from "@/type";
+import apiMock from "@/lib/axios-mock";
+import { Player} from "@/type/dashboard/players";
 
 
-
-export function PlayersContainer({ name, href, number }: {
-	name: string;
-	href: string;
-	number: Number;
-}) {
-
-
+export function PlayersContainer({ player }: {player: Player}) {
 	return (
-		<button
-			className={`mt-2 w-[341px] h-[69px] flex items-center justify-between rounded-lg bg-[#373737] overflow-hidden  p-2 mb-[10px]`}>
+		<button className={`mt-2 w-[341px] h-[69px] flex items-center justify-between rounded-lg bg-[#373737] overflow-hidden  p-2 mb-[10px]`}>
 			<div className='flex items-center justify-between '>
-				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={href} alt="Profile Image" width={53} height={53} />
+				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={player.image_url} alt="Profile Image" width={53} height={53} />
 				<div />
 				<div className="flex items-start flex-col max-w-[80px]">
-					<div className="ml-[10px]  text-white truncate text-[18px] font-bold">{name}</div>
-					<div className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>Level {String(number)}</div>
+					<div className="ml-[10px]  text-white truncate text-[18px] font-bold">{player.username}</div>
+					<div className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>Level {String(player.level)}</div>
 				</div>
 			</div>
 
-			<Link href={`/making-machine?player=${name}`}
+			<Link href={`/making-machine?player=${player.username}`}
 				className={`flex-row items-center rounded-[4px]  bg-[#FF3D00] w-[87px] h-[27px]`}>
 				<div className='flex items-center justify-between ml-2 mx-auto text-white text-[16px] font-medium"'> <InviteIcon /> <div />
 					<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> Invite </div>
@@ -41,15 +33,36 @@ export function PlayersContainer({ name, href, number }: {
 		</button>
 	);
 };
+
 function OnlinePlayers() {
+	const [onlinePlayers, setOnlinePlayers] = useState<PaginationApiResponse<Player>>();
 	const [ViewALlClicked, setViewALlClicked] = useState(false);
 	const handleViewAll = () => {
 		setViewALlClicked(!ViewALlClicked);
 	};
+
+	useEffect(() => {
+        const fetchOnlinePlayers = async () => {
+            try {
+                const response = await apiMock.get('/users/online-players');
+
+                if (response.status === 200) {
+                    setOnlinePlayers(response.data);
+                } else {
+                    console.error('Failed to fetch online players');
+                }
+            } catch (error) {
+                console.error('Error fetching online players:', error);
+            }
+        };
+        fetchOnlinePlayers();
+	}, []);
+
+
 	return (
 		<div className='relative h-full' >
 			<FilterBtn name='Online Players' />
-			{!AllOnlinePlayers.length ?
+			{onlinePlayers?.results.length === 0 ?
 				<div className="flex h-[320px] w-full justify-center items-center">
 					<Empty text="no Online Players are available right now" />
 				</div>
@@ -58,17 +71,14 @@ function OnlinePlayers() {
 					? "h-[308px] overflow-y-scroll hide-scrollbar"
 					: "h-[308px] "
 					}`}>
-					{AllOnlinePlayers.map((item, index) => (
-						<div>
+					{onlinePlayers?.results.map((item, index) => (
+						<div key={index}>
 							<PlayersContainer
-								key={index}
-								name={item.name}
-								href={item.href}
-								number={item.number}
+								player={item}
 							/>
 						</div>
-					)).slice(0, ViewALlClicked ? AllOnlinePlayers.length : 4)}
-					{AllOnlinePlayers.length > 4 && (
+					)).slice(0, (ViewALlClicked ? onlinePlayers?.results.length  : 4))}
+					{(onlinePlayers?.results.length ?? 0) > 4 && (
 						<div className="w-full absolute bottom-0" onClick={handleViewAll}>
 							<div className="w-full grid place-content-center">
 								<div className='flex flex-row items-center justify-center'>
