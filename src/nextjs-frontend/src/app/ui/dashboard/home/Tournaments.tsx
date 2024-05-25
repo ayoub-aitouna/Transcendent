@@ -5,7 +5,7 @@ import { TournamentsContainer } from './content_area/tournamentContainer';
 import ViewAll from './content_area/viewAll';
 import { tournamentLinks } from '@/constant/dashboard';
 import Link from 'next/link';
-import Empty from '../Empty';
+import Empty from '../component/Empty';
 import { PaginationApiResponse } from '@/type';
 import apiMock from '@/lib/axios-mock';
 import { Player, TournamentType } from '@/type/dashboard/players';

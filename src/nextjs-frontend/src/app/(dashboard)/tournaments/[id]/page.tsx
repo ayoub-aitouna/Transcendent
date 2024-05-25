@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Empty from "@/app/ui/dashboard/Empty";
+import Empty from "@/app/ui/dashboard/component/Empty";
 import {
 	ProfileImage,
 	UserDetails,
@@ -96,7 +96,6 @@ const page = async ({ params }: any) => {
 	try {
 		result = await GetTournamentDetails(id);
 	} catch (e) {
-		console.log(e);
 		return (
 			<Error
 				title='Tournament not found'

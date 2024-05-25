@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { parseCookies } from 'nookies';
 import { FilterBtn } from './content_area/filterBtn';
 import Image from 'next/image';
-import Empty from "../Empty";
+import Empty from "../component/Empty";
 import InviteIcon from "../icons/invite";
 import Link from "next/link";
 import { PaginationApiResponse } from "@/type";

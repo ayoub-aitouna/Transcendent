@@ -66,7 +66,6 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 			};
 			ws.current.onmessage = (event) => {
 				const data = JSON.parse(event.data);
-				console.log(data);
 				addToast({
 					id: data.id || 0,
 					title: data.title,

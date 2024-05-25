@@ -1,6 +1,6 @@
 import apiMock from "@/lib/axios-mock";
 import { PaginationApiResponse } from "@/type";
-import { uploadProfile, user } from "@/type/auth/user";
+import { ChangePasswordForm, uploadProfile, user } from "@/type/auth/user";
 import { MatchUp, RegisteredPlayer } from "@/type/dashboard/tournament";
 
 export async function getRanking(): Promise<PaginationApiResponse<user>> {
@@ -18,7 +18,6 @@ export const ProfileData = async (): Promise<user> => {
 export const UserDetail = async (id: number): Promise<user> => {
     const Response = await apiMock.get(`/users/${id}/`);
     const data: user = Response.data;
-    console.log(data);
     return data;
 }
 
@@ -44,7 +43,26 @@ export const TournamentHistory = async (id: number): Promise<PaginationApiRespon
 
 
 export const updateProfile = async (data: Partial<uploadProfile>): Promise<user> => {
-    const Response = await apiMock.put(`/users/me/`, data);
+    const formData = new FormData();
+    if (data.image_file) {
+        formData.append("image_file", data.image_file);
+    }
+
+    for (const key in data) {
+        const value = Object(data)[key];
+        if (value)
+            formData.append(key, value);
+
+    }
+    const Response = await apiMock.put(`/users/me/`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
     const res: user = Response.data;
     return res;
+}
+
+export const UpdatePassword = async (data: ChangePasswordForm): Promise<void> => {
+    await apiMock.put(`/users/change-password/`, data);
 }

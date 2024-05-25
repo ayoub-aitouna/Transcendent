@@ -20,10 +20,16 @@ export type user = {
     achievements: any[];
     ranking_logs: any[];
     send_request: string;
+    enabled_2fa: boolean;
 }
 
 export interface uploadProfile extends user {
     image_file: File;
+}
+
+export type ChangePasswordForm = {
+    old_password: string;
+    new_password: string;
 }
 
 export type FriendRequest = {

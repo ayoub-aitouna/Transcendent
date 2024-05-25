@@ -55,7 +55,7 @@ const page = () => {
 			);
 			router.replace("/");
 		} catch (error: any) {
-			console.log(error?.response?.data);
+			console.error(error?.response?.data);
 		}
 	};
 

@@ -5,13 +5,13 @@ urlpatterns = [
     path('', view=views.UsersList.as_view(), name='users'),
     path('me/', view=views.Profile.as_view(), name='my-profile'),
     path('<int:pk>/', view=views.UsersDetail.as_view(), name='user'),
+    path('change-password/', view=views.ChangePassword.as_view(),
+         name='change-password'),
     path('search-user/', view=views.SearchUser.as_view(), name='search-user'),
     path('ranking/', view=views.Ranking.as_view(), name='ranking'),
     path('top-players/', view=views.TopPlayers.as_view(), name='top-players'),
-
     path('send-friend-request/<int:pk>/',
          view=views.Send_friend_request.as_view(), name='send-friend-request'),
-
     path('accept-friend-request/<int:pk>/',
          view=views.Accept_friend_request.as_view(), name='accept-friend-request'),
 

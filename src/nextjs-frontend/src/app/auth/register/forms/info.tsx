@@ -54,7 +54,7 @@ const Info = () => {
 			const res: Partial<AuthApiResponse> = await RegisterUser({ ...user });
 			router.replace("/");
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 		}
 	};
 

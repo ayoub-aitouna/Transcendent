@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { UserContainer } from './content_area/userContainer';
-import Empty from '../Empty';
+import Empty from '../component/Empty';
 import { PaginationApiResponse } from '@/type';
 import apiMock from '@/lib/axios-mock';
 import { Player } from '@/type/dashboard/players';

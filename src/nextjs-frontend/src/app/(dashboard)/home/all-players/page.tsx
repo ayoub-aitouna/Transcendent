@@ -1,6 +1,6 @@
 'use client'
 
-import Empty from '@/app/ui/dashboard/Empty'
+import Empty from '@/app/ui/dashboard/component/Empty'
 import React, { useState } from 'react'
 import Image from 'next/image';
 import { AllOnlinePlayers } from '@/constant/dashboard';

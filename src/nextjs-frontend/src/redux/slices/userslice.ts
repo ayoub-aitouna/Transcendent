@@ -26,7 +26,11 @@ const initialState: userState = {
         friend_requests: [] as FriendRequest[],
         achievements: [] as any[],
         ranking_logs: [] as any[],
-        send_request: ''
+        send_request: '',
+        is_friend: false,
+        is_blocked: false,
+        enabled_2fa: false,
+        rankProgressPercentage: 0,
     },
     token: "",
     isAuth: false,
@@ -51,9 +55,9 @@ const userSlice = createSlice(
             },
             UpdateUser: (state, action) => {
                 return {
-                    ...userSlice,
+                    ...state,
                     user: {
-                        ...userSlice.user,
+                        ...state.user,
                         ...action.payload
                     }
                 }

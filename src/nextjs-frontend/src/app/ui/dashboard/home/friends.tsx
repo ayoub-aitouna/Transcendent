@@ -4,7 +4,7 @@ import { FilterBtn } from './content_area/filterBtn';
 import { UserContainer } from './content_area/userContainer';
 import ViewAll from './content_area/viewAll';
 import { AllOnlinePlayers } from '@/constant/dashboard';
-import Empty from '../Empty';
+import Empty from '../component/Empty';
 import Link from 'next/link';
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import { FriendContainer } from '@/app/(dashboard)/home/friends/page';

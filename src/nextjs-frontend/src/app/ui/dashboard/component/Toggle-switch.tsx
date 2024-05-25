@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ToggleSwitch({
 	onCheck,
 	checked = false,
 }: {
 	checked?: boolean;
-	onCheck?: () => void;
+	onCheck?: (value: boolean) => void;
 }) {
-	const [isChecked, setChecked] = useState<boolean>(checked);
+	const [isChecked, setChecked] = useState<boolean>(false);
+
+	useEffect(() => {
+		setChecked(checked);
+	}, [checked]);
+
 	return (
 		<label className='switch'>
 			<input
 				type='checkbox'
 				checked={isChecked}
-				onChange={(e) => {
+				onChange={() => {
+					onCheck && onCheck(!isChecked);
 					setChecked((prev) => !prev);
 				}}
-				onClick={() => onCheck && onCheck()}
 			/>
 			<span className='slider'></span>
 		</label>

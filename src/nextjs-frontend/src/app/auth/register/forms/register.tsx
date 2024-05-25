@@ -35,7 +35,7 @@ const Register = ({ NextStep }: { NextStep: () => void }) => {
 			setFormValues({ email: data.email });
 			NextStep();
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 		}
 	};
 

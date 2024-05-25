@@ -102,7 +102,6 @@ class UserSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
-    password = serializers.CharField(write_only=True)
     registration_method = serializers.CharField(read_only=True)
     send_request = serializers.HyperlinkedIdentityField(
         view_name='send-friend-request', lookup_field='pk')
@@ -119,9 +118,10 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     rankProgressPercentage = serializers.SerializerMethodField()
     is_friend = serializers.SerializerMethodField()
     is_blocked = serializers.SerializerMethodField()
-    password = serializers.CharField(write_only=True, required=False)
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(UserDetailSerializer, self).__init__(*args, **kwargs)
@@ -130,8 +130,8 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'is_friend', 'is_blocked',
-                  'email', 'password', 'image_url', 'registration_method', 'status', 'coins', 'rank',
+        fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'enabled_2fa', 'is_friend', 'is_blocked',
+                  'email', 'image_url', 'registration_method', 'status', 'coins', 'rank',
                   'current_xp', 'rankProgressPercentage', 'friends', 'friend_requests', 'achievements',
                   'ranking_logs', 'send_request']
 
@@ -176,14 +176,6 @@ class BlockListSerializer(serializers.ModelSerializer):
         model = BlockList
         fields = '__all__'
 
-
-class UserUpdateImageSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(write_only=True)
-    image_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ['image_url', 'image']
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):

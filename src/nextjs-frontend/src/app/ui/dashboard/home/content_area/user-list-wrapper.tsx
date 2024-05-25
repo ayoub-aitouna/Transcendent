@@ -1,6 +1,6 @@
 
 import { AllOnlinePlayers } from "@/constant/dashboard";
-import Empty from "../../Empty";
+import Empty from "../../component/Empty";
 import SearchIcon from "../../icons/messenger/search";
 
 export function UsersListWrapper({ children }: {

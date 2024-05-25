@@ -1,13 +1,12 @@
 import uuid
 from user.models import User, Friends_Request, BlockList
-from rest_framework import generics
+from rest_framework import generics, serializers
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from api.models import Notification
 from user.serializers import (
     UserSerializer,
     UserDetailSerializer,
-    UserUpdateImageSerializer,
     FriendsSerializer,
     OnlineUserSerializer,
     BlockListSerializer
@@ -48,7 +47,14 @@ class UsersList(generics.ListAPIView):
     queryset = User.objects.all()
 
     def get_queryset(self):
-        return User.objects.exclude(id=self.request.user.id)
+        user = self.request.user
+        if user.is_anonymous:
+            return User.objects.all()
+
+        none_fiends = self.request.query_params.get('none_fiends')
+        if none_fiends is not None:
+            return User.objects.exclude(id__in=user.friends.all()).exclude(id=user.id)
+        return User.objects.exclude(id=user.id)
 
 
 class UsersDetail(generics.RetrieveAPIView):
@@ -68,9 +74,23 @@ class Profile(generics.RetrieveUpdateDestroyAPIView):
         return self.request.user
 
 
-class UpdateImageApi(generics.UpdateAPIView):
-    serializer_class = UserUpdateImageSerializer
-    queryset = User.objects.all()
+class ChangePassword(APIView):
+    class ChangePasswordSerializer(serializers.Serializer):
+        old_password = serializers.CharField()
+        new_password = serializers.CharField()
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        serializer = self.ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if not user.check_password(serializer.data.get('old_password')):
+                return Response({'message': 'password is incorrect'}, status=400)
+            user.set_password(serializer.data.get('new_password'))
+            user.save()
+            return Response({'message': 'Password changed successfully'})
+        return Response(serializer.errors, status=400)
 
 
 class Send_friend_request(generics.CreateAPIView):

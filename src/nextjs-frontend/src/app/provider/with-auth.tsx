@@ -32,7 +32,7 @@ export default function WithAuth({
 				})
 			);
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		}
 	};
 

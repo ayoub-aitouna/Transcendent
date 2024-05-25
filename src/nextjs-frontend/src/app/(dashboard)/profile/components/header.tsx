@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import clsx from "clsx";
-import Empty from "@/app/ui/dashboard/Empty";
+import Empty from "@/app/ui/dashboard/component/Empty";
 import Link from "next/link";
 import { Achievement } from "@/type/dashboard";
 import { useToast } from "@/app/provider/ToastProvider";

@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Image from "next/image";
 type inputProps = {
 	error?: boolean;
 	helperText?: string;
-	onChange?: (e: any) => void;
 	setValue?: any;
 	props?: any;
+	clear?: boolean;
 };
 const UploadButton = React.forwardRef<HTMLInputElement | null, inputProps>(
-	({ error = false, helperText, onChange, setValue, props }) => {
+	({ error = false, helperText, setValue, clear }) => {
 		const [src, setSrc] = useState<string>("");
 
 		const GetUrl = (e: any) => {
@@ -23,6 +23,9 @@ const UploadButton = React.forwardRef<HTMLInputElement | null, inputProps>(
 			reader.readAsDataURL(e.target.files[0]);
 			setValue("image_file", e.target.files[0]);
 		};
+		useEffect(() => {
+			setSrc("");
+		}, [clear]);
 
 		return (
 			<div className='flex flex-col'>

@@ -12,9 +12,9 @@ import {
 } from "@/api/user";
 import { user } from "@/type/auth/user";
 import Header from "../components/header";
-import Empty from "@/app/ui/dashboard/Empty";
+import Empty from "@/app/ui/dashboard/component/Empty";
 import { redirect } from "next/navigation";
-import Error from "@/app/ui/dashboard/Error";
+import Error from "@/app/ui/dashboard/component/Error";
 import { MatchUp, RegisteredPlayer } from "@/type/dashboard/tournament";
 import { PaginationApiResponse } from "@/type";
 const HistoryWrapper = ({
@@ -83,12 +83,10 @@ const page = async ({ params }: any) => {
 								<li key={index} className='w-full '>
 									<TournamentsContainer
 										key={index}
-										href={
-											item.tournament.icon || "https://placehold.co/400x400.png"
-										}
-										name={item.tournament.name}
-										followers={item.tournament.max_players}
-										SecName={item.tournament.description}
+										Tournaments={{
+											...item.tournament,
+											icon: item.tournament.icon || "",
+										}}
 									/>
 								</li>
 							))}

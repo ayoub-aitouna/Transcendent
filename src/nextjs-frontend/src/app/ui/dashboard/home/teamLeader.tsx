@@ -7,7 +7,7 @@ import Messages from '../icons/content_area/messages';
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import Link from 'next/link';
-import Empty from '../Empty';
+import Empty from '../component/Empty';
 import ChartComponent from './content_area/chartComponent';
 
 
