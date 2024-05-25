@@ -20,6 +20,7 @@ export type user = {
     achievements: any[];
     ranking_logs: any[];
     send_request: string;
+	level: number;
 }
 
 export interface uploadProfile extends user {
@@ -43,6 +44,8 @@ export type Friend = {
     unfriend: string;
     block: string;
     message: string;
+	level: number;
+	id: number;
 }
 
 export type Rank = {

@@ -56,7 +56,8 @@ function Tournaments() {
 							</Link>
 						))}
 					</div>
-					<div className='w-full absolute bottom-0'>
+					{tournamentLinks.length > 3 && (					
+						<div className='w-full absolute bottom-0'>
 						<div className='w-full grid place-content-end'>
 							<div
 								className='flex flex-row items-end justify-end'>
@@ -64,6 +65,7 @@ function Tournaments() {
 							</div>
 						</div>
 					</div>
+				)}
 				</div>
 			}
 		</div>

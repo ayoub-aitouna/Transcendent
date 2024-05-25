@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Clock from '@/app/ui/dashboard/icons/content_area/clock';
 import Add from '@/app/ui/dashboard/icons/content_area/add';
 import { UsersListWrapper } from '@/app/ui/dashboard/home/content_area/user-list-wrapper';
+import { useAppSelector } from '@/redux/store';
 
 
 
@@ -59,7 +60,7 @@ export function FriendContainer({ name, href, number }: {
 
 
 const page = () => {
-
+	// const { USER } = useAppSelector((state) => state.user.user);
 	return (
 		<div>
 			<UsersListWrapper >

@@ -14,14 +14,14 @@ import { Player} from "@/type/dashboard/players";
 export function PlayersContainer({ player }: {player: Player}) {
 	return (
 		<button className={`mt-2 w-[341px] h-[69px] flex items-center justify-between rounded-lg bg-[#373737] overflow-hidden  p-2 mb-[10px]`}>
-			<div className='flex items-center justify-between '>
+			<Link href={`/profile/${player.id}`} className='flex items-center justify-between '>
 				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={player.image_url} alt="Profile Image" width={53} height={53} />
 				<div />
 				<div className="flex items-start flex-col max-w-[80px]">
 					<div className="ml-[10px]  text-white truncate text-[18px] font-bold">{player.username}</div>
 					<div className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>Level {String(player.level)}</div>
 				</div>
-			</div>
+			</Link>
 
 			<Link href={`/making-machine?player=${player.username}`}
 				className={`flex-row items-center rounded-[4px]  bg-[#FF3D00] w-[87px] h-[27px]`}>

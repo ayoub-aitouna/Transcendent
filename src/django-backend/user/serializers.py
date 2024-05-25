@@ -81,7 +81,7 @@ class UserFriendsSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['image_url', 'fullname', 'username',
+        fields = ['id', 'image_url', 'fullname', 'username',
                   'url', 'unfriend', 'block', 'message']
 
 
@@ -167,7 +167,7 @@ class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['image_url', 'fullname',
+        fields = ['id','image_url', 'fullname',
                   'username', 'url', 'send_invitation']
 
 

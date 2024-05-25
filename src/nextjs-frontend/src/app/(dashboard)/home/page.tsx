@@ -5,6 +5,7 @@ import TopPlayers from '@/app/ui/dashboard/home/topPlayers';
 import Tournaments from '@/app/ui/dashboard/home/Tournaments';
 import TeamRanking from '@/app/ui/dashboard/home/friends';
 import NewTournaments from '@/app/ui/dashboard/home/newTournament';
+import Friends from "@/app/ui/dashboard/home/friends";
 
 
 
@@ -21,7 +22,7 @@ const page = () => {
 				<div className="flex flex-row flex-wrap  gap-5">
 					<div className="h-[456px] lg:w-[381px] bg-secondary-400 rounded-xl p-4"><OnlinePlayers /></div>
 					<div className="h-[456px] flex-1 bg-secondary-400  min-w-[400px] rounded-xl p-4"><Tournaments /></div>
-					<div className="h-[456px] lg:w-[381px] bg-secondary-400 rounded-xl p-4"><TeamRanking /></div>
+					<div className="h-[456px] lg:w-[381px] bg-secondary-400 rounded-xl p-4">< Friends /></div>
 				</div>
 
 			</div>
