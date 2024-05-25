@@ -15,7 +15,7 @@ const SvgComponent = () => (
     xmlns="http://www.w3.org/2000/svg"
     className="svg-icon"
     style={{
-      width: "1.001953125em",
+      width: "1em",
       height: "1em",
       verticalAlign: "middle",
       fill: "currentColor",
