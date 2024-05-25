@@ -16,7 +16,6 @@ export function FilterBtn({ name }: {
 		setIsClicked(!isClicked);
 	};
 
-	// State to track the current sorting option
 	const [sortBy, setSortBy] = useState('');
 
 	// Function to handle sorting by order
