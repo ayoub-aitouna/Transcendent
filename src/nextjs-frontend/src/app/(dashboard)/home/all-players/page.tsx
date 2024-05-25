@@ -14,6 +14,7 @@ import apiMock from '@/lib/axios-mock';
 import { PaginationApiResponse } from '@/type';
 import { Player } from '@/type/dashboard/players';
 import { Friend } from '@/type/auth/user';
+import axios from 'axios';
 
 
 
@@ -24,12 +25,27 @@ export function FriendContainer({ name, href, number, id }: {
 	number: number;
 	id: number;
 }) {
-	const [clicked, setClicked] = useState(false);
-
-	const handleClicked = () => {
-		setClicked(!clicked);
-		<Link href='/home'></Link>
-	};
+	const { friend_requests } = useAppSelector((state) => state.user.user);
+    const [clicked, setClicked] = useState(false);
+	const requestUrl = "http://localhost:8000/api/v1/users/send-friend-request/${id}/";
+	const isFriendRequestSent = friend_requests.some(request => requestUrl  === friend_requests[id].url);
+    const handleClicked = async () => {
+		console.log("request is sended : " , isFriendRequestSent, "and is :", friend_requests[id]?.url);
+		if (isFriendRequestSent) {
+			try {
+				const response = await apiMock.post(``);
+				if (response.status === 201) {
+					setClicked(true);
+				} else {
+					console.error('Failed to send friend request');
+				}
+			} catch (error) {
+				console.error('Error sending friend request:', error);
+			}
+		}
+		else
+			setClicked(true);
+    };
 	return (
 		<button
 			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3`}
