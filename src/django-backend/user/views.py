@@ -159,8 +159,8 @@ class OnlineFriendsList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # friends = self.request.user.friends.all()
-        return User.objects.filter(status='online')
+        friends = self.request.user.friends.all()
+        return friends.filter(status='online')
 
 
 class TopPlayers(generics.ListAPIView):

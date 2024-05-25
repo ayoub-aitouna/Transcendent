@@ -13,6 +13,7 @@ import SearchIcon from '@/app/ui/dashboard/icons/messenger/search';
 import apiMock from '@/lib/axios-mock';
 import { PaginationApiResponse } from '@/type';
 import { Player } from '@/type/dashboard/players';
+import { Friend } from '@/type/auth/user';
 
 
 
@@ -62,111 +63,84 @@ export function FriendContainer({ name, href, number, id }: {
 }
 
 
-interface User {
-	username: string;
-	email: string;
-}
-
 const page = () => {
-	const { friends } = useAppSelector((state) => state.user.user);
-	const [query, setQuery] = useState<string>('');
-	const [results, setResults] = useState<User[]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
-	const [NonFriends, setNonFriends] = useState<PaginationApiResponse<Player>>();
-	const [ViewALlClicked, setViewALlClicked] = useState(false);
-	const handleViewAll = () => {
-		setViewALlClicked(!ViewALlClicked);
-	};
+    const [query, setQuery] = useState<string>('');
+    const [results, setResults] = useState<Friend[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-        const fetchNonFriends = async () => {
-            try {
-                const response = await apiMock.get('/users/search-user/?none_friend_only=true');
-
-                if (response.status === 200) {
-                    setNonFriends(response.data);
-                } else {
-                    console.error('Failed to fetch ');
-                }
-            } catch (error) {
-                console.error('Error fetching :', error);
+    const fetchData = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await apiMock.get("/users/search-user/?none_friend_only=true");
+            if (response.status === 200) {
+                setResults(response.data.results);
+            } else {
+                throw new Error("Failed to fetch data");
             }
-        };
-        fetchNonFriends();
-	}, []);
+        } catch (err) {
+            setError("Failed to fetch data");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-	const fetchData = async () => {
-		setIsLoading(true);
-		setError(null);
-		try {
-			let url = "/users/search-user/?none_friend_only=true";
-			const response = await apiMock.get(url);
-			setResults(response.data);
-		} catch (err) {
-			setError("Failed to fetch data");
-		} finally {
-			setIsLoading(false);
-		}
-	};
+    useEffect(() => {
+        fetchData();
+    }, []);
 
-	useEffect(() => {
-		fetchData();
-	}, [query]);
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setQuery(e.target.value);
+    };
 
-	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setQuery(e.target.value);
-	};
+    const filteredFriends = query
+        ? results.filter((friend) =>
+            friend.username.toLowerCase().includes(query.toLowerCase())
+        )
+        : results;
 
-	const filteredFriends = query
-		? friends.filter((friend) =>
-			friend.username.toLowerCase().includes(query.toLowerCase())
-		)
-		: friends;
-
-
-	return (
-		<div className='flex items-center justify-center w-full'>
-			<div className='p-10 bg-[#292929] w-[894px] h-[890px]'>
-				<div className='pb-6'>
-					<div className="flex flex-row items-center justify-between  relative">
-						<textarea
-							className="flex-row items-center justify-between rounded-lg overflow-hidden p-3 bg-[#474747] pl-10 h-[50px] w-full resize-none outline-none"
-							placeholder="Type Name of User"
-							value={query}
-							onChange={handleChange}
-						></textarea>
-						<div className="absolute pl-3 top-1/2 transform -translate-y-1/2">
-							<SearchIcon />
-						</div>
-					</div>
-				</div>
-				{isLoading ? (
-					<div className="flex h-[320px] w-full justify-center items-center">
-						<p>Loading...</p>
-					</div>
-				) : error ? (
-					<div className="flex h-[320px] w-full justify-center items-center">
-						<p>{error}</p>
-					</div>
-				) : (
-					<div className="h-[750px] overflow-y-scroll hide-scrollbar">
-						{filteredFriends.map((NonFriends, index) => (
-							<div key={index}>
-								<FriendContainer
-									name={NonFriends.username}
-									href={NonFriends.image_url}
-									number={NonFriends.level}
-									id={NonFriends.id}
-								/>
-							</div>
-						))}
-					</div>
-				)}
-			</div>
-		</div>
-	);
+    return (
+        <div className='flex items-center justify-center w-full'>
+            <div className='p-10 bg-[#292929] w-[894px] h-[890px]'>
+                <div className='pb-6'>
+                    <div className="flex flex-row items-center justify-between  relative">
+                        <textarea
+                            className="flex-row items-center justify-between rounded-lg overflow-hidden p-3 bg-[#474747] pl-10 h-[50px] w-full resize-none outline-none"
+                            placeholder="Type Name of User"
+                            value={query}
+                            onChange={handleChange}
+                        ></textarea>
+                        <div className="absolute pl-3 top-1/2 transform -translate-y-1/2">
+                            <SearchIcon />
+                        </div>
+                    </div>
+                </div>
+                {isLoading ? (
+                    <div className="flex h-[320px] w-full justify-center items-center">
+                        <p>Loading...</p>
+                    </div>
+                ) : error ? (
+                    <div className="flex h-[320px] w-full justify-center items-center">
+                        <p>{error}</p>
+                    </div>
+                ) : (
+                    <div className="h-[750px] overflow-y-scroll hide-scrollbar">
+                        {filteredFriends.map((friend, index) => (
+                            <div key={index}>
+                                <FriendContainer
+                                    name={friend.username}
+                                    href={friend.image_url}
+                                    number={friend.level}
+                                    id={friend.id}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 };
 
-
-export default page
+export default page;
