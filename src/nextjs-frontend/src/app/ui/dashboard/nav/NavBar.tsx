@@ -9,6 +9,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useAppSelector } from "@/redux/store";
 
 const PlayNowIcon = () => {
 	const pathname = usePathname();
@@ -142,7 +143,6 @@ const NavBar = () => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };
     }, []);
-
 	return (
 		<div className='w-full mt-[40px] mb-[40px] flex flex-row justify-between items-center mx-auto max-w-[100vw]'>
 			<div className='text-white font-semibold flex flex-row gap-16 items-center justify-center'>

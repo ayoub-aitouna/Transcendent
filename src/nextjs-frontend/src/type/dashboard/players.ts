@@ -1,5 +1,6 @@
 
 export interface Player {
+	id: number;
 	username: string;
 	image_url: string;
 	level: number;

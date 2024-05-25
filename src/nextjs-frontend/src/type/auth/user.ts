@@ -21,6 +21,8 @@ export type user = {
     ranking_logs: any[];
     send_request: string;
     enabled_2fa: boolean;
+    level: number;
+
 }
 
 export interface uploadProfile extends user {
@@ -49,6 +51,8 @@ export type Friend = {
     unfriend: string;
     block: string;
     message: string;
+	level: number;
+	id: number;
 }
 
 export type Rank = {

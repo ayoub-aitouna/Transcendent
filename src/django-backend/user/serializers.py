@@ -10,7 +10,7 @@ from django.core.files.storage import default_storage
 class BaseUserSerializer():
     def get_image_url(self, obj):
         request = self.context.get("request")
-        if obj.image_url is None:
+        if obj.image_url is None or request is None:
             return None
         if not obj.image_url.startswith('/media'):
             return obj.image_url
@@ -61,7 +61,10 @@ class RankSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_icon(self, obj):
-        host = self.context.get('request').get_host()
+        request = self.context.get("request")
+        if request is None:
+            return None
+        host = request.get_host()
         protocol = 'https' if self.context.get(
             'request').is_secure() else 'http'
         return f'{protocol}://{host}/{obj.icon}'
@@ -81,7 +84,7 @@ class UserFriendsSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['image_url', 'fullname', 'username',
+        fields = ['id', 'image_url', 'fullname', 'username',
                   'url', 'unfriend', 'block', 'message']
 
 
@@ -167,8 +170,8 @@ class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['image_url', 'fullname',
-                  'username', 'url', 'send_invitation']
+        fields = ['id','image_url', 'fullname',
+                'username', 'url', 'send_invitation']
 
 
 class BlockListSerializer(serializers.ModelSerializer):

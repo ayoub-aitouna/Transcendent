@@ -29,7 +29,7 @@ const setAccessTokens = async (access: string) => {
 
 export const apiMock = axios.create({
     baseURL: BACKEND_API_URL,
-    headers: {
+    headers: {	
         'Content-Type': 'application/json',
     },
     withCredentials: false,

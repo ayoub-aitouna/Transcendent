@@ -16,20 +16,20 @@ function Tournaments() {
 	const [Tournament, setTournament] = useState<PaginationApiResponse<Player>>();
 
 	useEffect(() => {
-        const fetchTournament = async () => {
-            try {
-                const response = await apiMock.get('/game/Tournament/');
+		const fetchTournament = async () => {
+			try {
+				const response = await apiMock.get('/game/Tournament/');
 
-                if (response.status === 200) {
-                    setTournament(response.data);
-                } else {
-                    console.error('Failed to fetch Tournaments');
-                }
-            } catch (error) {
-                console.error('Error fetching Tournaments:', error);
-            }
-        };
-        fetchTournament();
+				if (response.status === 200) {
+					setTournament(response.data);
+				} else {
+					console.error('Failed to fetch Tournaments');
+				}
+			} catch (error) {
+				console.error('Error fetching Tournaments:', error);
+			}
+		};
+		fetchTournament();
 	}, []);
 	return (
 		<div className='relative h-full'>
@@ -47,23 +47,24 @@ function Tournaments() {
 				<div>
 
 					<div className='flex flex-col gap-3'>
-						{Tournament?.results.map((item, index) => (
-							<Link href={`/tournaments/${index}`}>
+						{Tournament?.results.slice(0, 3).map((item, index) => (
+							<Link key={item.id} href={`/tournaments/${item.id	}`}>
 								<TournamentsContainer
-									key={index}
-									Tournaments={item as unknown as TournamentType} // Change the type of the prop here
+									{...item} // Change the type of the prop here
 								/>
 							</Link>
 						))}
 					</div>
-					<div className='w-full absolute bottom-0'>
-						<div className='w-full grid place-content-end'>
-							<div
-								className='flex flex-row items-end justify-end'>
-								<Link href={'/tournaments'}>  <ViewAll /> </Link>
+					{tournamentLinks.length > 3 && (
+						<div className='w-full absolute bottom-0'>
+							<div className='w-full grid place-content-end'>
+								<div
+									className='flex flex-row items-end justify-end'>
+									<Link href={'/tournaments'}>  <ViewAll /> </Link>
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
 				</div>
 			}
 		</div>

@@ -2,6 +2,7 @@ import { string } from "yup";
 import Image from 'next/image';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import { Player } from "@/type/dashboard/players";
+import Link from "next/link";
 
 
 export function UserContainer({ player, index }: {
@@ -13,6 +14,7 @@ export function UserContainer({ player, index }: {
 		return null; // or some fallback UI if player is not available
 	}
 	return (
+		<Link href={`/profile/${player.id}`}>
 		<button
 			className={`mt-2 w-[341px] h-[69px] flex items-center justify-between rounded-lg
 			${isMessage ? styles.highlight  : "bg-[#373737]"} overflow-hidden  p-2 h-[44px] mb-[10px]`}>
@@ -33,5 +35,6 @@ export function UserContainer({ player, index }: {
 			)}
 
 		</button>
+		</Link>
 	);
 };

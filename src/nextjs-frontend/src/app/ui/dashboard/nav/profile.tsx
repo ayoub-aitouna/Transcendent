@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import Settings from '../icons/content_area/settings';
 import LogOut from '../icons/content_area/logout';
+import { useAppSelector } from '@/redux/store';
 
 
 
@@ -12,7 +13,7 @@ export const ProfileIcon = () => {
 	const handleClick = () => {
 		setIsClicked(!isClicked);
 	};
-
+	const {fullname, username,image_url, level  } = useAppSelector((state) => state.user.user);
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
 			const target = event.target as HTMLElement;
@@ -43,13 +44,13 @@ export const ProfileIcon = () => {
 					<div className="rounded-ful flex items-start ">
 						<Image
 							className="bg-white  w-10 h-[38.9px] rounded-full"
-							src='/assets/images/profile.jpg'
+							src={image_url}
 							alt="Profile Image"
 							width={40} height={38.9} />
 					</div>
 					<div className="flex flex-col items-start max-w-[80px]">
-						<div className="ml-[5px] text-white truncate font-semibold text-[15px]"> aaitouna</div>
-						<div className="ml-[5px] items-start font-normal text-white text-[8px] truncate ">Level 55</div>
+						<div className="ml-[5px] text-white truncate w-[60px] font-semibold text-[15px]"> {username}</div>
+						<div className="ml-[5px] items-start font-normal text-white text-[8px] truncate ">Level {level}</div>
 					</div>
 				</div>
 				<div id='profile-icon' className="ml-2 bg-black rounded-full overflow-hidden w-7 h-7 flex items-center justify-center" onClick={handleClick}>
@@ -71,15 +72,15 @@ export const ProfileIcon = () => {
 							<div className="rounded-full flex items-start w-[30px] h-[30px]">
 								<Image
 									className="bg-white w-[30px] h-[30px] rounded-full"
-									src='/assets/images/profile.jpg'
+									src={image_url}
 									alt="Profile Image"
 									width={30} height={30}
 								/>
 							</div>
 						</div>
 						<div className="flex flex-col items-start ml-[5px]">
-							<div className="truncate text-white font-bold text-[14px]">Ayoub Aitouna</div>
-							<div className="truncate text-[#A2A2A2] text-[8px]">@aaitouna</div>
+							<div className="truncate text-white font-bold text-[14px]">{fullname}</div>
+							<div className="truncate text-[#A2A2A2] text-[8px]">@{username}</div>
 							<Link href="/profile" className="mt-1 truncate text-[#FD4106] text-[8px]" onClick={() => setIsClicked(false)}>View Your Profile</Link>
 						</div>
 					</div>

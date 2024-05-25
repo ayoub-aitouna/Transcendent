@@ -23,15 +23,9 @@ const page = async () => {
 				</div>
 				<ul className='flex flex-col items-center justify-start gap-3 w-full overflow-y-scroll hide-scrollbar'>
 					{list.results?.map((item, index) => (
-						<li key={item.name} className='w-full'>
+						<li key={item.id} className='w-full'>
 							<Link href={`/tournaments/${item.id}`}>
-								<TournamentsContainer
-									key={index}
-									Tournaments={{
-										...item,
-										icon: item.icon || "" 
-									}}
-								/>
+								<TournamentsContainer  {...item} />
 							</Link>
 						</li>
 					))}
