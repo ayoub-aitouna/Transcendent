@@ -1,12 +1,9 @@
 'use client'
 import React from 'react';
 import ViewAll from './content_area/viewAll';
-<<<<<<< HEAD
+
 import { AllOnlinePlayers } from '@/constant/dashboard';
 import Empty from '../component/Empty';
-=======
-import Empty from '../Empty';
->>>>>>> b7b97233f1e39b91b51e1d771e7e01824d0e52a7
 import Link from 'next/link';
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import { FriendContainer } from '@/app/(dashboard)/home/friends/page';

@@ -43,16 +43,20 @@ class BaseNotification():
 
 
 class UsersList(generics.ListAPIView):
+    class QuerySerializer(serializers.Serializer):
+        is_none_friend = serializers.BooleanField(required=False)
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
     def get_queryset(self):
         user = self.request.user
+        is_none_friend = False
         if user.is_anonymous:
             return User.objects.all()
-
-        none_fiends = self.request.query_params.get('none_fiends')
-        if none_fiends is not None:
+        query_serializer = self.QuerySerializer(data=self.request.query_params)
+        if query_serializer.is_valid():
+            is_none_friend = query_serializer.validated_data.get('is_none_friend', False)
+        if is_none_friend:
             return User.objects.exclude(id__in=user.friends.all()).exclude(id=user.id)
         return User.objects.exclude(id=user.id)
 

@@ -3,7 +3,7 @@
 import React, { ChangeEvent, useState } from "react";
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import Image from "next/image";
-import ToggleSwitch from "@/app/ui/dashboard/Toggle-switch";
+import ToggleSwitch from "@/app/ui/dashboard/component/Toggle-switch";
 
 export const UploadIcon = () => (
 	<svg xmlns='http://www.w3.org/2000/svg' width={25} height={24} fill='none'>
