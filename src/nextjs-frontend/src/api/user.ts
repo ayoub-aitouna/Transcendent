@@ -1,6 +1,6 @@
 import apiMock from "@/lib/axios-mock";
 import { PaginationApiResponse } from "@/type";
-import { user } from "@/type/auth/user";
+import { uploadProfile, user } from "@/type/auth/user";
 import { MatchUp, RegisteredPlayer } from "@/type/dashboard/tournament";
 
 export async function getRanking(): Promise<PaginationApiResponse<user>> {
@@ -40,4 +40,11 @@ export const TournamentHistory = async (id: number): Promise<PaginationApiRespon
     } catch (error) {
         return {} as PaginationApiResponse<RegisteredPlayer>
     }
+}
+
+
+export const updateProfile = async (data: Partial<uploadProfile>): Promise<user> => {
+    const Response = await apiMock.put(`/users/me/`, data);
+    const res: user = Response.data;
+    return res;
 }

@@ -48,10 +48,19 @@ const userSlice = createSlice(
                     isLoading: false,
                     error: "",
                 };
+            },
+            UpdateUser: (state, action) => {
+                return {
+                    ...userSlice,
+                    user: {
+                        ...userSlice.user,
+                        ...action.payload
+                    }
+                }
             }
         }
     }
 )
 
-export const { Logout, Login } = userSlice.actions;
+export const { Logout, Login, UpdateUser } = userSlice.actions;
 export default userSlice.reducer;

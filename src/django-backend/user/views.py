@@ -51,7 +51,7 @@ class UsersList(generics.ListAPIView):
         return User.objects.exclude(id=self.request.user.id)
 
 
-class UsersDetail(generics.RetrieveUpdateDestroyAPIView):
+class UsersDetail(generics.RetrieveAPIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
 
@@ -59,7 +59,7 @@ class UsersDetail(generics.RetrieveUpdateDestroyAPIView):
         return super().perform_update(serializer)
 
 
-class Profile(generics.RetrieveAPIView):
+class Profile(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()

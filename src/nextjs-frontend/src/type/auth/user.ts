@@ -22,6 +22,10 @@ export type user = {
     send_request: string;
 }
 
+export interface uploadProfile extends user {
+    image_file: File;
+}
+
 export type FriendRequest = {
     username: string;
     fullname: string;

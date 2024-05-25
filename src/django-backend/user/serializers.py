@@ -17,6 +17,9 @@ class BaseUserSerializer():
         return request.build_absolute_uri(obj.image_url)
 
     def create_avatar(self, validated_data):
+        print(f'validated_data {validated_data}')
+        if 'image_file' not in validated_data:
+            return validated_data
         avatar = validated_data['image_file']
         save_path = os.path.join(settings.MEDIA_ROOT,
                                  'public/profile-images', avatar.name)
@@ -117,6 +120,8 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     is_friend = serializers.SerializerMethodField()
     is_blocked = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
+    email = serializers.EmailField(required=False)
+    username = serializers.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(UserDetailSerializer, self).__init__(*args, **kwargs)
