@@ -9,6 +9,7 @@ export type user = {
     image_url: string;
     is_friend: boolean;
     is_blocked: boolean;
+    is_pending_friend_request: boolean;
     registration_method: string;
     coins: number;
     status: string;
@@ -51,8 +52,8 @@ export type Friend = {
     unfriend: string;
     block: string;
     message: string;
-	level: number;
-	id: number;
+    level: number;
+    id: number;
 }
 
 export type Rank = {
@@ -63,4 +64,15 @@ export type Rank = {
     xp_required: number;
     created_at: Date;
     updated_at: Date;
+}
+
+export type InviteMessage = {
+    game_room_id: string;
+    message: string
+}
+
+export enum useManageFRAction {
+    Remove,
+    Add,
+    Accept,
 }

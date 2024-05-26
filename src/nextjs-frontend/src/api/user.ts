@@ -1,6 +1,6 @@
 import apiMock from "@/lib/axios-mock";
 import { PaginationApiResponse } from "@/type";
-import { ChangePasswordForm, uploadProfile, user } from "@/type/auth/user";
+import { ChangePasswordForm, uploadProfile, user, InviteMessage } from "@/type/auth/user";
 import { MatchUp, RegisteredPlayer } from "@/type/dashboard/tournament";
 
 export async function getRanking(): Promise<PaginationApiResponse<user>> {
@@ -65,4 +65,23 @@ export const updateProfile = async (data: Partial<uploadProfile>): Promise<user>
 
 export const UpdatePassword = async (data: ChangePasswordForm): Promise<void> => {
     await apiMock.put(`/users/change-password/`, data);
+}
+
+
+export const InvitePlayer = async (id: number): Promise<InviteMessage> => {
+    const res = await apiMock.get(`/users/invite-player/${id}`)
+    const data: InviteMessage = res.data
+    return data;
+}
+
+export const SendFriendRequest = async (id: number): Promise<void> => {
+    await apiMock.post(`/users/send-friend-request/${id}/`)
+}
+
+export const RemoveFriendRequest = async (id: number): Promise<void> => {
+    await apiMock.delete(`/users/remove-friend-request/${id}/`)
+}
+
+export const DeclineFriendRequest = async (id: number): Promise<void> => {
+    await apiMock.delete(`/users/decline-friend-request/${id}/`)
 }

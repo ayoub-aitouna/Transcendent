@@ -14,7 +14,8 @@ urlpatterns = [
          view=views.Send_friend_request.as_view(), name='send-friend-request'),
     path('accept-friend-request/<int:pk>/',
          view=views.Accept_friend_request.as_view(), name='accept-friend-request'),
-
+    path('remove-friend-request/<int:pk>/',
+         view=views.RemoveFriendRequest.as_view(), name='remove-friend-request'),
     path('decline-friend-request/<int:pk>/',
          view=views.Decline_friend_request.as_view(), name='decline-friend-request'),
 

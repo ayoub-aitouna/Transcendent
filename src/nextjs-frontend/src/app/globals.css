@@ -80,13 +80,17 @@ body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-	background: #000;
+	background: #474747;
 	border-radius: 4px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
 	background: #262626;
+}
+
+::-webkit-scrollbar-thumb:active {
+	background: #FF3D00;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

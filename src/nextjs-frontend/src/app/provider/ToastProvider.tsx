@@ -15,6 +15,7 @@ type ToastContextType = {
 	toasts: Toast[];
 	addToast: (toast: Toast) => void;
 	removeToast: (id: number) => void;
+	useEmitMessage: (message: any) => void;
 };
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -78,8 +79,20 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	}, []);
 
+	const useEmitMessage = useCallback(
+		(message: any) => {
+			if (ws.current && ws.current.readyState === 1) {
+				ws.current.send(JSON.stringify(message));
+			} else {
+				console.log("ws not connected");
+			}
+		},
+		[ws]
+	);
+
 	return (
-		<ToastContext.Provider value={{ toasts, addToast, removeToast }}>
+		<ToastContext.Provider
+			value={{ toasts, addToast, removeToast, useEmitMessage }}>
 			<ToastContainer />
 			{children}
 		</ToastContext.Provider>

@@ -46,6 +46,12 @@ class BaseUserSerializer():
         blocked_query = BlockList.objects.filter(user=obj, blocked_user=user)
         return blocked_me_query.exists() or blocked_query.exists()
 
+    def get_is_pending_friend_request(self, obj):
+        user = self.context.get('request').user
+        if user is None:
+            return False
+        return Friends_Request.objects.filter(requester=user, addressee=obj).exists()
+
 
 class AchievementsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -120,6 +126,7 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     image_url = serializers.SerializerMethodField()
     rankProgressPercentage = serializers.SerializerMethodField()
     is_friend = serializers.SerializerMethodField()
+    is_pending_friend_request = serializers.SerializerMethodField()
     is_blocked = serializers.SerializerMethodField()
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
@@ -134,7 +141,7 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     class Meta:
         model = User
         fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'enabled_2fa', 'is_friend', 'is_blocked',
-                  'email', 'image_url', 'registration_method', 'status', 'coins', 'rank',
+                  'is_pending_friend_request', 'email', 'image_url', 'registration_method', 'status', 'coins', 'rank',
                   'current_xp', 'rankProgressPercentage', 'friends', 'friend_requests', 'achievements',
                   'ranking_logs', 'send_request']
 
@@ -170,15 +177,14 @@ class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['id','image_url', 'fullname',
-                'username', 'url', 'send_invitation']
+        fields = ['id', 'image_url', 'fullname',
+                  'username', 'url', 'send_invitation']
 
 
 class BlockListSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlockList
         fields = '__all__'
-
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):

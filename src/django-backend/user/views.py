@@ -55,7 +55,8 @@ class UsersList(generics.ListAPIView):
             return User.objects.all()
         query_serializer = self.QuerySerializer(data=self.request.query_params)
         if query_serializer.is_valid():
-            is_none_friend = query_serializer.validated_data.get('is_none_friend', False)
+            is_none_friend = query_serializer.validated_data.get(
+                'is_none_friend', False)
         if is_none_friend:
             return User.objects.exclude(id__in=user.friends.all()).exclude(id=user.id)
         return User.objects.exclude(id=user.id)
@@ -136,6 +137,14 @@ class Accept_friend_request(generics.UpdateAPIView):
             self._create_notification(self.get_object().requester)
 
 
+class RemoveFriendRequest(APIView):
+    def delete(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        Friends_Request.objects.filter(
+            requester=self.request.user, addressee=user).delete()
+        return Response(status=204)
+
+
 class Decline_friend_request(generics.DestroyAPIView):
     serializer_class = FriendsSerializer
     queryset = Friends_Request.objects.all()
@@ -180,10 +189,10 @@ class InvitePlayer(APIView, BaseNotification):
 
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
-        game_room = f'/ws/game/{uuid.uuid4()}/'
+        game_room_id = str(uuid.uuid4())
         self._create_notification(
-            user, 'Game invitation', f'{self.request.user.username} invited you to a game room {game_room}')
-        return Response({'message': 'Invitation sent', 'game_room': game_room})
+            user, 'Game invitation', f'{self.request.user.username} invited you to a game room {game_room_id}')
+        return Response({'message': 'Invitation sent', 'game_room_id': game_room_id})
 
 
 class SendTestNotification(APIView):
@@ -213,7 +222,7 @@ class SearchUser(generics.ListAPIView):
     class QuerySerializer(serializers.Serializer):
         search_query = serializers.CharField(required=False)
         none_friend_only = serializers.BooleanField(required=False)
-        
+
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -224,17 +233,19 @@ class SearchUser(generics.ListAPIView):
 
         query_serializer = self.QuerySerializer(data=self.request.query_params)
         if query_serializer.is_valid():
-            none_friend_only = query_serializer.validated_data.get('none_friend_only')
+            none_friend_only = query_serializer.validated_data.get(
+                'none_friend_only')
             search_query = query_serializer.validated_data.get('search_query')
-        search_query  = search_query if search_query is not None else ""
-        base_query = User.objects.filter(Q(username__icontains=search_query) | Q(email__icontains=search_query))
+        search_query = search_query if search_query is not None else ""
+        base_query = User.objects.filter(
+            Q(username__icontains=search_query) | Q(email__icontains=search_query))
         if user.is_anonymous:
-            return base_query 
+            return base_query
         elif not none_friend_only:
             return base_query.exclude(id=user.id)
         else:
             return base_query.exclude(id__in=user.friends.all()).exclude(id=user.id)
-		
+
 
 def send_notification(notification, type='notification', request=None):
     channel_layer = get_channel_layer()

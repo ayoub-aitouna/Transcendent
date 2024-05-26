@@ -1,13 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useOptimistic, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import Empty from "@/app/ui/dashboard/component/Empty";
 import Link from "next/link";
 import { Achievement } from "@/type/dashboard";
 import { useToast } from "@/app/provider/ToastProvider";
-import { user } from "@/type/auth/user";
+import { useManageFRAction, user } from "@/type/auth/user";
+import {
+	DeclineFriendRequest,
+	InvitePlayer,
+	RemoveFriendRequest,
+	SendFriendRequest,
+} from "@/api/user";
+import { useRouter } from "next/navigation";
+import { boolean } from "yup";
 
 const Cta = ({
 	src,
@@ -63,13 +71,9 @@ const UserInfo = ({ src, value }: { src: string; value: string }) => {
 	);
 };
 
-const UserInfoContainer = ({
-	isOtherUser,
-	data,
-}: {
-	isOtherUser: boolean;
-	data: user;
-}) => {
+const UserInfoContainer = (data: user) => {
+	const { addToast } = useToast();
+	const router = useRouter();
 	const UserInfoList = [
 		{
 			src: "/assets/icons/fluent_games.png",
@@ -88,6 +92,22 @@ const UserInfoContainer = ({
 			value: data.status,
 		},
 	];
+	const handleInvite = async () => {
+		try {
+			const res = await InvitePlayer(data.id);
+			console.log(res);
+			router.push(`/in-game/?game_id=${res.game_room_id}`);
+		} catch (err: any) {
+			console.log("err", err);
+			addToast({
+				id: Math.random() * 1000,
+				title: "Failed To invite Player",
+				message: "Please Try Again later....",
+				icon: "",
+				backgroundColor: "bg-red-500",
+			});
+		}
+	};
 
 	return (
 		<div className='w-80  h-full hidden xl:flex flex-col bg-secondary-400 rounded-lg p-3 gap-3'>
@@ -100,6 +120,7 @@ const UserInfoContainer = ({
 				<Cta
 					src='/assets/icons/fluent_games.png'
 					title='Invite'
+					onClick={() => handleInvite()}
 					visible={data.is_friend}
 				/>
 			</div>
@@ -124,24 +145,99 @@ const TopAchievementsItem = ({ achievement }: { achievement: Achievement }) => {
 	);
 };
 
-const Header = ({
+const ActionButton = ({
 	data,
+	isOtherUser,
+	onAction,
+}: {
+	data: user;
+	isOtherUser: boolean;
+	onAction?: (newData: user) => void;
+}) => {
+	const { addToast } = useToast();
+	const useManageFriendRequest = async (action: useManageFRAction) => {
+		try {
+			let res = null;
+			switch (action) {
+				case useManageFRAction.Add:
+					res = await SendFriendRequest(data.id);
+					onAction && onAction({ ...data, is_pending_friend_request: true });
+					break;
+				case useManageFRAction.Remove:
+					res = await RemoveFriendRequest(data.id);
+					onAction && onAction({ ...data, is_pending_friend_request: false });
+					break;
+				case useManageFRAction.Accept:
+					onAction && onAction({ ...data, is_friend: true });
+					break;
+			}
+		} catch (err: any) {
+			addToast({
+				id: Math.random() * 1000,
+				title: `Failed To ${
+					action == useManageFRAction.Add
+						? "Send"
+						: action == useManageFRAction.Remove
+						? "Remove"
+						: "Accept"
+				} Friend Request`,
+				message: "Please Try Again later....",
+				icon: "",
+				backgroundColor: "bg-red-500",
+			});
+		}
+	};
+	if (!isOtherUser) return null;
+	if (data.is_friend) {
+		return (
+			<Link href={`/messenger?chatroom=${data.id}`}>
+				<Cta
+					src={"/assets/icons/message-filled.svg"}
+					title={"Send Message"}
+					height={20}
+					width={20}
+					style='text-secondary-100 text-sm font-medium tracking-tighter'
+					visible
+				/>
+			</Link>
+		);
+	}
+	if (data.is_pending_friend_request) {
+		return (
+			<Cta
+				src='/assets/icons/light_close.png'
+				title={"Cancel Request"}
+				onClick={() => useManageFriendRequest(useManageFRAction.Remove)}
+				height={20}
+				width={20}
+				style='text-secondary-100 text-sm font-medium tracking-tighter'
+				visible
+			/>
+		);
+	}
+	return (
+		<Cta
+			src='/assets/icons/add-fill.svg'
+			title={"Add Friend"}
+			height={20}
+			onClick={() => useManageFriendRequest(useManageFRAction.Add)}
+			width={20}
+			style='text-secondary-100 text-sm font-medium tracking-tighter'
+			visible
+		/>
+	);
+};
+const Header = ({
+	data: inputData,
 	isOtherUser,
 }: {
 	data: user;
 	isOtherUser: boolean;
 }) => {
-	const { addToast } = useToast();
-	function handleAddFriend() {
-		addToast({
-			id: Math.floor(Math.random() * 100),
-			title: "Friend Request Sent",
-			message: "you Have sent a friend request to " + data.username,
-			icon: "/assets/icons/light_close.png",
-			backgroundColor: "bg-blue-500",
-		});
-	}
-
+	const [data, setData] = useState<user>(inputData);
+	const handelAction = (newData: user) => {
+		setData(newData);
+	};
 	return (
 		<div className='relative min-h-[21.8rem] w-full rounded-lg overflow-hidden'>
 			<Image
@@ -173,31 +269,11 @@ const Header = ({
 									@{data.username}
 								</p>
 							</div>
-							{data.is_friend && (
-								<Link href={`/messenger?chatroom=${data.id}`}>
-									<Cta
-										src={"/assets/icons/message-filled.svg"}
-										title={"Send Message"}
-										height={20}
-										width={20}
-										style='text-secondary-100 text-sm font-medium tracking-tighter'
-										visible
-									/>
-								</Link>
-							)}
-							{!data.is_friend && isOtherUser && (
-								<Cta
-									src='/assets/icons/add-fill.svg'
-									title={"Add Friend"}
-									height={20}
-									onClick={() => {
-										handleAddFriend();
-									}}
-									width={20}
-									style='text-secondary-100 text-sm font-medium tracking-tighter'
-									visible
-								/>
-							)}
+							<ActionButton
+								data={data}
+								isOtherUser={isOtherUser}
+								onAction={handelAction}
+							/>
 						</div>
 					</div>
 					<div className='flex-1 flex flex-row h-full gap-3'>
@@ -258,7 +334,7 @@ const Header = ({
 								</div>
 							</div>
 						</div>
-						<UserInfoContainer isOtherUser={isOtherUser} data={data} />
+						<UserInfoContainer {...data} />
 					</div>
 				</div>
 			</div>

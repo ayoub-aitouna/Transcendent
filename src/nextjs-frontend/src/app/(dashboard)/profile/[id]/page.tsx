@@ -17,6 +17,7 @@ import { redirect } from "next/navigation";
 import Error from "@/app/ui/dashboard/component/Error";
 import { MatchUp, RegisteredPlayer } from "@/type/dashboard/tournament";
 import { PaginationApiResponse } from "@/type";
+
 const HistoryWrapper = ({
 	children,
 	title,
@@ -81,13 +82,7 @@ const page = async ({ params }: any) => {
 						<ul className='flex  flex-col gap-3 items-center justify-start w-full h-full'>
 							{tournamentHistory.results.map((item, index) => (
 								<li key={index} className='w-full '>
-									<TournamentsContainer
-										key={index}
-										Tournaments={{
-											...item.tournament,
-											icon: item.tournament.icon || "",
-										}}
-									/>
+									<TournamentsContainer {...item.tournament} />
 								</li>
 							))}
 						</ul>
