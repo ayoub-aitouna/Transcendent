@@ -1,6 +1,8 @@
 import uuid
+
+from django.db import DatabaseError, IntegrityError
 from user.models import User, Friends_Request, BlockList
-from rest_framework import generics, serializers
+from rest_framework import generics, serializers, status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from api.models import Notification
@@ -70,6 +72,12 @@ class UsersDetail(generics.RetrieveAPIView):
         return super().perform_update(serializer)
 
 
+class UsersDetailByUsername(generics.RetrieveAPIView):
+    serializer_class = UserDetailSerializer
+    queryset = User.objects.all()
+    lookup_field = 'username'
+
+
 class Profile(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = [IsAuthenticated]
@@ -77,6 +85,12 @@ class Profile(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        try:
+            return super().update(request, *args, **kwargs)
+        except IntegrityError:
+            return Response({"message": "this entry already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChangePassword(APIView):
@@ -98,7 +112,7 @@ class ChangePassword(APIView):
         return Response(serializer.errors, status=400)
 
 
-class Send_friend_request(generics.CreateAPIView):
+class SendFriendRequest(generics.CreateAPIView):
     serializer_class = FriendsSerializer
     queryset = Friends_Request.objects.all()
 
@@ -118,7 +132,7 @@ class Send_friend_request(generics.CreateAPIView):
         serializer.save(requester=self.request.user, addressee=addressee)
 
 
-class Accept_friend_request(generics.UpdateAPIView):
+class AcceptFriendRequest(generics.UpdateAPIView):
     serializer_class = FriendsSerializer
     queryset = Friends_Request.objects.all()
 
@@ -140,17 +154,9 @@ class Accept_friend_request(generics.UpdateAPIView):
 class RemoveFriendRequest(APIView):
     def delete(self, request, pk):
         user = get_object_or_404(User, pk=pk)
-        Friends_Request.objects.filter(
-            requester=self.request.user, addressee=user).delete()
+        Friends_Request.objects.filter(Q(requester=user, addressee=self.request.user) | Q(
+            requester=self.request.user, addressee=user)).delete()
         return Response(status=204)
-
-
-class Decline_friend_request(generics.DestroyAPIView):
-    serializer_class = FriendsSerializer
-    queryset = Friends_Request.objects.all()
-
-    def perform_destroy(self, instance):
-        instance.delete()
 
 
 class BlockUser(generics.CreateAPIView):
@@ -245,6 +251,31 @@ class SearchUser(generics.ListAPIView):
             return base_query.exclude(id=user.id)
         else:
             return base_query.exclude(id__in=user.friends.all()).exclude(id=user.id)
+
+
+class UnblockUser(generics.DestroyAPIView):
+    queryset = BlockList.objects.all()
+
+    def perform_destroy(self, instance):
+        pk = self.kwargs.get("pk")
+        blocked_user = get_object_or_404(User, pk=pk)
+        BlockList.objects.filter(
+            user=self.request.user, blocked_user=blocked_user).delete()
+        return
+
+
+class LogoutAllDevices(APIView):
+    permission_classes = [IsAuthenticated]
+    channel_layer = get_channel_layer()
+
+    def post(self, request):
+        user = request.user
+        str_obj = json.dumps({
+            'type': 'logout',
+            'message': 'You have been logged out',
+        })
+        NotifyUser(user['id'], str_obj, self.channel_layer)
+        return Response({'message': 'All devices logged out'})
 
 
 def send_notification(notification, type='notification', request=None):

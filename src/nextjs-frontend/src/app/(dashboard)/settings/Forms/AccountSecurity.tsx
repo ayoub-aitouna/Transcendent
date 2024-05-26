@@ -36,16 +36,18 @@ const AccountSecurityFrom = () => {
 
 	const updateSubmit = async (data: any) => {
 		console.log("data", data);
+
 		try {
 			const res = await updateProfile(data);
 			dispatch(UpdateUser(res));
+			reset();
 		} catch (err: any) {
+			console.error(err);
 			setError("email", {
-				type: "manual",
-				message: err.response.data.message,
+				type: "costume",
+				message: err.response?.data.message,
 			});
 		}
-		reset();
 	};
 
 	return (

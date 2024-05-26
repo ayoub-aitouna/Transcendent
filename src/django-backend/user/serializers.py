@@ -5,6 +5,13 @@ from user.models import User, Friends_Request, Ranks, Achievements, BlockList
 from rest_framework.reverse import reverse
 from django.db.models import Q
 from django.core.files.storage import default_storage
+from enum import Enum
+
+
+class FriendRequestState(Enum):
+    NONE = 'NONE'
+    SENT = 'SENT'
+    RECEIVED = 'RECEIVED'
 
 
 class BaseUserSerializer():
@@ -17,7 +24,6 @@ class BaseUserSerializer():
         return request.build_absolute_uri(obj.image_url)
 
     def create_avatar(self, validated_data):
-        print(f'validated_data {validated_data}')
         if 'image_file' not in validated_data:
             return validated_data
         avatar = validated_data['image_file']
@@ -32,6 +38,8 @@ class BaseUserSerializer():
         return f'{obj.first_name} {obj.last_name}'.strip()
 
     def get_is_friend(self, obj):
+        if self.context.get('request').user.is_anonymous:
+            return False
         user = self.context.get('request').user
         if user is None:
             return False
@@ -39,19 +47,28 @@ class BaseUserSerializer():
 
     def get_is_blocked(self, obj):
         user = self.context.get('request').user
-        if user is None or user == obj:
+        if user is None or user.is_anonymous or user == obj:
             return False
         blocked_me_query = BlockList.objects.filter(
             user=user, blocked_user=obj)
         blocked_query = BlockList.objects.filter(user=obj, blocked_user=user)
         return blocked_me_query.exists() or blocked_query.exists()
 
-    def get_is_pending_friend_request(self, obj):
+    def get_friend_request_state(self, obj):
         user = self.context.get('request').user
-        if user is None:
+        if user is None or user.is_anonymous or user == obj:
+            return FriendRequestState.NONE.value
+        if Friends_Request.objects.filter(requester=user, addressee=obj).exists():
+            return FriendRequestState.SENT.value
+        elif Friends_Request.objects.filter(requester=obj, addressee=user).exists():
+            return FriendRequestState.RECEIVED.value
+        return FriendRequestState.NONE.value
+    
+    def get_is_my_profile(self, obj):
+        user = self.context.get('request').user
+        if user is None or user.is_anonymous:
             return False
-        return Friends_Request.objects.filter(requester=user, addressee=obj).exists()
-
+        return user == obj
 
 class AchievementsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -126,8 +143,9 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     image_url = serializers.SerializerMethodField()
     rankProgressPercentage = serializers.SerializerMethodField()
     is_friend = serializers.SerializerMethodField()
-    is_pending_friend_request = serializers.SerializerMethodField()
+    friend_request_state = serializers.SerializerMethodField()
     is_blocked = serializers.SerializerMethodField()
+    is_my_profile = serializers.SerializerMethodField()
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
     first_name = serializers.CharField(required=False)
@@ -140,8 +158,8 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'enabled_2fa', 'is_friend', 'is_blocked',
-                  'is_pending_friend_request', 'email', 'image_url', 'registration_method', 'status', 'coins', 'rank',
+        fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'enabled_2fa', 'is_my_profile', 'is_friend', 'is_blocked',
+                  'friend_request_state', 'email', 'image_url', 'registration_method', 'status', 'coins', 'rank',
                   'current_xp', 'rankProgressPercentage', 'friends', 'friend_requests', 'achievements',
                   'ranking_logs', 'send_request']
 

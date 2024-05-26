@@ -21,6 +21,14 @@ export const UserDetail = async (id: number): Promise<user> => {
     return data;
 }
 
+
+export const UserDetailByUsername = async (username: string): Promise<user> => {
+    const Response = await apiMock.get(`/users/${username}/`);
+    const data: user = Response.data;
+    return data;
+}
+
+
 export const MatchHistory = async (id: number): Promise<PaginationApiResponse<MatchUp>> => {
     try {
         const res = await apiMock.get(`/game/match-history/${id}/`)
@@ -84,4 +92,8 @@ export const RemoveFriendRequest = async (id: number): Promise<void> => {
 
 export const DeclineFriendRequest = async (id: number): Promise<void> => {
     await apiMock.delete(`/users/decline-friend-request/${id}/`)
+}
+
+export const AcceptFriendRequest = async (id: number): Promise<void> => {
+    await apiMock.post(`/users/accept-friend-request/${id}/`)
 }

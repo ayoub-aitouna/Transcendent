@@ -1,21 +1,19 @@
 "use client";
 
-import React, { useOptimistic, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import Empty from "@/app/ui/dashboard/component/Empty";
 import Link from "next/link";
 import { Achievement } from "@/type/dashboard";
 import { useToast } from "@/app/provider/ToastProvider";
-import { useManageFRAction, user } from "@/type/auth/user";
+import { useManageFRAction, user, FriendRequestState } from "@/type/auth/user";
 import {
-	DeclineFriendRequest,
 	InvitePlayer,
 	RemoveFriendRequest,
 	SendFriendRequest,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
-import { boolean } from "yup";
 
 const Cta = ({
 	src,
@@ -147,11 +145,9 @@ const TopAchievementsItem = ({ achievement }: { achievement: Achievement }) => {
 
 const ActionButton = ({
 	data,
-	isOtherUser,
 	onAction,
 }: {
 	data: user;
-	isOtherUser: boolean;
 	onAction?: (newData: user) => void;
 }) => {
 	const { addToast } = useToast();
@@ -161,14 +157,28 @@ const ActionButton = ({
 			switch (action) {
 				case useManageFRAction.Add:
 					res = await SendFriendRequest(data.id);
-					onAction && onAction({ ...data, is_pending_friend_request: true });
+					onAction &&
+						onAction({
+							...data,
+							friend_request_state: FriendRequestState.SENT,
+						});
 					break;
 				case useManageFRAction.Remove:
 					res = await RemoveFriendRequest(data.id);
-					onAction && onAction({ ...data, is_pending_friend_request: false });
+					onAction &&
+						onAction({
+							...data,
+							friend_request_state: FriendRequestState.NONE,
+						});
 					break;
 				case useManageFRAction.Accept:
-					onAction && onAction({ ...data, is_friend: true });
+					// res = await DeclineFriendRequest(data.id);
+					onAction &&
+						onAction({
+							...data,
+							friend_request_state: FriendRequestState.NONE,
+							is_friend: true,
+						});
 					break;
 			}
 		} catch (err: any) {
@@ -187,7 +197,7 @@ const ActionButton = ({
 			});
 		}
 	};
-	if (!isOtherUser) return null;
+	if (data.is_my_profile) return null;
 	if (data.is_friend) {
 		return (
 			<Link href={`/messenger?chatroom=${data.id}`}>
@@ -202,7 +212,7 @@ const ActionButton = ({
 			</Link>
 		);
 	}
-	if (data.is_pending_friend_request) {
+	if (data.friend_request_state == FriendRequestState.SENT) {
 		return (
 			<Cta
 				src='/assets/icons/light_close.png'
@@ -227,13 +237,8 @@ const ActionButton = ({
 		/>
 	);
 };
-const Header = ({
-	data: inputData,
-	isOtherUser,
-}: {
-	data: user;
-	isOtherUser: boolean;
-}) => {
+
+const Header = ({ data: inputData }: { data: user }) => {
 	const [data, setData] = useState<user>(inputData);
 	const handelAction = (newData: user) => {
 		setData(newData);
@@ -269,11 +274,7 @@ const Header = ({
 									@{data.username}
 								</p>
 							</div>
-							<ActionButton
-								data={data}
-								isOtherUser={isOtherUser}
-								onAction={handelAction}
-							/>
+							<ActionButton data={data} onAction={handelAction} />
 						</div>
 					</div>
 					<div className='flex-1 flex flex-row h-full gap-3'>

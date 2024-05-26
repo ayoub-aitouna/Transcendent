@@ -42,11 +42,10 @@ const PersonalInfoForm = () => {
 	const onPersonalInfoUpdate = async (data: any) => {
 		const { image_file, firstname, lastname, username } = data;
 		if (!image_file && !firstname && !lastname && !username) {
-			setErrorPersonalInfo("image_file", {
+			setErrorPersonalInfo("root", {
 				type: "manual",
 				message: "At least one field is required",
 			});
-
 			return;
 		}
 		try {
@@ -57,13 +56,14 @@ const PersonalInfoForm = () => {
 				username: username,
 			});
 			dispatch(UpdateUser(res));
+			ResetPersonalInfoForm();
 		} catch (err: any) {
-			setErrorPersonalInfo("image_file", {
+			console.log("error message ", err.response.data.message);
+			setErrorPersonalInfo("root", {
 				type: "manual",
 				message: err.response.data.message,
 			});
 		}
-		ResetPersonalInfoForm();
 	};
 	return (
 		<FormWrapper
@@ -104,7 +104,7 @@ const PersonalInfoForm = () => {
 				<Input
 					type='text'
 					title='Username'
-					name='Username'
+					name='username'
 					placeholder={`@${user.user.username}`}
 					additionalStyles='rounded'
 					error={personalInfoErrors.username ? true : false}
@@ -125,6 +125,11 @@ const PersonalInfoForm = () => {
 						value='Save Changes'
 					/>
 				</div>
+				{personalInfoErrors.root && (
+					<p className='text-red-500 text-sm text-center'>
+						{personalInfoErrors.root.message}
+					</p>
+				)}
 			</form>
 		</FormWrapper>
 	);

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useAppSelector } from "@/redux/store";
 import { redirect, usePathname } from "next/navigation";
 

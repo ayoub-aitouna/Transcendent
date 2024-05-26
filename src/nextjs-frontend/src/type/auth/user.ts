@@ -1,3 +1,10 @@
+
+export enum FriendRequestState {
+    NONE = 'NONE',
+    SENT = 'SENT',
+    RECEIVED = 'RECEIVED'
+}
+
 export type user = {
     id: number;
     fullname: string;
@@ -9,7 +16,8 @@ export type user = {
     image_url: string;
     is_friend: boolean;
     is_blocked: boolean;
-    is_pending_friend_request: boolean;
+    is_my_profile: boolean;
+    friend_request_state: FriendRequestState;
     registration_method: string;
     coins: number;
     status: string;
@@ -23,7 +31,6 @@ export type user = {
     send_request: string;
     enabled_2fa: boolean;
     level: number;
-
 }
 
 export interface uploadProfile extends user {

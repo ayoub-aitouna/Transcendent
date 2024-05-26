@@ -8,7 +8,7 @@ import {
 	MatchHistory,
 	ProfileData,
 	TournamentHistory,
-	UserDetail,
+	UserDetailByUsername,
 } from "@/api/user";
 import { user } from "@/type/auth/user";
 import Header from "../components/header";
@@ -40,7 +40,7 @@ const HistoryWrapper = ({
 };
 
 const loadUserData = async (
-	id: string
+	username: string
 ): Promise<
 	[
 		user,
@@ -48,23 +48,23 @@ const loadUserData = async (
 		PaginationApiResponse<RegisteredPlayer>
 	]
 > => {
-	let data = null;
 	let matchHistory;
 	let tournamentHistory;
 	try {
-		if (id === "me") data = await ProfileData();
-		else data = await UserDetail(parseInt(id));
+		const data = await UserDetailByUsername(username);
+		matchHistory = await MatchHistory(data.id);
+		tournamentHistory = await TournamentHistory(data.id);
+		return [data, matchHistory, tournamentHistory];
 	} catch (e) {
 		console.error(e);
 		redirect("/");
 	}
-	matchHistory = await MatchHistory(data.id);
-	tournamentHistory = await TournamentHistory(data.id);
-	return [data, matchHistory, tournamentHistory];
 };
 
 const page = async ({ params }: any) => {
-	const [data, matchHistory, tournamentHistory] = await loadUserData(params.id);
+	const [data, matchHistory, tournamentHistory] = await loadUserData(
+		params.username
+	);
 	if (data.is_blocked)
 		return (
 			<Error
@@ -75,7 +75,7 @@ const page = async ({ params }: any) => {
 		);
 	return (
 		<div className='flex flex-col justify-start items-start  h-full gap-10'>
-			<Header data={data} isOtherUser={params.id !== "me"} />
+			<Header data={data}/>
 			<div className='flex-1 flex w-full flex-col xl:flex-row items-center justify-center xl:max-h-[34rem] gap-5'>
 				<HistoryWrapper title='tournament History'>
 					{tournamentHistory.results.length !== 0 && (
