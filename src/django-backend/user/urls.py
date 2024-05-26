@@ -9,7 +9,10 @@ urlpatterns = [
     path('change-password/', view=views.ChangePassword.as_view(),
          name='change-password'),
     path('search-user/', view=views.SearchUser.as_view(), name='search-user'),
-
+    path('recommend-users/', view=views.RecommendUsers.as_view(),
+         name='recommend-users'),
+    path('appending-requests/', view=views.AppendingRequests.as_view(),
+         name='appending-requests'),
     path('ranking/', view=views.Ranking.as_view(), name='ranking'),
     path('top-players/', view=views.TopPlayers.as_view(), name='top-players'),
     path('send-friend-request/<int:pk>/',

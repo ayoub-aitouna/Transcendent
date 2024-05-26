@@ -63,12 +63,13 @@ class BaseUserSerializer():
         elif Friends_Request.objects.filter(requester=obj, addressee=user).exists():
             return FriendRequestState.RECEIVED.value
         return FriendRequestState.NONE.value
-    
+
     def get_is_my_profile(self, obj):
         user = self.context.get('request').user
         if user is None or user.is_anonymous:
             return False
         return user == obj
+
 
 class AchievementsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -206,13 +207,12 @@ class BlockListSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    image_url = serializers.CharField(source='requester.image_url')
+    image_url = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
     username = serializers.CharField(source='requester.username')
     accept_fiend_request = serializers.SerializerMethodField()
     decline_fiend_request = serializers.SerializerMethodField()
-    url = serializers.HyperlinkedIdentityField(
-        view_name='user', lookup_field='pk')
+    url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -220,16 +220,26 @@ class FriendRequestSerializer(serializers.ModelSerializer):
                   'url', 'accept_fiend_request', 'decline_fiend_request']
 
     def get_decline_fiend_request(self, obj):
-        return reverse('decline-friend-request', kwargs={"pk": obj.id},  request=self.context.get('request'))
+        return reverse('decline-friend-request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
 
     def get_accept_fiend_request(self, obj):
         return reverse('accept-friend-request', kwargs={"pk": obj.id},  request=self.context.get('request'))
 
     def get_url(self, obj):
+        print(obj)
         return reverse('user', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
 
     def get_fullname(self, obj):
         return f'{obj.requester.first_name} {obj.requester.last_name}'.strip()
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        image_url = obj.requester.image_url
+        if image_url is None or request is None:
+            return None
+        if not image_url.startswith('/media'):
+            return image_url
+        return request.build_absolute_uri(image_url)
 
 
 class FriendsSerializer(serializers.ModelSerializer):

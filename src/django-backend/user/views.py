@@ -11,7 +11,8 @@ from user.serializers import (
     UserDetailSerializer,
     FriendsSerializer,
     OnlineUserSerializer,
-    BlockListSerializer
+    BlockListSerializer,
+    FriendRequestSerializer
 )
 from django.db.models import Q
 from channels.layers import get_channel_layer
@@ -252,6 +253,29 @@ class SearchUser(generics.ListAPIView):
             return base_query.exclude(id=user.id)
         else:
             return base_query.exclude(id__in=user.friends.all()).exclude(id=user.id)
+
+
+class RecommendUsers(generics.ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        requests = Friends_Request.objects.filter(
+            Q(requester=user) | Q(addressee=user))
+        return User.objects.exclude(id__in=user.friends.all())\
+            .exclude(id=user.id).exclude(id__in=requests.values_list('requester', flat=True))\
+            .exclude(id__in=requests.values_list('addressee', flat=True))\
+            .order_by('?')
+
+
+class AppendingRequests(generics.ListAPIView):
+    serializer_class = FriendRequestSerializer
+    queryset = Friends_Request.objects.all()
+
+    def get_queryset(self):
+        return Friends_Request.objects.filter(addressee=self.request.user)
 
 
 class UnblockUser(generics.DestroyAPIView):
