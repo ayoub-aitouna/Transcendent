@@ -233,6 +233,7 @@ class SearchUser(generics.ListAPIView):
     queryset = User.objects.all()
 
     def get_queryset(self):
+        print('Get Quey')
         user = self.request.user
         none_friend_only = False
         search_query = ""

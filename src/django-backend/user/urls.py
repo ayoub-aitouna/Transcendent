@@ -5,11 +5,11 @@ urlpatterns = [
     path('', view=views.UsersList.as_view(), name='users'),
     path('me/', view=views.Profile.as_view(), name='my-profile'),
     path('<int:pk>/', view=views.UsersDetail.as_view(), name='user'),
-    path('<str:username>/', view=views.UsersDetailByUsername.as_view(),
-         name='user-by-username'),
+
     path('change-password/', view=views.ChangePassword.as_view(),
          name='change-password'),
     path('search-user/', view=views.SearchUser.as_view(), name='search-user'),
+
     path('ranking/', view=views.Ranking.as_view(), name='ranking'),
     path('top-players/', view=views.TopPlayers.as_view(), name='top-players'),
     path('send-friend-request/<int:pk>/',
@@ -39,4 +39,6 @@ urlpatterns = [
          view=views.UnblockUser.as_view(), name='unblock-user'),
     path('logout-all-devices/', view=views.LogoutAllDevices.as_view(),
          name='logout-all-devices'),
+    path('<str:username>/', view=views.UsersDetailByUsername.as_view(),
+         name='user-by-username'),
 ]
