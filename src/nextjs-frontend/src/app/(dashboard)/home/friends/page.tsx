@@ -94,15 +94,20 @@ const page = () => {
 						</div>
 					</div>
 				</div>
-				{isLoading ? (
-					<div className="flex h-[320px] w-full justify-center items-center">
-						<p>Loading...</p>
-					</div>
-				) : error ? (
-					<div className="flex h-[320px] w-full justify-center items-center">
-						<p>{error}</p>
-					</div>
-				) : (
+				{
+					filteredFriends.length === 0 ?
+						<div className="flex h-[320px] w-full justify-center items-center">
+							<Empty text="no Online Players are available right now" />
+						</div>
+					: isLoading ? (
+						<div className="flex h-[320px] w-full justify-center items-center">
+							<p>Loading...</p>
+						</div>
+					) : error ? (
+						<div className="flex h-[320px] w-full justify-center items-center">
+							<p>{error}</p>
+						</div>
+					) : (
 					<div className="h-[750px] overflow-y-scroll hide-scrollbar">
 						{filteredFriends.map((friend, index) => (
 							<div key={index}>
