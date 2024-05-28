@@ -1,9 +1,10 @@
 "use client";
 
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import Image from "next/image";
 import ToggleSwitch from "@/app/ui/dashboard/component/Toggle-switch";
+import apiMock from "@/lib/axios-mock";
 
 export const UploadIcon = () => (
 	<svg xmlns='http://www.w3.org/2000/svg' width={25} height={24} fill='none'>
@@ -24,8 +25,14 @@ export const UploadIcon = () => (
 	</svg>
 );
 
-const page = () => {
+
+const CreateTournamentPage = () => {
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+	const [name, setName] = useState('');
+	const [description, setDescription] = useState('');
+	const [maxPlayers, setMaxPlayers] = useState('');
+	const [isPublic, setIsPublic] = useState(false);
+	const [isMonetized, setIsMonetized] = useState(false);
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files && e.target.files[0];
@@ -36,23 +43,48 @@ const page = () => {
 		setSelectedImage(null);
 	};
 
+	const handleSubmit = async (e: FormEvent) => {
+		e.preventDefault();
+		const formData = new FormData();
+		formData.append('name', name);
+		formData.append('description', description);
+		formData.append('max_players', maxPlayers);
+		// formData.append('is_public', String(isPublic));
+		// formData.append('is_monetized', String(isMonetized));
+		if (selectedImage) {
+			const response = await fetch(selectedImage);
+			const blob = await response.blob();
+			formData.append('icon', blob, 'icon.jpg');
+		}
+
+		try {
+			const res = await apiMock.post('/game/Tournament/', formData);
+			if (res.status === 201) {
+				alert('Tournament created successfully!');
+			} else {
+				alert('Error creating tournament.');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			alert('An error occurred while creating the tournament.');
+		}
+	};
+
 	return (
-		<div className='flex w-full justify-center items-center '>
+		<div className='flex w-full justify-center items-center'>
 			<div className='w-[640px] justify-start items-start'>
 				<div className='pl-1 font-semibold text-[18px]'>
 					Create new tournament
 				</div>
-				<div className=' pl-1 font-light text-[14px] text-[#94969C] pb-4'>
-					Organize a tournament and enjoy playing with both friends and
-					strangers.
+				<div className='pl-1 font-light text-[14px] text-[#94969C] pb-4'>
+					Organize a tournament and enjoy playing with both friends and strangers.
 				</div>
 
-				<form className='bg-[#000000] h-[772px]  rounded-lg p-5'>
+				<form className='bg-[#000000] h-[772px] rounded-lg p-5' onSubmit={handleSubmit}>
 					<div className='flex w-full justify-center items-center'>
 						{selectedImage ? (
 							<div className='relative w-[73px] h-[73px] p-6'>
 								<Image
-									className=''
 									src={selectedImage}
 									alt='Selected'
 									height={73}
@@ -60,7 +92,8 @@ const page = () => {
 								/>
 								<div
 									className='absolute top-[-10%] right-[-10%] h-4 w-4 rounded-full bg-secondary-100 grid place-content-center cursor-pointer'
-									onClick={removeImage}>
+									onClick={removeImage}
+								>
 									<Image
 										src='/assets/icons/light_close.png'
 										width={12}
@@ -84,7 +117,7 @@ const page = () => {
 											accept='image/*'
 										/>
 									</label>
-									<span className='text-[#878787] font-light text-[12px]'>
+									<span className='text-[#878787] font-light text-[12px] pl-1'>
 										or drag and drop
 									</span>
 								</div>
@@ -95,7 +128,7 @@ const page = () => {
 						)}
 					</div>
 
-					<div className='py-2 flex flex-col  justify-start items-start'>
+					<div className='py-2 flex flex-col justify-start items-start'>
 						<div className='py-2 text-[14px] font-normal text-[#878787]'>
 							Name *
 						</div>
@@ -103,6 +136,8 @@ const page = () => {
 							className='rounded overflow-hidden bg-[#373737] h-[47px] w-[592px] text-[#878787] font-light text-[12px] pl-3 outline-none'
 							type='text'
 							placeholder='New Tournament Name'
+							onChange={(e) => setName(e.target.value)}
+							required
 						/>
 					</div>
 					<div className='py-2 flex flex-col justify-start items-start'>
@@ -111,70 +146,75 @@ const page = () => {
 						</div>
 						<textarea
 							className='rounded overflow-hidden overflow-y-scroll hide-scrollbar bg-[#373737] h-[100px] w-[592px] text-[#878787] font-light text-[12px] p-3 resize-none outline-none'
-							placeholder='Please provide any relevant details you would like to share with players.'></textarea>
+							placeholder='Please provide any relevant details you would like to share with players.'
+							onChange={(e) => setDescription(e.target.value)}
+							required
+						></textarea>
 					</div>
 
-					<div className='py-4 flex flex-col  justify-start items-start'>
+					<div className='py-4 flex flex-col justify-start items-start'>
 						<div className='p-2 text-[14px] font-normal text-[#878787]'>
 							Max Players *
 						</div>
 						<input
 							className='rounded overflow-hidden bg-[#373737] h-[47px] w-[592px] text-[#878787] font-light text-[12px] pl-3 outline-none appearance-none'
-							type='text'
+							type='number'
 							placeholder='the maximum number of players (0-16)'
 							min='0'
 							max='16'
-							onInput={(e) => {
-								const inputValue = parseInt(
-									(e.target as HTMLInputElement).value,
-									10
-								);
-								if (inputValue < 0 || inputValue > 16 || isNaN(inputValue)) {
-									(e.target as HTMLInputElement).value = "";
-								}
-							}}
+							onChange={(e) => setMaxPlayers(e.target.value)}
+							required
 						/>
 					</div>
 					<div className='flex flex-col justify-start items-start pt-8'>
-						<div
-							className={`w-[592px]  flex items-center justify-between rounded-lg mb-[10px]`}>
-							<div className='flex items-center justify-between '>
+						<div className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
+							<div className='flex items-center justify-between'>
 								<div className='flex items-start flex-col'>
 									<div className='text-white truncate font-semibold'>
 										Public
 									</div>
-									<div className={`font-[200] text-[#94969C] text-xs `}>
+									<div className='font-[200] text-[#94969C] text-xs'>
 										Make your tournament public so that everyone can join.
 									</div>
 								</div>
 							</div>
 							<div className='flex items-center justify-end'>
-								<ToggleSwitch />
+								<ToggleSwitch
+									checked={isPublic}
+									onChange={() => setIsPublic(!isPublic)}
+								/>
 							</div>
 						</div>
-						<div
-							className={`w-[592px]  flex items-center justify-between rounded-lg mb-[10px]`}>
-							<div className='flex items-center justify-between '>
+						<div className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
+							<div className='flex items-center justify-between'>
 								<div className='flex items-start flex-col'>
 									<div className='text-white truncate font-semibold'>
-										monetize
+										Monetize
 									</div>
-									<div className={`font-[200] text-[#94969C] text-xs `}>
+									<div className='font-[200] text-[#94969C] text-xs'>
 										By enabling this feature, your tournament will be featured
 										on the homepage.
 									</div>
 								</div>
 							</div>
 							<div className='flex items-center justify-end'>
-								<ToggleSwitch />
+								<ToggleSwitch
+									checked={isMonetized}
+									onChange={() => setIsMonetized(!isMonetized)}
+								/>
 							</div>
 						</div>
-						<div className='flex flex-row justify-end items-end space-x-2 ml-auto  mt-12'>
-							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]'>
+						<div className='flex flex-row justify-end items-end space-x-2 ml-auto mt-12'>
+							<button
+								className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]'
+								type='button'
+							>
 								Cancel
 							</button>
 							<button
-								className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px] `}>
+								className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px]`}
+								type='submit'
+							>
 								Create
 							</button>
 						</div>
@@ -185,4 +225,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default CreateTournamentPage;
