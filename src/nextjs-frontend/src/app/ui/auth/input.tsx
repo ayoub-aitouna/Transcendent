@@ -3,8 +3,6 @@ import { inputProps } from "@/type";
 import clsx from "clsx";
 import React from "react";
 
-
-
 const Input = React.forwardRef<HTMLInputElement | null, inputProps>(
 	(
 		{
@@ -30,7 +28,10 @@ const Input = React.forwardRef<HTMLInputElement | null, inputProps>(
 				<input
 					className={clsx(
 						"w-full h-[50px] bg-[#606060]/50 outline-none px-2",
-						additionalStyles
+						additionalStyles,
+						{
+							"border border-red-700": error,
+						}
 					)}
 					onChange={onChange}
 					placeholder={placeholder}

@@ -13,16 +13,23 @@ import { oauth2Providers } from "@/constant/Auth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { Login } from "@/redux/slices/userslice";
 import { ProfileData } from "@/api/user";
+import LoadingIcon from "@/app/ui/icons/loading-icon";
 
 const schema = yup.object().shape({
 	email: yup
 		.string()
 		.email("Invalid email format")
-		.required("Email is required"),
+		.matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Invalid Email Format")
+		.required("Email is required")
+		.trim(),
 	password: yup
 		.string()
-		.min(6, "Password must be at least 6 characters")
-		.required("Password is required"),
+		// .min(8, "password must be at least 8 characters")
+		// .matches(/[a-z]/, "password must have at least one lowercase letter")
+		// .matches(/[A-Z]/, "password must have at least one uppercase letter")
+		// .matches(/\d/, "password must have at least one digit")
+		// .matches(/[!@#$%^&*]/, "password must have at least one special character")
+		.required("password is required"),
 });
 
 const page = () => {
@@ -33,7 +40,7 @@ const page = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 		setError,
 	} = useForm({
 		resolver: yupResolver(schema),
@@ -149,7 +156,11 @@ const page = () => {
 					placeholder='**********'
 					register={register}
 				/>
-				<button type='submit' className='w-[318px] h-[50px] bg-[#004E99]'>
+				<button
+					type='submit'
+					disabled={isSubmitting}
+					className='w-[318px] h-[50px] bg-[#004E99] flex justify-center items-center gap-3'>
+					{isSubmitting && <LoadingIcon fill='white' />}
 					Sing in
 				</button>
 			</AuthForm>

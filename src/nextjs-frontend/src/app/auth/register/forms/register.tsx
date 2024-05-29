@@ -10,12 +10,15 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { oauth2Providers } from "@/constant/Auth";
+import LoadingIcon from "@/app/ui/icons/loading-icon";
 
 const schema = yup.object().shape({
 	email: yup
 		.string()
 		.email("Invalid email format")
-		.required("Email is required"),
+		.matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Invalid Email Format")
+		.required("Email is required")
+		.trim(),
 });
 
 const Register = ({ NextStep }: { NextStep: () => void }) => {
@@ -24,7 +27,7 @@ const Register = ({ NextStep }: { NextStep: () => void }) => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm({
 		resolver: yupResolver(schema),
 	});
@@ -78,7 +81,11 @@ const Register = ({ NextStep }: { NextStep: () => void }) => {
 				helperText={errors.email ? errors.email.message : null}
 				register={register}
 			/>
-			<button type='submit' className='w-[318px] h-[50px] bg-[#004E99]'>
+			<button
+				type='submit'
+				disabled={isSubmitting}
+				className='w-[318px] h-[50px] bg-[#004E99] flex justify-center items-center gap-3'>
+				{isSubmitting && <LoadingIcon fill='white' />}
 				Continue
 			</button>
 		</AuthForm>

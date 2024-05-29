@@ -21,7 +21,7 @@
 
       - finish tournament matchmaking system
       - move game app to another microservice
-      - Change location of toast to bottom-left and make it smaller (https://codingartistweb.com/2021/07/toast-notifications-ui-design-html-css/)
+      - add block and remove button in profile page 
 
 ##
 

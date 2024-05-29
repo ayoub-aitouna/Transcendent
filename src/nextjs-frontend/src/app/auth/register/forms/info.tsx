@@ -9,6 +9,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AuthApiResponse } from "@/type/auth/auth";
+import LoadingIcon from "@/app/ui/icons/loading-icon";
 
 const schema = yup.object().shape({
 	username: yup
@@ -37,7 +38,7 @@ const Info = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm({
 		resolver: yupResolver(schema),
 	});
@@ -45,8 +46,8 @@ const Info = () => {
 	const onSubmit = async (data: any) => {
 		const user = {
 			email: (getFormValues() && getFormValues().email) || null,
-			password: data.username,
-			username: data.password,
+			password: data.password,
+			username: data.username,
 			first_name: data.fullname.split(" ")[0],
 			last_name: data.fullname.split(" ")[1],
 		} as user;
@@ -87,7 +88,11 @@ const Info = () => {
 				placeholder='**********'
 				register={register}
 			/>
-			<button type='submit' className='w-[318px] h-[50px] bg-[#004E99]'>
+			<button
+				type='submit'
+				disabled={isSubmitting}
+				className='w-[318px] h-[50px] bg-[#004E99] flex justify-center items-center gap-3'>
+				{isSubmitting && <LoadingIcon fill='white' />}
 				Continue
 			</button>
 		</AuthForm>
