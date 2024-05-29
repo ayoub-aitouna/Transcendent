@@ -1,13 +1,10 @@
-
 'use client'
+
 import Image from 'next/image';
 import { Rank } from '../icons/content_area/rank';
 import Coins from '../icons/content_area/coins';
 import Messages from '../icons/content_area/messages';
-import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
 import Link from 'next/link';
-import Empty from '../component/Empty';
 import ChartComponent from './content_area/chartComponent';
 import { useAppSelector } from '@/redux/store';
 
@@ -15,13 +12,10 @@ import { useAppSelector } from '@/redux/store';
 
 
 function TeamLeader() {
-	const handleClick = () => {
-		window.location.href = "/profile";
-	};
-	const {fullname, username, image_url, level, rank, coins } = useAppSelector((state) => state.user.user);
+	const {fullname,  image_url, level, rank, coins } = useAppSelector((state) => state.user.user);
 	return (
 		<div className='' >
-			<div className="pt-4 flex items-center" onClick={handleClick} aria-label="Navigate to profile">
+			<Link href={"/profile"} className="pt-4 flex items-center">
 				<div className="rounded-full overflow-hidden bg-white w-[62px] h-[62px]">
 					<Image src={image_url} alt="Profile Image" width={62} height={62} />
 				</div>
@@ -29,7 +23,7 @@ function TeamLeader() {
 					<div className=" text-white  font-bold text-[18px] tracking-tight	">{fullname}</div>
 					<div className="font-light mt-[2px] text-[#A1A1A1] text-[14px]">Your Status </div>
 				</div>
-			</div >
+			</Link>
 			<div className=' mt-10 h-[12px] text-white font-light text-sx flex justify-between">'>
 				<div className=' text-[10px] font-light'>My Level</div>
 				<div className="ml-auto text-[10px] font-light">7.9000/9000</div>

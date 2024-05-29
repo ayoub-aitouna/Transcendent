@@ -1,3 +1,4 @@
+'use client'
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
@@ -13,7 +14,8 @@ export const ProfileIcon = () => {
 	const handleClick = () => {
 		setIsClicked(!isClicked);
 	};
-	const {fullname, username,image_url, level  } = useAppSelector((state) => state.user.user);
+	const user = useAppSelector((state) => state.user);
+	const { fullname, username, image_url, level } = user.user;
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
 			const target = event.target as HTMLElement;

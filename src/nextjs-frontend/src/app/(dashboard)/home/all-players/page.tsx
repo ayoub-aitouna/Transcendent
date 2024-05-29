@@ -14,7 +14,9 @@ export const GetRecommendedAndPendingUsers = async (q: string | null) => {
 		recommendedRes = await apiMock.get("/users/recommended-users/");
 	}
 	else
-		recommendedRes = await apiMock.get(`/users/search-user/?none_friend_only=false&search_query=${q}`)
+		recommendedRes = await apiMock.get(`/users/search-user/?none_friend_only=true&search_query=${q}`)
+
+	console.log("id :", pendingRes?.data.results)
 
 	return [pendingRes?.data.results as Friend[] || [], recommendedRes?.data.results as Friend[] || []];
 };
@@ -47,24 +49,22 @@ const Page = async ({
 										name={friend.username}
 										href={friend.image_url}
 										number={friend.level}
-										id={friend.id}
-										status='send'
-									/>
+										id={friend.id}	
+										q={q}								/>
 								))}
 							</>
 						)}
 						{recommendedResults.length > 0 && (
 							<>
-								<div className='font-bold text-[18px]'>Recommended Users</div>
+								<div className='font-bold text-[18px] pt-4'>Recommended Users</div>
 								{recommendedResults.map((friend, index) => (
 									<RecommendedContainer
 										key={index}
 										name={friend.username}
 										href={friend.image_url}
 										number={friend.level}
-										id={friend.id}
-										status='send'
-									/>
+										id={friend.id}	
+										q={q}								/>
 								))}
 							</>
 						)}

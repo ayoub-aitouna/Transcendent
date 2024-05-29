@@ -205,7 +205,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'fullname', 'image_url',
+        fields = ['id','username', 'fullname', 'image_url',
                   'url', 'accept_fiend_request', 'decline_fiend_request']
 
     def get_decline_fiend_request(self, obj):
