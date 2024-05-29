@@ -25,7 +25,7 @@ const SvgComponent = () => (
 )
 
 function Friends({ }) {
-	const { friends } = useAppSelector((state) => state.user.user);
+	const { friends ,rank} = useAppSelector((state) => state.user.user);
 	return (
 		<div className='relative h-full w-full'>
 			<Link href={"/home/all-players"}>

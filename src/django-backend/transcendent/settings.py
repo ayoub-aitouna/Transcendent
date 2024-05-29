@@ -179,13 +179,13 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://localhost:3000",
-    "http://10.32.98.164:3000"
+    "http://192.168.122.1:3000"
 ]
 
 CORS_URLS_REGEX = r"^/api/.*$"
 
 
-BASE_FRONTEND_URL = os.getenv('DJANGO_BASE_FRONTEND_URL', default='http://10.32.98.164:3000')
+BASE_FRONTEND_URL = os.getenv('DJANGO_BASE_FRONTEND_URL', default='http://192.168.122.1:3000')
 
 # Google OAuth2 settings
 GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID')

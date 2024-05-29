@@ -31,7 +31,6 @@ export function FriendContainer({ name, href, number, id }: { name: string; href
 }
 
 export const GetData = async (q: string | null) => {
-//   const { friends } = useAppSelector((state) => state.user.user);
 	let response = null;
   if (!q || q === '') {
 	response = await apiMock.get(`/users/search-user/?none_friend_only=false`);

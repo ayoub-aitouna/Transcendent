@@ -23,7 +23,7 @@ const schema = yup.object().shape({
 		.string()
 		.min(6, "Password must be at least 6 characters")
 		.required("Password is required"),
-});
+}).required();
 
 const page = () => {
 	const params = useSearchParams();
@@ -61,6 +61,8 @@ const page = () => {
 	};
 
 	const onSubmit = async (data: any) => {
+
+		console.log('clicked....')
 		try {
 			const res: any = await LoginUser({ ...data });
 			const user = await ProfileData();
@@ -91,6 +93,10 @@ const page = () => {
 		}
 	}, []);
 
+	const __handleSubmit = (e: any) => {
+		e.preventDefault()
+		console.log('clicked')
+	}
 	return (
 		<div className='flex justify-center items-center w-full h-full'>
 			<AuthForm
@@ -149,7 +155,7 @@ const page = () => {
 					placeholder='**********'
 					register={register}
 				/>
-				<button type='submit' className='w-[318px] h-[50px] bg-[#004E99]'>
+				<button type='submit' className='w-[318px] h-[50px] bg-[#004E99] cursor-pointer'>
 					Sing in
 				</button>
 			</AuthForm>

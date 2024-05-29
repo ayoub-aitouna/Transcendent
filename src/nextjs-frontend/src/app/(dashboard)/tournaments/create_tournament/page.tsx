@@ -27,7 +27,8 @@ export const UploadIcon = () => (
 
 
 const CreateTournamentPage = () => {
-	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+	const [selectedImage, setSelectedImage] = useState<File | null>(null);
+	const [src, setSrc] = useState<string | null>(null);
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
 	const [startDate, setStartDate] = useState('');
@@ -36,12 +37,21 @@ const CreateTournamentPage = () => {
 	const [isMonetized, setIsMonetized] = useState(false);
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files && e.target.files[0];
-		if (file) setSelectedImage(URL.createObjectURL(file));
+		if (!e.target.files)
+			return
+		const file = e.target.files[0]
+		console.log(file)
+		setSelectedImage(file);
+		const reader = new FileReader();
+		reader.onload = () => {
+			const dataURL = reader.result;
+			setSrc(dataURL as string);
+		};
+		reader.readAsDataURL(file);
 	};
 
 	const removeImage = () => {
-		setSelectedImage(null);
+		setSrc(null);
 	};
 
 	const handleSubmit = async (e: FormEvent) => {
@@ -53,23 +63,14 @@ const CreateTournamentPage = () => {
 		formData.append('max_players', maxPlayers);
 		formData.append('is_public', String(isPublic));
 		formData.append('is_monetized', String(isMonetized));
-		formData.append('icon_file', selectedImage ? selectedImage : ''
-		);
-
-		if (selectedImage) {
-			const response = await fetch(selectedImage);
-			const blob = await response.blob();
-			formData.append('icon', blob, 'icon.jpg');
-		}
-
-
+		formData.append('icon_file', selectedImage ? selectedImage : '');
 		try {
-			const res = await apiMock.post('/game/Tournament/', formData);
-			if (res.status === 201) {
-				alert('Tournament created successfully!');
-			} else {
-				alert('Error creating tournament.');
-			}
+			const res = await apiMock.post('/game/Tournament/', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			});
+			alert('Tournament created successfully!');
 		} catch (error) {
 			console.error('Error:', error);
 			alert('An error occurred while creating the tournament.');
@@ -86,12 +87,12 @@ const CreateTournamentPage = () => {
 					Organize a tournament and enjoy playing with both friends and strangers.
 				</div>
 
-				<form className='bg-[#000000] h-[772px] rounded-lg p-5' onSubmit={handleSubmit}>
-					<div className='flex w-full justify-center items-center'>
-						{selectedImage ? (
+				<form className='bg-[#000000] h-[830px] rounded-lg p-5' onSubmit={handleSubmit}>
+					<div className='flex w-full h-[100px] justify-center items-center'>
+						{src ? (
 							<div className='relative w-[73px] h-[73px] p-6'>
 								<Image
-									src={selectedImage}
+									src={src}
 									alt='Selected'
 									height={73}
 									width={73}
@@ -121,7 +122,7 @@ const CreateTournamentPage = () => {
 											className='hidden'
 											onChange={handleImageUpload}
 											accept='image/*'
-											// required
+										// required
 										/>
 									</label>
 									<span className='text-[#878787] font-light text-[12px] pl-1'>
@@ -180,6 +181,7 @@ const CreateTournamentPage = () => {
 
 
 					</div>
+
 					<div className='py-2 flex flex-col justify-start items-start'>
 						<div className='py-2 text-[14px] font-normal text-[#878787]'>
 							Start Date *
