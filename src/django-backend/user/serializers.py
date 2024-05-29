@@ -134,7 +134,6 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
         view_name='send-friend-request', lookup_field='pk')
     achievements = AchievementsSerializer(many=True, read_only=True)
     friends = UserFriendsSerializer(many=True, read_only=True)
-    friend_requests = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
     ranking_logs = RankSerializer(read_only=True, many=True)
     rank = RankSerializer(read_only=True)
@@ -161,7 +160,7 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
         model = User
         fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'enabled_2fa', 'is_my_profile', 'is_friend', 'is_blocked',
                   'friend_request_state', 'email', 'image_url', 'registration_method', 'status', 'coins', 'rank',
-                  'current_xp', 'rankProgressPercentage', 'friends', 'friend_requests', 'achievements',
+                  'current_xp', 'rankProgressPercentage', 'friends', 'achievements',
                   'ranking_logs', 'send_request']
 
     def update(self, instance, validated_data):
@@ -174,16 +173,6 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
         if obj.rank is None:
             return 0
         return (obj.current_xp / obj.rank.xp_required) * 100
-
-    def get_friend_requests(self, obj):
-        user_id = self.context.get('view').kwargs.get('pk')
-        try:
-            current_user = User.objects.get(pk=user_id)
-            q = Friends_Request.objects.filter(
-                addressee=current_user).distinct()
-            return FriendRequestSerializer(q, many=True, context=self.context).data
-        except Exception as e:
-            return []
 
 
 class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
