@@ -1,1 +1,1 @@
-export const BACKEND_API_URL = 'http://172.17.0.1:8000/api/v1'
+export const BACKEND_API_URL = 'http://10.32.118.90:8000/api/v1'

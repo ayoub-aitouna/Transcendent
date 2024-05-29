@@ -30,6 +30,7 @@ const CreateTournamentPage = () => {
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
+	const [startDate, setStartDate] = useState('');
 	const [maxPlayers, setMaxPlayers] = useState('');
 	const [isPublic, setIsPublic] = useState(false);
 	const [isMonetized, setIsMonetized] = useState(false);
@@ -48,14 +49,19 @@ const CreateTournamentPage = () => {
 		const formData = new FormData();
 		formData.append('name', name);
 		formData.append('description', description);
+		formData.append('start_date', startDate);
 		formData.append('max_players', maxPlayers);
-		// formData.append('is_public', String(isPublic));
-		// formData.append('is_monetized', String(isMonetized));
+		formData.append('is_public', String(isPublic));
+		formData.append('is_monetized', String(isMonetized));
+		formData.append('icon_file', selectedImage ? selectedImage : ''
+		);
+
 		if (selectedImage) {
 			const response = await fetch(selectedImage);
 			const blob = await response.blob();
 			formData.append('icon', blob, 'icon.jpg');
 		}
+
 
 		try {
 			const res = await apiMock.post('/game/Tournament/', formData);
@@ -115,6 +121,7 @@ const CreateTournamentPage = () => {
 											className='hidden'
 											onChange={handleImageUpload}
 											accept='image/*'
+											// required
 										/>
 									</label>
 									<span className='text-[#878787] font-light text-[12px] pl-1'>
@@ -164,6 +171,25 @@ const CreateTournamentPage = () => {
 							max='16'
 							onChange={(e) => setMaxPlayers(e.target.value)}
 							required
+							style={{
+								WebkitAppearance: 'none',
+								MozAppearance: 'textfield',
+								margin: '0'
+							}}
+						/>
+
+
+					</div>
+					<div className='py-2 flex flex-col justify-start items-start'>
+						<div className='py-2 text-[14px] font-normal text-[#878787]'>
+							Start Date *
+						</div>
+						<input
+							className='rounded overflow-hidden bg-[#373737] h-[47px] w-[592px] text-[#878787] font-light text-[12px] pl-3 outline-none'
+							type='datetime-local'
+							placeholder='mm/dd/yyyy hh:mm am/pm'
+							onChange={(e) => setStartDate(e.target.value)}
+							required
 						/>
 					</div>
 					<div className='flex flex-col justify-start items-start pt-8'>
@@ -181,7 +207,7 @@ const CreateTournamentPage = () => {
 							<div className='flex items-center justify-end'>
 								<ToggleSwitch
 									checked={isPublic}
-									onChange={() => setIsPublic(!isPublic)}
+									onCheck={() => setIsPublic(!isPublic)} // Change 'onChange' to 'onCheck'
 								/>
 							</div>
 						</div>
@@ -200,7 +226,7 @@ const CreateTournamentPage = () => {
 							<div className='flex items-center justify-end'>
 								<ToggleSwitch
 									checked={isMonetized}
-									onChange={() => setIsMonetized(!isMonetized)}
+									onCheck={() => setIsMonetized(!isMonetized)}
 								/>
 							</div>
 						</div>
