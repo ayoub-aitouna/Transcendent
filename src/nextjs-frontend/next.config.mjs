@@ -10,17 +10,17 @@ const nextConfig = {
                 protocol: 'http',
                 hostname: 'localhost',
             },
-			{
+            {
                 protocol: 'http',
                 hostname: '172.17.0.1',
             },
-			{
+            {
                 protocol: 'http',
                 hostname: '192.168.122.1',
             },
-			{
+            {
                 protocol: 'http',
-                hostname: '10.32.118.90',
+                hostname: '10.32.98.164',
             },
             {
                 protocol: 'https',

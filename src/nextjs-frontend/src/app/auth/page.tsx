@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { oauth2Providers } from "@/constant/Auth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { Login } from "@/redux/slices/userslice";
+import { ProfileData } from "@/api/user";
 
 const schema = yup.object().shape({
 	email: yup
@@ -62,9 +63,10 @@ const page = () => {
 	const onSubmit = async (data: any) => {
 		try {
 			const res: any = await LoginUser({ ...data });
+			const user = await ProfileData();
 			Dispatch(
 				Login({
-					user: res.user,
+					user: user,
 					token: res.token,
 					isAuth: true,
 					isLoading: false,
@@ -73,9 +75,10 @@ const page = () => {
 			);
 			router.replace("/");
 		} catch (error: any) {
+			console.error(error);
 			setError("root", {
 				type: "manual",
-				message: error?.response?.data?.detail,
+				message: error?.response?.data?.detail || "Something went wrong",
 			});
 		}
 	};
