@@ -1,7 +1,7 @@
 import Empty from '@/app/ui/dashboard/component/Empty'
 import React from 'react'
 import apiMock from '@/lib/axios-mock';
-import { Friend } from '@/type/auth/user';
+import { FriendRequest } from '@/type/auth/user';
 import { PendingContainer, RecommendedContainer } from '@/app/ui/dashboard/home/content_area/friends-containers';
 import SearchBar from '@/app/ui/dashboard/home/content_area/SearchBar';
 
@@ -16,9 +16,8 @@ export const GetRecommendedAndPendingUsers = async (q: string | null) => {
 	else
 		recommendedRes = await apiMock.get(`/users/search-user/?none_friend_only=true&search_query=${q}`)
 
-	console.log("id :", pendingRes?.data.results)
-
-	return [pendingRes?.data.results as Friend[] || [], recommendedRes?.data.results as Friend[] || []];
+	console.group(pendingRes?.data)
+	return [pendingRes?.data.results as FriendRequest[] || [], recommendedRes?.data.results as FriendRequest[] || []];
 };
 
 const Page = async ({
@@ -48,9 +47,11 @@ const Page = async ({
 										key={index}
 										name={friend.username}
 										href={friend.image_url}
-										number={friend.level}
-										id={friend.id}	
-										q={q}								/>
+										number={0}
+										accept_fiend_request={friend.accept_fiend_request}
+										decline_fiend_request={friend.decline_fiend_request}
+										id={friend.id}
+										q={q} />
 								))}
 							</>
 						)}
@@ -62,9 +63,9 @@ const Page = async ({
 										key={index}
 										name={friend.username}
 										href={friend.image_url}
-										number={friend.level}
-										id={friend.id}	
-										q={q}								/>
+										number={0}
+										id={friend.id}
+										q={q} />
 								))}
 							</>
 						)}

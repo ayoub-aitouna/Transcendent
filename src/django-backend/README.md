@@ -7,6 +7,7 @@
 ### USER 
 * invite users create looby for game 
    - if after 2 min invited user didn't join the game room kill the inviter
+   - Appending users and accept users are broken
 
 ## tournament 
 - join registered users to looby_tournament_<tournament_id>

@@ -12,7 +12,7 @@ import { useAppSelector } from '@/redux/store';
 
 
 function TeamLeader() {
-	const {fullname,  image_url, level, rank, coins } = useAppSelector((state) => state.user.user);
+	const {fullname,  image_url, current_xp, rank, coins } = useAppSelector((state) => state.user.user);
 	return (
 		<div className='' >
 			<Link href={"/profile"} className="pt-4 flex items-center">
@@ -25,8 +25,8 @@ function TeamLeader() {
 				</div>
 			</Link>
 			<div className=' mt-10 h-[12px] text-white font-light text-sx flex justify-between">'>
-				<div className=' text-[10px] font-light'>My Level</div>
-				<div className="ml-auto text-[10px] font-light">7.9000/9000</div>
+				<div className=' text-[10px] font-light'>{rank.name}</div>
+				<div className="ml-auto text-[10px] font-light">{current_xp}/{rank.xp_required}</div>
 			</div>
 			<div className='mt-5 h-[161px] w-full'>
 				<ChartComponent />

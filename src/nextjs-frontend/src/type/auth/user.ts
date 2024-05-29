@@ -43,6 +43,7 @@ export type ChangePasswordForm = {
 }
 
 export type FriendRequest = {
+	id: number;
     username: string;
     fullname: string;
     image_url: string;

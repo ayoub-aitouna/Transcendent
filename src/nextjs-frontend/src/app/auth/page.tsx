@@ -68,6 +68,7 @@ const page = () => {
 	};
 
 	const onSubmit = async (data: any) => {
+		console.log("clicked....");
 		try {
 			const res: any = await LoginUser({ ...data });
 			const user = await ProfileData();
@@ -98,6 +99,10 @@ const page = () => {
 		}
 	}, []);
 
+	const __handleSubmit = (e: any) => {
+		e.preventDefault();
+		console.log("clicked");
+	};
 	return (
 		<div className='flex justify-center items-center w-full h-full'>
 			<AuthForm
@@ -105,7 +110,7 @@ const page = () => {
 				error={errors.root ? true : false}
 				error_message={errors.root ? errors.root.message : null}
 				onSubmit={handleSubmit(onSubmit)}>
-				<div className='felx-1 flex w-full flex-col gap-[7px] '>
+				<div className='flex-1 flex w-full flex-col gap-[7px] '>
 					<OAuthentication2 {...oauth2Providers[0]}>
 						<div
 							className='flex-1 flex flex-row items-center justify-start
