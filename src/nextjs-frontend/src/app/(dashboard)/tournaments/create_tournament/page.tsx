@@ -5,28 +5,12 @@ import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import Image from "next/image";
 import ToggleSwitch from "@/app/ui/dashboard/component/Toggle-switch";
 import apiMock from "@/lib/axios-mock";
-
-export const UploadIcon = () => (
-	<svg xmlns='http://www.w3.org/2000/svg' width={25} height={24} fill='none'>
-		<rect width={23} height={23} x={1} y={0.5} stroke='#575757' rx={3.5} />
-		<path
-			stroke='#878787'
-			strokeLinecap='round'
-			strokeLinejoin='round'
-			strokeWidth={1.5}
-			d='M12.5 14.947V20m0-5.053 1.6 1.684m-1.6-1.684-1.6 1.684'
-		/>
-		<path
-			stroke='#878787'
-			strokeLinecap='round'
-			strokeWidth={1.5}
-			d='M20.5 12.718c0 1.973-1.155 3.666-2.8 4.385m-3.295-8.87a4.421 4.421 0 0 1 3.02-.01m0 0C17.17 5.847 15.233 4 12.88 4 10.356 4 8.31 6.128 8.31 8.755c-.001.564.095 1.124.283 1.652m8.832-2.184a4.566 4.566 0 0 1 1.845 1.25m-10.677.934a3.316 3.316 0 0 0-.664-.067c-1.894 0-3.429 1.597-3.429 3.567 0 1.597 1.009 2.948 2.4 3.403m1.693-6.903c.442.09.864.272 1.24.534'
-		/>
-	</svg>
-);
+import { useRouter } from "next/navigation";
+import { UploadIcon } from "@/app/ui/dashboard/icons/content_area/UploadIcon";
 
 
 const CreateTournamentPage = () => {
+	const router = useRouter()
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
 	const [src, setSrc] = useState<string | null>(null);
 	const [name, setName] = useState('');
@@ -35,6 +19,20 @@ const CreateTournamentPage = () => {
 	const [maxPlayers, setMaxPlayers] = useState('');
 	const [isPublic, setIsPublic] = useState(false);
 	const [isMonetized, setIsMonetized] = useState(false);
+	const [error, setError] = useState<string>('');
+
+	const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const inputTime = new Date(e.target.value);
+		const currentTime = new Date();
+
+		if (inputTime <= currentTime) {
+			setError('Please select a time in the future.');
+		} else {
+			setError('');
+		}
+
+		setStartDate(e.target.value);
+	};
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
 		if (!e.target.files)
@@ -56,21 +54,26 @@ const CreateTournamentPage = () => {
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
+		console.log('uploading')
 		const formData = new FormData();
+
 		formData.append('name', name);
 		formData.append('description', description);
 		formData.append('start_date', startDate);
 		formData.append('max_players', maxPlayers);
 		formData.append('is_public', String(isPublic));
 		formData.append('is_monetized', String(isMonetized));
-		formData.append('icon_file', selectedImage ? selectedImage : '');
+		if (selectedImage)
+			formData.append('icon_file', selectedImage ? selectedImage : '');
+
 		try {
 			const res = await apiMock.post('/game/Tournament/', formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}
 			});
-			alert('Tournament created successfully!');
+
+			router.push('/home')
 		} catch (error) {
 			console.error('Error:', error);
 			alert('An error occurred while creating the tournament.');
@@ -119,10 +122,10 @@ const CreateTournamentPage = () => {
 										Click to upload
 										<input
 											type='file'
+											name="icon"
 											className='hidden'
 											onChange={handleImageUpload}
 											accept='image/*'
-										// required
 										/>
 									</label>
 									<span className='text-[#878787] font-light text-[12px] pl-1'>
@@ -190,9 +193,10 @@ const CreateTournamentPage = () => {
 							className='rounded overflow-hidden bg-[#373737] h-[47px] w-[592px] text-[#878787] font-light text-[12px] pl-3 outline-none'
 							type='datetime-local'
 							placeholder='mm/dd/yyyy hh:mm am/pm'
-							onChange={(e) => setStartDate(e.target.value)}
+							onChange={handleTimeChange}
 							required
 						/>
+						{error && <p style={{ color: 'red' }}>{error}</p>}
 					</div>
 					<div className='flex flex-col justify-start items-start pt-8'>
 						<div className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>

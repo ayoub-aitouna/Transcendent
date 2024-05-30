@@ -33,7 +33,20 @@ export type user = {
     level: number;
 }
 
+export type tournament = {
+	name :string,
+	description :string,
+	startDate :string,
+	maxPlayers:number,
+	isPublic:boolean,
+	isMonetized:boolean,
+}
+
 export interface uploadProfile extends user {
+    image_file: File;
+}
+
+export interface uploadTournamentProfile extends tournament {
     image_file: File;
 }
 

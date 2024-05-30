@@ -11,17 +11,17 @@ class HomeView(APIView):
 
 
 class NotificationView(generics.ListAPIView):
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.all().order_by('created_at').reverse()
     serializer_class = NotificationSerializer
 
 
-class NotificationAction(generics.UpdateAPIView):
+class NotificationAction(generics.RetrieveUpdateDestroyAPIView):
     class NAS(serializers.Serializer):
         pass
 
     queryset = Notification.objects.all()
     serializer_class = NAS
-
+	
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.seen = True

@@ -12,6 +12,7 @@
       - link play-now with backend (get game data and tournament, and online players) .k
       - fix responsively of homepage .k
       - Messenger page change to use id for individual chat rooms and layout to display all chat-rooms .k
+	  - add action-type to notification model and based on action decide on click event functionality 
 
 #
 

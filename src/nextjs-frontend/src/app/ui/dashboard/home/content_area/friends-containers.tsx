@@ -85,6 +85,7 @@ export function PendingContainer({ name, href, number, id, q, accept_fiend_reque
 			const response = await apiMock.put(accept_fiend_request);
 			console.log(response)
 			setAccept(true)
+
 		} catch (err: any) {
 			console.error('Failed to send friend request', err);
 		}
@@ -93,6 +94,7 @@ export function PendingContainer({ name, href, number, id, q, accept_fiend_reque
 		try {
 			const response = await apiMock.delete(decline_fiend_request);
 			setDecline(true)
+
 		}
 		catch (err: any) {
 			console.error('Failed to send friend request');
@@ -113,28 +115,18 @@ export function PendingContainer({ name, href, number, id, q, accept_fiend_reque
 			{
 				!q ?
 					<div className={`flex items-center justify-center rounded-[4px] gap-2`}>
-						{!accept ? (
-							<button className={`flex flex-row items-center justify-center rounded-[4px] bg-[#FD4106] w-[100px] h-[35px] p-2`} onClick={handleAccept}>
+						{(accept || decline) ? (
+							<Link href={`profile/${id}/`} passHref>
+								<div className="flex items-end justify-end text-white text-[16px] font-medium">
+									<RightArrow />
+								</div>
+							</Link>
+						) : (
+							<><button className={`flex flex-row items-center justify-center rounded-[4px] bg-[#FD4106] w-[100px] h-[35px] p-2`} onClick={handleAccept}>
 								<div className="text-[#e2e2e2] text-[12px] font-medium"> Accept </div>
-							</button>
-						) : (
-							<Link href={`profile/${id}/`} passHref>
-								<div className="flex items-end justify-end text-white text-[16px] font-medium">
-									<RightArrow />
-								</div>
-							</Link>
-						)}
-
-						{!decline ? (
-							<button className={`flex flex-row items-center justify-center rounded-[4px] bg-[#474747] w-[80px] h-[35px]`} onClick={handleDecline}>
+							</button><button className={`flex flex-row items-center justify-center rounded-[4px] bg-[#474747] w-[80px] h-[35px]`} onClick={handleDecline}>
 								<div className="text-[#e2e2e2] text-[12px] font-medium"> Decline </div>
-							</button>
-						) : (
-							<Link href={`profile/${id}/`} passHref>
-								<div className="flex items-end justify-end text-white text-[16px] font-medium">
-									<RightArrow />
-								</div>
-							</Link>
+							</button></>
 						)}
 					</div>
 					:

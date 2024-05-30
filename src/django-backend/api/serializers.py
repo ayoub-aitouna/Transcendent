@@ -5,7 +5,6 @@ from user.serializers import UserSerializer
 
 
 class NotificationSerializer(serializers.ModelSerializer):
-    recipient = UserSerializer(many=False, read_only=True)
     sender = UserSerializer(many=False, read_only=True)
     action = serializers.SerializerMethodField()
     icon = serializers.CharField(read_only=True, source='sender.image_url')
@@ -13,7 +12,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Notification
-        fields = ['recipient', 'sender', 'title', 'description', 'icon',
+        fields = ['id', 'recipient', 'sender', 'title', 'description', 'icon',
                   'seen', 'action', 'created_at', 'updated_at']
 
     def get_action(self, obj):
