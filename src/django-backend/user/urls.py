@@ -23,19 +23,16 @@ urlpatterns = [
          view=views.RemoveFriendRequest.as_view(), name='remove-friend-request'),
     path('decline-friend-request/<int:pk>/',
          view=views.RemoveFriendRequest.as_view(), name='decline-friend-request'),
-
+    path('blocked-list', view=views.MyBlockList.as_view(), name='block-list'),
     path('block-user/<int:pk>/',
          view=views.BlockUser.as_view(), name='block-user'),
-
     path('send-test-notification/',
          view=views.SendTestNotification.as_view(), name='send-test-notification'),
-
     path('online-players/',
          view=views.OnlineFriendsList.as_view(), name='online-player'),
-
+    path('rank-logs/', view=views.RankAchievementList.as_view(), name="rank-logs"),
     path('invite-player/<int:pk>/',
          view=views.InvitePlayer.as_view(), name='invite-player'),
-
     path('unfriend-user/<int:pk>/',
          view=views.DestroyFriendShip.as_view(), name='unfriend-user'),
     path('unblock-user/<int:pk>/',

@@ -1,12 +1,14 @@
+from enum import Enum
 import uuid
 
 from django.db import DatabaseError, IntegrityError
-from user.models import User, Friends_Request, BlockList
+from user.models import RankAchievement, Ranks, User, Friends_Request, BlockList
 from rest_framework import generics, serializers, status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from api.models import Notification
 from user.serializers import (
+    RankAchievementSerializer,
     UserSerializer,
     UserDetailSerializer,
     FriendsSerializer,
@@ -159,6 +161,9 @@ class RemoveFriendRequest(APIView):
             requester=self.request.user, addressee=user)).delete()
         return Response(status=204)
 
+class MyBlockList(generics.ListAPIView):
+    serializer_class = BlockListSerializer
+    queryset = BlockList.objects.all()
 
 class BlockUser(generics.CreateAPIView):
     serializer_class = BlockListSerializer
@@ -171,17 +176,42 @@ class BlockUser(generics.CreateAPIView):
 
 
 class OnlineFriendsList(generics.ListAPIView):
+    class QuerySerializer(serializers.Serializer):
+        filterbyName=serializers.BooleanField(required=False)
+        filterByLevel=serializers.BooleanField(required=False)
     serializer_class = OnlineUserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        friends = self.request.user.friends.all()
-        return friends.filter(status='online')
+        query_serializer = self.QuerySerializer(data=self.request.query_params)
+        friends_query = self.request.user.friends.all().filter(status='online')
+        if query_serializer.is_valid():
+            filterbyName = query_serializer.validated_data.get('filterbyName')
+            filterByLevel = query_serializer.validated_data.get('filterByLevel')
+            if filterbyName:
+                return friends_query.order_by('username')
+            if filterByLevel:
+                return friends_query.order_by('rank__hierarchy_order').order_by('current_xp').reverse()
+        return friends_query
 
+
+class RankAchievementList(APIView):
+    serializer_class = RankAchievementSerializer
+    def get(slef, request):
+        user = request.user
+        ranking_logs = RankAchievement.objects.all().filter(user=user).order_by('achieved_at')        
+        data = RankAchievementSerializer(ranking_logs, many=True).data
+        return Response(data, status=200)
+    
+    def post(self, request):
+        user = request.user
+        rank_achievement = RankAchievement(user=user, rank=Ranks.objects.get(id=1))
+        rank_achievement.save()
+        return Response(status=201)
 
 class TopPlayers(generics.ListAPIView):
     serializer_class = UserSerializer
-    queryset = User.objects.all().order_by('current_xp').reverse()[:5]
+    queryset = User.objects.all().order_by('rank__hierarchy_order').order_by('current_xp').reverse()[:5]
 
 
 class Ranking(generics.ListAPIView):

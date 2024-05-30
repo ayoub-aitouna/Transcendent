@@ -20,9 +20,22 @@ class ListGame(ListAPIView):
 
 class listTournaments(ListCreateAPIView):
     serializer_class = TournamentSerializer
+    queryset = Tournament.objects.all().filter(is_public=True).order_by('created_at').reverse()
+
+
+class listAnnouncements(ListCreateAPIView):
+    serializer_class = TournamentSerializer
+    queryset = Tournament.objects.all().filter(is_monetized=True).order_by('created_at').reverse()
+
+class privateTournamentslist(ListAPIView):
+    serializer_class = TournamentSerializer
     queryset = Tournament.objects.all()
-
-
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        return super().get_queryset().filter(owener=user).order_by('created_at').reverse()
+    
 class RetrieveTournament(RetrieveDestroyAPIView):
     serializer_class = TournamentDetailsSerializer
     queryset = Tournament.objects.all()

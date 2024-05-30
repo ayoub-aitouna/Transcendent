@@ -21,7 +21,8 @@ class Tournament(models.Model):
     streams = models.ManyToManyField('stream', blank=True)
     is_public = models.BooleanField(default=False)
     is_monetized = models.BooleanField(default=False)
-
+    owener = models.ForeignKey('user.User', on_delete=models.CASCADE,
+                               related_name='owener')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

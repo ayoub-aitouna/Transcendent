@@ -1,7 +1,7 @@
 import os
 from django.conf import settings
 from rest_framework import serializers
-from user.models import User, Friends_Request, Ranks, Achievements, BlockList
+from user.models import RankAchievement, User, Friends_Request, Ranks, Achievements, BlockList
 from rest_framework.reverse import reverse
 from django.db.models import Q
 from django.core.files.storage import default_storage
@@ -175,6 +175,17 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
         return (obj.current_xp / obj.rank.xp_required) * 100
 
 
+class RankAchievementSerializer(serializers.ModelSerializer):
+    point = serializers.SerializerMethodField()
+    class Meta:
+        model = RankAchievement
+        fields = ['id', 'point', 'achieved_at']
+    
+    def get_point(slef,obj):
+        print(obj.rank.hierarchy_order * obj.rank.xp_required)
+        return (obj.rank.hierarchy_order * obj.rank.xp_required)
+    
+    
 class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
     fullname = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
@@ -188,12 +199,15 @@ class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
         fields = ['id', 'image_url', 'fullname',
                   'username', 'url', 'send_invitation']
 
-
 class BlockListSerializer(serializers.ModelSerializer):
+    blocked_user =  UserSerializer(read_only=True)
     class Meta:
         model = BlockList
-        fields = '__all__'
-
+        fields = ['blocked_user']
+        
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return representation["blocked_user"]
 
 class FriendRequestSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()

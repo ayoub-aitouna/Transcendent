@@ -17,6 +17,12 @@ class Ranks(models.Model):
         return self.name
 
 
+class RankAchievement(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    rank = models.ForeignKey('Ranks', on_delete=models.CASCADE)
+    achieved_at = models.DateTimeField(auto_now_add=True)
+
+
 class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False)
     REGISTRATION_CHOICE = [
@@ -40,11 +46,12 @@ class User(AbstractUser):
     image_url = models.URLField(blank=True, null=True)
     achievements = models.ManyToManyField('Achievements', blank=True)
     friends = models.ManyToManyField('self', symmetrical=False)
-    ranking_logs = models.ManyToManyField('Ranks')
+    ranking_logs = models.ManyToManyField('Ranks', through=RankAchievement)
     coins = models.IntegerField(default=0)
     rank = models.ForeignKey(Ranks, on_delete=models.CASCADE,
                              related_name='user_rank', null=True, default=None)
     current_xp = models.IntegerField(default=0)
+    total_xp = models.IntegerField(default=0)
     enabled_2fa = models.BooleanField(default=False)
 
     objects = UserManager()
