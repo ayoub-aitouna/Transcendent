@@ -102,3 +102,14 @@ export const getRankLogs = async() : Promise<RankLogs[]> =>{
 	const res = await apiMock.get('/users/rank-logs/');
 	return res.data as RankLogs[]
 }
+export const removeTournament = async(id:number) =>{
+	await apiMock.delete(`/game/Tournament/detail/${id}/`);
+}
+
+export const removeNotification = async(id:number) =>{
+	await apiMock.delete(`/notifications/${id}/`);
+}
+
+export const seenNotification = async(id:number) =>{
+	await apiMock.put(`/notifications/${id}/`);
+}

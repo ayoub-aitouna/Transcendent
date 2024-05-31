@@ -14,17 +14,12 @@ export function RecommendedContainer({ user, isSearch }: {
 	user: FriendRequest;
 	isSearch: string | null;
 }) {
-	const { friend_requests } = useAppSelector((state) => state.user.user);
 	const [clicked, setClicked] = useState(false);
 	const requestUrl = `/users/send-friend-request/${user.id}/`;
 	const handleClicked = async () => {
 		try {
-			const response = await apiMock.post(requestUrl);
-			if (response.status === 201) {
-				setClicked(true);
-			} else {
-				console.error('Failed to send friend request');
-			}
+			await apiMock.post(requestUrl);
+			setClicked(true);
 		} catch (error) {
 			console.error('Error sending friend request:', error);
 		}
@@ -66,17 +61,14 @@ export function RecommendedContainer({ user, isSearch }: {
 	);
 };
 
-export function PendingContainer({user, isSearch }: {
-	user:FriendRequest;
-	isSearch: string | null;
+export function PendingContainer({user}: {
+	user:FriendRequest; 
 }) {
 	const [accept, setAccept] = useState(false);
 	const [decline, setDecline] = useState(false);
 	const handleAccept = async () => {
 		try {
-			console.log(user.manage_friend_request)
-			const response = await apiMock.put(user.manage_friend_request);
-			console.log(response)
+			await apiMock.put(user.manage_friend_request);
 			setAccept(true)
 
 		} catch (err: any) {
@@ -85,7 +77,7 @@ export function PendingContainer({user, isSearch }: {
 	};
 	const handleDecline = async () => {
 		try {
-			const response = await apiMock.delete(user.manage_friend_request);
+			await apiMock.delete(user.manage_friend_request);
 			setDecline(true)
 
 		}
@@ -106,7 +98,6 @@ export function PendingContainer({user, isSearch }: {
 				</div>
 			</Link>
 			{
-				isSearch ?
 					<div className={`flex items-center justify-center rounded-[4px] gap-2`}>
 						{(accept || decline) ? (
 							<Link href={`profile/${user.id}/`} passHref>
@@ -122,8 +113,6 @@ export function PendingContainer({user, isSearch }: {
 								</button></>
 						)}
 					</div>
-					:
-					<Link href={'/messenger'} className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> <RightArrow /> </Link>
 			}
 
 		</div>

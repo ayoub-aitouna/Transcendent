@@ -215,10 +215,10 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='requester.username')
     manage_friend_request = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = User
-        fields = ['id','username', 'fullname', 'image_url',
+        fields = ['id','requester_id', 'username', 'fullname', 'image_url',
                   'url',  'manage_friend_request']
 
     def get_manage_friend_request(self, obj):

@@ -99,9 +99,6 @@ export const ProfileIcon = () => {
 					</Link>
 				</div>
 			)}
-
-
-
 		</div>
 	);
 };

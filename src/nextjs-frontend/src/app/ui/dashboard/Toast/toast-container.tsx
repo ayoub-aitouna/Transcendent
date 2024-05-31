@@ -15,7 +15,7 @@ const ToastItem = ({
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			removeToast(item.id);
-		}, 5 * 1000);
+		}, 11 * 1000);
 		return () => clearTimeout(timer);
 	}, [item.id, removeToast]);
 
@@ -25,9 +25,17 @@ const ToastItem = ({
 				<div className='flex-1 flex flex-row  items-center justify-start p-3 gap-4'>
 					<div
 						className={clsx(
-							"w-16 h-16 rounded-full ",
+							"w-16 h-16 rounded-full flex justify-center items-center ",
 							item.backgroundColor
-						)}></div>
+						)}>
+						<Image
+							className='cursor-pointer'
+							width={30}
+							height={30}
+							src={item.icon}
+							alt='toast-icon'
+						/>
+					</div>
 					<div className='flex-1 flex-col items-center justify-start gap-3'>
 						<h1 className='font-bold text-white uppercase'>{item.title}</h1>
 						<p>{item.message}</p>

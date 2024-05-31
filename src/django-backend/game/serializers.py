@@ -70,10 +70,10 @@ class TournamentDetailsSerializer(serializers.ModelSerializer, BaseTournamentSer
     icon = serializers.SerializerMethodField()
     games_states = serializers.SerializerMethodField()
     match_ups = serializers.SerializerMethodField()
-
+    is_my_tournament = serializers.SerializerMethodField()
     class Meta:
         model = Tournament
-        fields = ['id', 'icon', 'name', 'description', 'max_players', 'is_public', 'is_monetized', 'tournament_bracket',
+        fields = ['id', 'icon', 'name', 'description', 'max_players', 'is_public', 'is_monetized', 'is_my_tournament', 'tournament_bracket',
                   'start_date', 'registered_users', 'streams', 'games_states', 'match_ups', 'created_at', 'updated_at']
 
     def get_games_states(self, obj):
@@ -84,7 +84,12 @@ class TournamentDetailsSerializer(serializers.ModelSerializer, BaseTournamentSer
     def get_match_ups(self, obj):
         match_up = Matchup.objects.all().filter(tournament=obj).filter(game_over=False)
         return MatchUpSerializer(match_up, many=True).data
-
+    
+    def get_is_my_tournament(self, obj):
+        request = self.context.get('request')
+        if request is None:
+            return False
+        return request.user == obj.owner
 
 class MatchUpSerializer(serializers.ModelSerializer):
     first_player = UserSerializer()

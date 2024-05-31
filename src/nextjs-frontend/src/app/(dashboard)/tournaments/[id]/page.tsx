@@ -13,6 +13,7 @@ import { Bracket } from "@/app/ui/dashboard/tournament/bracket-board";
 import { MatchUp, Tournament } from "@/type/dashboard/tournament";
 import Error from "@/app/ui/dashboard/component/Error";
 import ThreePoints from "@/app/ui/dashboard/icons/messenger/three-points";
+import TournamentMenu from "@/app/ui/dashboard/tournament/tournament-menu";
 function StatusTable({ data }: { data: Array<MatchUp> }) {
 	return (
 		<div className='w-full overflow-x-scroll hide-scrollbar'>
@@ -134,7 +135,12 @@ const page = async ({ params }: any) => {
 							Max Players
 						</div>
 					</div>
-					<div className="w-5 h-5 "><ThreePoints/></div>
+					{
+						result.is_my_tournament &&
+						<div className="w-5 h-5 flex items-center justify-center">
+							<TournamentMenu id={id} />
+						</div>
+					}
 				</div>
 			</div>
 			<div className='w-full xl:h-[28.5rem] flex flex-col xl:flex-row gap-5  '>
