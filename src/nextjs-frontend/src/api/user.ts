@@ -1,6 +1,6 @@
 import apiMock from "@/lib/axios-mock";
 import { PaginationApiResponse } from "@/type";
-import { ChangePasswordForm, uploadProfile, user, InviteMessage } from "@/type/auth/user";
+import { ChangePasswordForm, uploadProfile, user, InviteMessage ,RankLogs} from "@/type/auth/user";
 import { MatchUp, RegisteredPlayer } from "@/type/dashboard/tournament";
 
 export async function getRanking(): Promise<PaginationApiResponse<user>> {
@@ -96,4 +96,9 @@ export const DeclineFriendRequest = async (id: number): Promise<void> => {
 
 export const AcceptFriendRequest = async (id: number): Promise<void> => {
     await apiMock.post(`/users/accept-friend-request/${id}/`)
+}
+
+export const getRankLogs = async() : Promise<RankLogs[]> =>{
+	const res = await apiMock.get('/users/rank-logs/');
+	return res.data as RankLogs[]
 }

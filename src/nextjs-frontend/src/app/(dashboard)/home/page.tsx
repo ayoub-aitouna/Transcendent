@@ -12,17 +12,23 @@ import Friends from "@/app/ui/dashboard/home/friends";
 const page = () => {
 	return <>
 		<div className="h-full">
-			<div className="flex-1 h-full flex flex-col gap-5">
-				<div className="flex  flex-row flex-wrap  gap-5">
-					<div className="w-full lg:w-[381px] h-[456px] bg-secondary-400 rounded-xl p-4"><TeamLeader /></div>
-					<div className="w-full flex-1 h-[456px] bg-secondary-400  min-w-[400px] rounded-xl  overflow-hidden"><NewTournaments /></div>
-					<div className="w-full lg:w-[381px] h-[456px] bg-secondary-400 rounded-xl p-4"><TopPlayers /></div>
+			<div className="flex-1 h-full flex flex-row flex-wrap gap-5">
+				<div className="grid-container gap-4">
+					<div className="bg-secondary-400 rounded-xl p-4  item-a"><TeamLeader /></div>
+					<div className="bg-secondary-400 rounded-xl p-4  item-b"><NewTournaments /></div>
+					<div className="bg-secondary-400 rounded-xl p-4  item-c"><TopPlayers /></div>
 				</div>
 
-				<div className="flex flex-row flex-wrap  gap-5">
-					<div className="h-[456px] lg:w-[381px] bg-secondary-400 rounded-xl p-4"><OnlinePlayers /></div>
-					<div className="h-[456px] flex-1 bg-secondary-400  min-w-[400px] rounded-xl p-4"><Tournaments /></div>
-					<div className="h-[456px] lg:w-[381px] bg-secondary-400 rounded-xl p-4">< Friends /></div>
+				<div className="grid-container gap-4">
+					<div className="item-a h-[456px] bg-secondary-400 rounded-xl p-4">
+						<OnlinePlayers />
+					</div>
+					<div className="item-b h-[456px] flex-1 bg-secondary-400  min-w-[400px] rounded-xl p-4">
+						<Tournaments />
+					</div>
+					<div className="item-c h-[456px] bg-secondary-400 rounded-xl p-4">
+						< Friends />
+					</div>
 				</div>
 
 			</div>

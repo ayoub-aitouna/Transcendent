@@ -210,7 +210,7 @@ class RankAchievementList(APIView):
     def post(self, request):
         user = request.user
         rank_achievement = RankAchievement(
-            user=user, rank=Ranks.objects.get(id=1))
+            user=user, rank=Ranks.objects.get(id=3))
         rank_achievement.save()
         return Response(status=201)
 

@@ -49,14 +49,16 @@ class TournamentSerializer(serializers.ModelSerializer, BaseTournamentSerializer
     class Meta:
         model = Tournament
         fields = ['id', 'icon', 'icon_file', 'name', 'description', 'start_date',
-                  'max_players', 'url', 'register']
+                  'max_players','is_public', 'is_monetized', 'url', 'register']
 
     def create(self, validated_data):
+        user = self.context.get('request').user 
         icon = validated_data['icon_file']
         save_path = os.path.join(
             settings.MEDIA_ROOT, 'public/profile-images', icon.name)
         path = default_storage.save(save_path, icon)
         validated_data['icon'] = f'/media/{path}'
+        validated_data['owner'] = user
         del validated_data['icon_file']
         return super().create(validated_data)
 

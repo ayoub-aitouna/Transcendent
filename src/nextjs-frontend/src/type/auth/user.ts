@@ -61,8 +61,13 @@ export type FriendRequest = {
     fullname: string;
     image_url: string;
     url: string;
-    accept_fiend_request: string;
-    decline_fiend_request: string;
+    manage_friend_request: string;
+}
+
+export type RankLogs = {
+	id: number;
+    point: number;
+    achieved_at: string;
 }
 
 export type Friend = {

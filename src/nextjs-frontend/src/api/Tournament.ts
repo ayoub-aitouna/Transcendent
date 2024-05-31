@@ -14,6 +14,18 @@ export const GetTournaments = async (): Promise<
 	}
 };
 
+export const GetPrivateTournaments = async (): Promise<
+	Partial<PaginationApiResponse<Tournament>>
+> => {
+	try {
+		const Response = await apiMock.get(`/game/private-tournaments/`);
+		const data: Partial<PaginationApiResponse<Tournament>> = Response.data;
+		return data;
+	} catch (error) {
+		return [] as Partial<PaginationApiResponse<Tournament>>;
+	}
+};
+
 export const GetTournamentDetails = async (id: number): Promise<Tournament> => {
 	const Response = await apiMock.get(`/game/Tournament/detail/${id}`);
 	const data: Tournament = Response.data;

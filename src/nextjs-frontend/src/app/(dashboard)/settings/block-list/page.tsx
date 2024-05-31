@@ -4,17 +4,19 @@ import SearchBar from '@/app/ui/dashboard/home/content_area/SearchBar';
 import Empty from '@/app/ui/dashboard/component/Empty';
 import apiMock from '@/lib/axios-mock';
 import { BlocksContainer } from '@/app/ui/dashboard/home/content_area/friends-containers';
+import { FriendRequest } from '@/type/auth/user';
+import { PaginationApiResponse } from '@/type';
 
 
 export const GetData = async (q: string | null) => {
 	let response = null;
 	if (!q || q === '') {
-		response = await apiMock.get(`/users/search-user/?none_friend_only=false`);
+		response = await apiMock.get(`/users/blocked-list/`);
 
 	} else {
 		response = await apiMock.get(`/users/search-user/?none_friend_only=false&search_query=${q}`);
 	}
-	return response?.data.results || [];
+	return response?.data as PaginationApiResponse<FriendRequest>;
 };
 
 const page = async ({ searchParams }: { searchParams?: { q?: string } }) => {
@@ -27,20 +29,17 @@ const page = async ({ searchParams }: { searchParams?: { q?: string } }) => {
 				<div className="pb-1">
 					<SearchBar />
 				</div>
-				{filteredFriends.length === 0 ? (
+				{filteredFriends.count === 0 ? (
 					<div className="flex h-[320px] w-full justify-center items-center">
 						<Empty text="no Online Players are available right now" />
 					</div>
 				) : (
 					<div className="h-[750px] overflow-y-scroll hide-scrollbar">
 						<div className='font-bold text-[18px] pb-2'>Blocks list</div>
-						{filteredFriends.map((friend: { username: string; image_url: string; level: number; id: number; }, index: Key | null | undefined) => (
+						{filteredFriends.results.map((friend: FriendRequest, index) => (
 							<BlocksContainer
-								name={friend.username}
 								key={index}
-								href={friend.image_url}
-								number={friend.level}
-								id={friend.id}
+								user={friend}
 							/>
 						))}
 					</div>

@@ -11,13 +11,13 @@ export function UserContainer({ player, index }: {
 }) {
 	const isMessage = index == 1;
 	if (!player) {
-		return null; // or some fallback UI if player is not available
+		return null;
 	}
 	return (
 		<Link href={`/profile/${player.id}`}>
 		<button
-			className={`mt-2 w-[341px] h-[69px] flex items-center justify-between rounded-lg
-			${isMessage ? styles.highlight  : "bg-[#373737]"} overflow-hidden  p-2 h-[44px] mb-[10px]`}>
+			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3
+			${isMessage ? styles.highlight  : "bg-[#373737]"}`}>
 			<div className='flex items-center justify-between '>
 				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={player.image_url} alt="Profile Image" width={53} height={53} />
 				<div />

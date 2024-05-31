@@ -213,16 +213,16 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
     username = serializers.CharField(source='requester.username')
-    manage_fiend_request = serializers.SerializerMethodField()
+    manage_friend_request = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['id','username', 'fullname', 'image_url',
-                  'url',  'manage_fiend_request']
+                  'url',  'manage_friend_request']
 
-    def get_manage_fiend_request(self, obj):
-        return reverse('manage-friend-request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
+    def get_manage_friend_request(self, obj):
+        return reverse('manage_friend_request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
 
     def get_url(self, obj):
         print(obj)

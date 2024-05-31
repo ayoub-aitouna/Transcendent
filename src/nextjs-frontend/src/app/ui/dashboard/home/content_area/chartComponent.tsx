@@ -1,34 +1,24 @@
 import React, { useEffect, useRef } from 'react';
 import Chart, { ChartConfiguration, Point } from 'chart.js/auto';
+import { RankLogs } from '@/type/auth/user';
 
-const LineChart: React.FC = () => {
+const LineChart = ({ inputData }: { inputData: RankLogs[] }) => {
 	const chartRef = useRef<HTMLCanvasElement | null>(null);
 	const chartInstanceRef = useRef<Chart<"line"> | null>(null);
 
 
-	useEffect(() => {
+	const prepareChart = async () => {
 		if (chartRef.current) {
 			const ctx = chartRef.current.getContext('2d');
 			var gradient = ctx?.createLinearGradient(0, 0, 0, 400);
 			gradient?.addColorStop(0, 'rgba(253, 65, 6, 0.28)');
 			gradient?.addColorStop(1, 'rgba(253, 65, 6, 0)');
 			if (ctx) {
-				const inputs = {
-					min: 0,
-					max: 100,
-					count: 16,
-					decimals: 2,
-					continuity: 1,
-				};
-
 				const generateLabels = () => {
-					return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+					return inputData.map(entry => new Date(entry.achieved_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
 				};
-
 				const generateData = () => {
-					return Array.from({ length: inputs.count }, () =>
-						Math.random() * (inputs.max - inputs.min) + inputs.min
-					);
+					return inputData.map(entry => entry.point);
 				};
 
 				const data = {
@@ -103,7 +93,10 @@ const LineChart: React.FC = () => {
 				} as ChartConfiguration<"line", (number | Point | null)[], unknown>);
 			}
 		}
+	}
 
+	useEffect(() => {
+		prepareChart()
 		return () => {
 			if (chartInstanceRef.current) {
 				chartInstanceRef.current.destroy();
@@ -111,7 +104,11 @@ const LineChart: React.FC = () => {
 		};
 	}, []);
 
-	return <canvas ref={chartRef} />;
+	return (
+		<div className="chart-container">
+			<canvas ref={chartRef} style={{ width: '100%', height: '100%' }} />
+		</div>
+	);
 };
 
 export default LineChart;

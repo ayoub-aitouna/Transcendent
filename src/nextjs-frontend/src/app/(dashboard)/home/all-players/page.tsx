@@ -28,6 +28,7 @@ const Page = async ({
 	};
 }) => {
 	const q = searchParams?.q || null;
+	const isSearch = q === '';
 	const [pendingResults, recommendedResults] = await GetRecommendedAndPendingUsers(q);
 	return (
 		<div className='flex items-center justify-center w-full'>
@@ -45,34 +46,30 @@ const Page = async ({
 								{pendingResults.map((friend, index) => (
 									<PendingContainer
 										key={index}
-										name={friend.username}
-										href={friend.image_url}
-										number={0}
-										accept_fiend_request={friend.accept_fiend_request}
-										decline_fiend_request={friend.decline_fiend_request}
-										id={friend.id}
-										q={q} />
+										user={friend}
+										isSearch={q} />
 								))}
 							</>
 						)}
 						{recommendedResults.length > 0 && (
-							<>
+							<>{!q ?
 								<div className='font-bold text-[18px] pt-4'>Recommended Users</div>
+								:
+								<div className='font-bold text-[18px]'>All Users</div>
+							}
 								{recommendedResults.map((friend, index) => (
 									<RecommendedContainer
 										key={index}
-										name={friend.username}
-										href={friend.image_url}
-										number={0}
-										id={friend.id}
-										q={q} />
+										user={friend}
+										isSearch={q}
+									/>
 								))}
 							</>
 						)}
 					</>
 				)}
 			</div>
-		</div>
+		</div >
 	);
 };
 

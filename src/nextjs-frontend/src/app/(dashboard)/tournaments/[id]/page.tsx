@@ -12,6 +12,7 @@ import { CountDownTimerButton } from "@/app/ui/dashboard/tournament/count-down-b
 import { Bracket } from "@/app/ui/dashboard/tournament/bracket-board";
 import { MatchUp, Tournament } from "@/type/dashboard/tournament";
 import Error from "@/app/ui/dashboard/component/Error";
+import ThreePoints from "@/app/ui/dashboard/icons/messenger/three-points";
 function StatusTable({ data }: { data: Array<MatchUp> }) {
 	return (
 		<div className='w-full overflow-x-scroll hide-scrollbar'>
@@ -124,13 +125,16 @@ const page = async ({ params }: any) => {
 						</div>
 					</div>
 				</div>
-				<div className='flex flex-col items-start justify-center '>
-					<div className='font-bold text-lg tracking-tight'>
-						{result.max_players}
+				<div className="flex flex-row gap-3 items-center justify-center">
+					<div className='flex flex-col items-start justify-center '>
+						<div className='font-bold text-lg tracking-tight'>
+							{result.max_players}
+						</div>
+						<div className='text-secondary-100 text-sm truncate font-normal tracking-tight'>
+							Max Players
+						</div>
 					</div>
-					<div className='text-secondary-100 text-sm truncate font-normal tracking-tight'>
-						Max Players
-					</div>
+					<div className="w-5 h-5 "><ThreePoints/></div>
 				</div>
 			</div>
 			<div className='w-full xl:h-[28.5rem] flex flex-col xl:flex-row gap-5  '>
@@ -159,7 +163,7 @@ const page = async ({ params }: any) => {
 					)}
 					<CountDownTimerButton
 						targetDate={result.start_date}
-						// Onclick={() => handleRegister()}
+					// Onclick={() => handleRegister()}
 					/>
 				</div>
 			</div>

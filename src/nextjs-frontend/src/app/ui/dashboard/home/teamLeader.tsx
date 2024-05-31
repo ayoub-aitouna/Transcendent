@@ -7,12 +7,26 @@ import Messages from '../icons/content_area/messages';
 import Link from 'next/link';
 import ChartComponent from './content_area/chartComponent';
 import { useAppSelector } from '@/redux/store';
-
+import { RankLogs } from '@/type/auth/user';
+import { getRankLogs } from '@/api/user';
+import { useEffect, useState } from 'react';
+import Empty from '../component/Empty';
 
 
 
 function TeamLeader() {
-	const {fullname,  image_url, current_xp, rank, coins } = useAppSelector((state) => state.user.user);
+	const { fullname, image_url, current_xp, rank, coins } = useAppSelector((state) => state.user.user);
+	const [charData, setChartData] = useState<RankLogs[]>([])
+	const getPlayerProgress = async () => {
+		try {
+			const data = await getRankLogs()
+			setChartData(data)
+		} catch (error) {
+		}
+	}
+	useEffect(() => {
+		getPlayerProgress()
+	}, [])
 	return (
 		<div className='' >
 			<Link href={"/profile"} className="pt-4 flex items-center">
@@ -28,8 +42,14 @@ function TeamLeader() {
 				<div className=' text-[10px] font-light'>{rank.name}</div>
 				<div className="ml-auto text-[10px] font-light">{current_xp}/{rank.xp_required}</div>
 			</div>
-			<div className='mt-5 h-[161px] w-full'>
-				<ChartComponent />
+			<div className='mt-5 h-[161px] w-full flex justify-center items-center'>
+				{
+					charData.length === 0 && <Empty text="you don't have progress data Yet !" />
+				}
+				{
+					charData.length !== 0 &&
+					<ChartComponent inputData={charData} />
+				}
 			</div >
 			<div className='mt-5'>
 				<div className='flex flex-row justify-between items-center'>
