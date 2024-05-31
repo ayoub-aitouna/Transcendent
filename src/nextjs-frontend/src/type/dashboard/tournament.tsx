@@ -18,6 +18,7 @@ export type Tournament = {
 	updated_at: Date;
 	url?: string;
 	register?: string;
+	is_my_tournament: boolean;
 };
 export type RegisteredPlayer = {
 	id: number;

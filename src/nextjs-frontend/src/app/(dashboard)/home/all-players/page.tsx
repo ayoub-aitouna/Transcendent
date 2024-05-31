@@ -28,7 +28,6 @@ const Page = async ({
 	};
 }) => {
 	const q = searchParams?.q || null;
-	const isSearch = q === '';
 	const [pendingResults, recommendedResults] = await GetRecommendedAndPendingUsers(q);
 	return (
 		<div className='flex items-center justify-center w-full'>
@@ -46,8 +45,7 @@ const Page = async ({
 								{pendingResults.map((friend, index) => (
 									<PendingContainer
 										key={index}
-										user={friend}
-										isSearch={q} />
+										user={friend} />
 								))}
 							</>
 						)}

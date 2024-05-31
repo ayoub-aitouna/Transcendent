@@ -8,12 +8,11 @@ import { navLinks, socialLinks } from "@/constant/dashboard";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useAppSelector } from "@/redux/store";
+import { usePathname } from "next/navigation";;
 import apiMock from "@/lib/axios-mock";
 import { PaginationApiResponse } from "@/type";
 import { user } from "@/type/auth/user";
-import { create } from "domain";
+import NotificationMenu from "./notification-menu";
 
 const PlayNowIcon = () => {
 	const pathname = usePathname();
@@ -27,32 +26,32 @@ const PlayNowIcon = () => {
 	);
 };
 
+export interface Results {
+	id :number;
+	recipient :user;
+	sender :user;
+}
 export interface Notifications {
 	image_url: string;
-	title: string;
+	description: string;
 	created_at: string;
-	sender: user
+	id :number;
+	sender: user;
+	seen: boolean;
+	results: Results[];
 }
 
-function NotificationContent({
-	notification,
-	time,
-	sender,
-}: {
-	notification: string;
-	time: string;
-	sender: user;
-}) {
-	const truncatedNotification = notification;
-	const send_at = new Date(time).toLocaleString();
+function NotificationContent({notifications}:{notifications: Notifications}) {
+	const truncatedNotification = notifications.description;
+	const send_at = new Date(notifications.created_at).toLocaleString();
 	return (
 		<div
-			className={`p-2 h-[60px] flex  flex-row items-center justify-between rounded-md  w-[256px] overflow-hidden`}>
+			className={`p-2 h-[50px] flex  flex-row items-center justify-between rounded-sm my-[3px]  w-[260px] overflow-hidden ${!notifications.seen ? "bg-[#474747]" : ""}`}>
 			<div className='flex items-center rounded-sm'>
 				<div className="rounded-ful flex items-start ">
 					<Image
 						className="bg-white  w-[35px] h-[35px] rounded-full"
-						src={sender.image_url}
+						src={notifications.sender.image_url}
 						alt="Profile Image"
 						width={35} height={35} />
 				</div>
@@ -63,6 +62,9 @@ function NotificationContent({
 					</div>
 					<div className=' font-normal text-[#878787] text-[10px]  '>{send_at}</div>
 				</div>
+			</div>
+			<div className=''>
+				<NotificationMenu id={notifications.id} />
 			</div>
 		</div>
 	);
@@ -77,7 +79,7 @@ function NotificationPanel() {
 		const fetchNotifications = async () => {
 			try {
 				const response = await apiMock.get('/notifications/');
-				setNotifications(response.data); // Assuming response.data is an array of notifications
+				setNotifications(response.data);
 			} catch (error) {
 				console.error('Error fetching notifications:', error);
 			}
@@ -109,19 +111,17 @@ function NotificationPanel() {
 						? "h-[300px] overflow-y-scroll hide-scrollbar"
 						: "h-[300px]"
 						}`}>
-					{notifications?.results.map((item, index) => (
+					{notifications?.results.slice(0, viewAllClicked ? (notifications?.results.length ?? 0) : 5).map((item, index) => (
 						<div
 							key={index}
-							className={`container flex flex-col justify-between items-center 
-						${index === notificationClicked ? "bg-[#3D3D3D] rounded-sm" : ""}`}
+							className={`container flex flex-col justify-between items-center relative
+							${index === notificationClicked ? item.seen = true : ""}`}
 							onClick={() => handleNotificationClicked(index)}>
 							<NotificationContent
-								sender={item.sender}
-								notification={item.title}
-								time={item.created_at}
+								notifications={item}
 							/>
-						</div>
-					)).slice(0, viewAllClicked ? (notifications?.results.length ?? 0) : 5)}
+						</div> 
+					))}
 				</div>
 				{(notifications?.results.length ?? 0) > 5 && (
 					<button
