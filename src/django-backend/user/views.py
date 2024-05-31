@@ -1,7 +1,5 @@
-from enum import Enum
 import uuid
-
-from django.db import DatabaseError, IntegrityError
+from django.db import IntegrityError
 from user.models import RankAchievement, Ranks, User, Friends_Request, BlockList
 from rest_framework import generics, serializers, status
 from rest_framework.permissions import IsAuthenticated
@@ -22,13 +20,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from transcendent.consumers import NotifyUser
 import json
-from django.core.files.storage import default_storage
 from game.tasks import NotifyTournamentUsers
 from django.utils import timezone
 from datetime import timedelta
 from api.serializers import NotificationSerializer
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms.models import model_to_dict
+
 
 class Test(APIView):
     def get(self, request):
@@ -38,11 +35,13 @@ class Test(APIView):
 
 
 class BaseNotification():
-    def _create_notification(self, addressee, title, description):
+    def _create_notification(self, addressee, title, description, type, action):
         notification = Notification(
             title=title,
             description=description,
             sender=self.request.user,
+            type=type,
+            action=action,
             recipient=addressee)
         notification.save()
         send_notification(notification)
@@ -82,6 +81,34 @@ class UsersDetailByUsername(generics.RetrieveAPIView):
     lookup_field = 'username'
 
 
+class MyBlockList(generics.ListAPIView):
+    class QuerySerializer(serializers.Serializer):
+        search_query = serializers.CharField(required=False)
+    serializer_class = BlockListSerializer
+    queryset = BlockList.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        base_query = BlockList.objects.all().filter(user=user)
+        queryserializer = self.QuerySerializer(data=self.request.query_params)
+        if queryserializer.is_valid():
+            search_query = queryserializer.validated_data.get('search_query')
+            if search_query is not None or "":
+                return base_query.filter(blocked_user__username__icontains=search_query)
+        return base_query
+
+
+class BlockUser(generics.CreateAPIView):
+    serializer_class = BlockListSerializer
+    queryset = BlockList.objects.all()
+
+    def perform_create(self, serializer):
+        pk = self.kwargs.get("pk")
+        blocked_user = get_object_or_404(User, pk=pk)
+        serializer.save(user=self.request.user, blocked_user=blocked_user)
+
+
 class Profile(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = [IsAuthenticated]
@@ -116,23 +143,21 @@ class ChangePassword(APIView):
         return Response(serializer.errors, status=400)
 
 
-class SendFriendRequest(generics.CreateAPIView):
+class SendFriendRequest(generics.CreateAPIView, BaseNotification):
     serializer_class = FriendsSerializer
     queryset = Friends_Request.objects.all()
-
-    def _create_notification(self, addressee):
-        notification = Notification(
-            title='You have a new friend request',
-            description=f'{self.request.user.username} sent you a friend request',
-            sender=self.request.user,
-            recipient=addressee)
-        notification.save()
-        send_notification(notification)
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         pk = self.kwargs.get("pk")
         addressee = get_object_or_404(User, pk=pk)
-        self._create_notification(addressee)
+        self._create_notification(
+            addressee,
+            'you have new Friend Request ',
+            f'{self.request.user.username} has sent you friend request',
+            'friend-request',
+            self.request.user.username
+        )
         serializer.save(requester=self.request.user, addressee=addressee)
 
 
@@ -148,32 +173,22 @@ class ManageFriendRequest(APIView, BaseNotification):
         except ObjectDoesNotExist:
             return Response(status=404, data={'message': 'Friend request not found'})
         self._create_notification(
-            user, 'Friend Request Accepted', f'{self.request.user.username} has accepted your friend request')
+            user,
+            'Friend Request Accepted',
+            f'{self.request.user.username} has accepted your friend request',
+            'friend-request',
+            user.username
+        )
         user.friends.add(self.request.user)
         self.request.user.friends.add(user)
         instance.delete()
-        return Response(status=201)
+        return Response(status=200)
 
     def delete(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         Friends_Request.objects.filter(Q(requester=user, addressee=self.request.user) | Q(
             requester=self.request.user, addressee=user)).delete()
         return Response(status=204)
-
-
-class MyBlockList(generics.ListAPIView):
-    serializer_class = BlockListSerializer
-    queryset = BlockList.objects.all()
-
-
-class BlockUser(generics.CreateAPIView):
-    serializer_class = BlockListSerializer
-    queryset = BlockList.objects.all()
-
-    def perform_create(self, serializer):
-        pk = self.kwargs.get("pk")
-        blocked_user = get_object_or_404(User, pk=pk)
-        serializer.save(user=self.request.user, blocked_user=blocked_user)
 
 
 class OnlineFriendsList(generics.ListAPIView):
@@ -235,7 +250,12 @@ class InvitePlayer(APIView, BaseNotification):
         user = get_object_or_404(User, pk=pk)
         game_room_id = str(uuid.uuid4())
         self._create_notification(
-            user, 'Game invitation', f'{self.request.user.username} invited you to a game room {game_room_id}')
+            addressee=user,
+            title='Game invitation',
+            description=f'{self.request.user.username} invited you to a game room {game_room_id}',
+            type='invite',
+            action=game_room_id
+        )
         return Response({'message': 'Invitation sent', 'game_room_id': game_room_id})
 
 

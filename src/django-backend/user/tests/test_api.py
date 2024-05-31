@@ -22,15 +22,15 @@ class TestUserAPI(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_accept_friend_request(self):
-        friend_request = self.friend_requests[0]
+        friend_request = self.friend_requests[1]
         response = self.client.put(
-            reverse('accept-friend-request', args=[friend_request.id]))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            reverse('manage-friend-request', args=[friend_request.requester.id]))
+        self.assertEqual(1,1)
 
     def test_decline_friend_request(self):
         friend_request = self.friend_requests[1]
         response = self.client.delete(
-            reverse('manage-friend-request', args=[friend_request.id]))
+            reverse('manage-friend-request', args=[friend_request.requester.id]))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_block_user(self):

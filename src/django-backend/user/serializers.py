@@ -222,7 +222,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
                   'url',  'manage_friend_request']
 
     def get_manage_friend_request(self, obj):
-        return reverse('manage_friend_request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
+        return reverse('manage-friend-request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
 
     def get_url(self, obj):
         print(obj)

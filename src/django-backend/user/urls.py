@@ -17,7 +17,7 @@ urlpatterns = [
     path('top-players/', view=views.TopPlayers.as_view(), name='top-players'),
     path('send-friend-request/<int:pk>/',
          view=views.SendFriendRequest.as_view(), name='send-friend-request'),
-    path('manage_friend_request/<int:pk>/', view=views.ManageFriendRequest.as_view(), name='manage_friend_request'),
+    path('manage_friend_request/<int:pk>/', view=views.ManageFriendRequest.as_view(), name='manage-friend-request'),
     path('blocked-list/', view=views.MyBlockList.as_view(), name='block-list'),
     path('block-user/<int:pk>/',
          view=views.BlockUser.as_view(), name='block-user'),
