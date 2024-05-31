@@ -39,7 +39,7 @@ const Cta = ({
 			className='w-[200px] h-[44px] bg-[#323232] rounded flex flex-row justify-center
 					items-center gap-2 p-3'>
 			<Image
-				src={src}
+				src={src || ""}
 				width={height}
 				height={width}
 				alt='profile background image'
@@ -56,7 +56,7 @@ const UserInfo = ({ src, value }: { src: string; value: string }) => {
 	return (
 		<li className='flex w-full flex-row items-start justify-start gap-3 px-5 '>
 			<Image
-				src={src}
+				src={src || ""}
 				width={24}
 				height={24}
 				alt='userInfo Icon'
@@ -339,6 +339,7 @@ const Header = ({ data: inputData }: { data: user }) => {
 					</div>
 				</div>
 			</div>
+			<div className='absolute h-8 w-8 rounded-tr-lg rounded-bl-xl bg-secondary-300 right-0 top-0'></div>
 		</div>
 	);
 };

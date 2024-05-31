@@ -27,7 +27,8 @@ from game.tasks import NotifyTournamentUsers
 from django.utils import timezone
 from datetime import timedelta
 from api.serializers import NotificationSerializer
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.forms.models import model_to_dict
 
 class Test(APIView):
     def get(self, request):
@@ -135,35 +136,35 @@ class SendFriendRequest(generics.CreateAPIView):
         serializer.save(requester=self.request.user, addressee=addressee)
 
 
-class AcceptFriendRequest(generics.UpdateAPIView):
-    serializer_class = FriendsSerializer
-    queryset = Friends_Request.objects.all()
+class ManageFriendRequest(APIView, BaseNotification):
+    class serializer_class(serializers.Serializer):
+        pass
 
-    def _create_notification(self, requester):
-        Notification(
-            title='Your friend request has been accepted',
-            icon='fa fa-user-plus',
-            recipient=requester).save()
+    def put(self, request, pk):
+        try:
+            user = get_object_or_404(User, pk=pk)
+            instance = Friends_Request.objects.get(
+                Q(requester=user, addressee=self.request.user))
+        except ObjectDoesNotExist:
+            return Response(status=404, data={'message': 'Friend request not found'})
+        self._create_notification(
+            user, 'Friend Request Accepted', f'{self.request.user.username} has accepted your friend request')
+        user.friends.add(self.request.user)
+        self.request.user.friends.add(user)
+        instance.delete()
+        return Response(status=201)
 
-    def perform_update(self, serializer):
-        instance = self.get_object()
-        if instance.addressee == self.request.user:
-            instance.addressee.friends.add(instance.requester)
-            instance.requester.friends.add(instance.addressee)
-            instance.delete()
-            self._create_notification(self.get_object().requester)
-
-
-class RemoveFriendRequest(APIView):
     def delete(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         Friends_Request.objects.filter(Q(requester=user, addressee=self.request.user) | Q(
             requester=self.request.user, addressee=user)).delete()
         return Response(status=204)
 
+
 class MyBlockList(generics.ListAPIView):
     serializer_class = BlockListSerializer
     queryset = BlockList.objects.all()
+
 
 class BlockUser(generics.CreateAPIView):
     serializer_class = BlockListSerializer
@@ -177,8 +178,8 @@ class BlockUser(generics.CreateAPIView):
 
 class OnlineFriendsList(generics.ListAPIView):
     class QuerySerializer(serializers.Serializer):
-        filterbyName=serializers.BooleanField(required=False)
-        filterByLevel=serializers.BooleanField(required=False)
+        filterbyName = serializers.BooleanField(required=False)
+        filterByLevel = serializers.BooleanField(required=False)
     serializer_class = OnlineUserSerializer
     permission_classes = [IsAuthenticated]
 
@@ -187,7 +188,8 @@ class OnlineFriendsList(generics.ListAPIView):
         friends_query = self.request.user.friends.all().filter(status='online')
         if query_serializer.is_valid():
             filterbyName = query_serializer.validated_data.get('filterbyName')
-            filterByLevel = query_serializer.validated_data.get('filterByLevel')
+            filterByLevel = query_serializer.validated_data.get(
+                'filterByLevel')
             if filterbyName:
                 return friends_query.order_by('username')
             if filterByLevel:
@@ -197,21 +199,26 @@ class OnlineFriendsList(generics.ListAPIView):
 
 class RankAchievementList(APIView):
     serializer_class = RankAchievementSerializer
+
     def get(slef, request):
         user = request.user
-        ranking_logs = RankAchievement.objects.all().filter(user=user).order_by('achieved_at')        
+        ranking_logs = RankAchievement.objects.all().filter(
+            user=user).order_by('achieved_at')
         data = RankAchievementSerializer(ranking_logs, many=True).data
         return Response(data, status=200)
-    
+
     def post(self, request):
         user = request.user
-        rank_achievement = RankAchievement(user=user, rank=Ranks.objects.get(id=1))
+        rank_achievement = RankAchievement(
+            user=user, rank=Ranks.objects.get(id=1))
         rank_achievement.save()
         return Response(status=201)
 
+
 class TopPlayers(generics.ListAPIView):
     serializer_class = UserSerializer
-    queryset = User.objects.all().order_by('rank__hierarchy_order').order_by('current_xp').reverse()[:5]
+    queryset = User.objects.all().order_by(
+        'rank__hierarchy_order').order_by('current_xp').reverse()[:5]
 
 
 class Ranking(generics.ListAPIView):
@@ -247,6 +254,7 @@ class SendTestNotification(APIView):
 
 class DestroyFriendShip(generics.DestroyAPIView):
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
         pk = self.kwargs.get("pk")
@@ -303,6 +311,7 @@ class RecommendUsers(generics.ListAPIView):
 class AppendingRequests(generics.ListAPIView):
     serializer_class = FriendRequestSerializer
     queryset = Friends_Request.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Friends_Request.objects.filter(addressee=self.request.user)
@@ -310,6 +319,7 @@ class AppendingRequests(generics.ListAPIView):
 
 class UnblockUser(generics.DestroyAPIView):
     queryset = BlockList.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
         pk = self.kwargs.get("pk")
@@ -322,6 +332,7 @@ class UnblockUser(generics.DestroyAPIView):
 class LogoutAllDevices(APIView):
     permission_classes = [IsAuthenticated]
     channel_layer = get_channel_layer()
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         user = request.user

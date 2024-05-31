@@ -397,12 +397,12 @@
             "rank": 1,
             "friends": [
                 1,
-				3,
+                3,
                 4,
-				5,
-				6,
-				7,
-				8
+                5,
+                6,
+                7,
+                8
             ],
             "user_permissions": [],
             "achievements": []
@@ -460,7 +460,7 @@
             "achievements": []
         }
     },
-	{
+    {
         "model": "user.user",
         "pk": 5,
         "fields": {
@@ -486,7 +486,7 @@
             "achievements": []
         }
     },
-	{
+    {
         "model": "user.user",
         "pk": 6,
         "fields": {
@@ -512,7 +512,7 @@
             "achievements": []
         }
     },
-	{
+    {
         "model": "user.user",
         "pk": 7,
         "fields": {
@@ -538,7 +538,7 @@
             "achievements": []
         }
     },
-	{
+    {
         "model": "user.user",
         "pk": 8,
         "fields": {
@@ -565,6 +565,151 @@
         }
     },
     {
+        "model": "user.user",
+        "pk": 9,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$GUN3clwL5m3nkCZAUD6wKu$fFNlSNWchURhqyFnD6SClI+pOoc3yfL67zLPbPvX63c=",
+            "last_login": "2024-04-24T02:04:35.402Z",
+            "is_superuser": false,
+            "username": "test9",
+            "first_name": "",
+            "last_name": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2024-04-24T02:04:06.438Z",
+            "email": "test9@gmail.com",
+            "registration_method": "email",
+            "image_url": "/media/public/profile-images/00_img.jpg",
+            "groups": [],
+            "rank": 1,
+            "friends": [],
+            "user_permissions": [],
+            "achievements": []
+        }
+    },
+    {
+        "model": "user.Friends_Request",
+        "pk": 4,
+        "fields": {
+            "requester": 9,
+            "addressee": 1,
+            "created_at": "2024-04-24T02:04:51.557Z",
+            "updated_at": "2024-04-24T02:04:51.557Z"
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 10,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$GUN3clwL5m3nkCZAUD6wKu$fFNlSNWchURhqyFnD6SClI+pOoc3yfL67zLPbPvX63c=",
+            "last_login": "2024-04-24T02:04:35.402Z",
+            "is_superuser": false,
+            "username": "test10",
+            "first_name": "",
+            "last_name": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2024-04-24T02:04:06.438Z",
+            "email": "test10@gmail.com",
+            "registration_method": "email",
+            "image_url": "/media/public/profile-images/00_img.jpg",
+            "groups": [],
+            "rank": 1,
+            "friends": [],
+            "user_permissions": [],
+            "achievements": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 11,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$GUN3clwL5m3nkCZAUD6wKu$fFNlSNWchURhqyFnD6SClI+pOoc3yfL67zLPbPvX63c=",
+            "last_login": "2024-04-24T02:04:35.402Z",
+            "is_superuser": false,
+            "username": "test11",
+            "first_name": "",
+            "last_name": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2024-04-24T02:04:06.438Z",
+            "email": "test11@gmail.com",
+            "registration_method": "email",
+            "image_url": "/media/public/profile-images/00_img.jpg",
+            "groups": [],
+            "rank": 1,
+            "friends": [],
+            "user_permissions": [],
+            "achievements": []
+        }
+    },
+    {
+        "model": "user.Friends_Request",
+        "pk": 6,
+        "fields": {
+            "requester": 11,
+            "addressee": 3,
+            "created_at": "2024-04-24T02:04:51.557Z",
+            "updated_at": "2024-04-24T02:04:51.557Z"
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 12,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$GUN3clwL5m3nkCZAUD6wKu$fFNlSNWchURhqyFnD6SClI+pOoc3yfL67zLPbPvX63c=",
+            "last_login": "2024-04-24T02:04:35.402Z",
+            "is_superuser": false,
+            "username": "test12",
+            "first_name": "",
+            "last_name": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2024-04-24T02:04:06.438Z",
+            "email": "test12@gmail.com",
+            "registration_method": "email",
+            "image_url": "/media/public/profile-images/00_img.jpg",
+            "groups": [],
+            "rank": 1,
+            "friends": [],
+            "user_permissions": [],
+            "achievements": []
+        }
+    },
+    {
+        "model": "user.Friends_Request",
+        "pk": 7,
+        "fields": {
+            "requester": 12,
+            "addressee": 4,
+            "created_at": "2024-04-24T02:04:51.557Z",
+            "updated_at": "2024-04-24T02:04:51.557Z"
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 13,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$GUN3clwL5m3nkCZAUD6wKu$fFNlSNWchURhqyFnD6SClI+pOoc3yfL67zLPbPvX63c=",
+            "last_login": "2024-04-24T02:04:35.402Z",
+            "is_superuser": false,
+            "username": "test13",
+            "first_name": "",
+            "last_name": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2024-04-24T02:04:06.438Z",
+            "email": "test13@gmail.com",
+            "registration_method": "email",
+            "image_url": "/media/public/profile-images/00_img.jpg",
+            "groups": [],
+            "rank": 1,
+            "friends": [],
+            "user_permissions": [],
+            "achievements": []
+        }
+    },
+    {
         "model": "user.Friends_Request",
         "pk": 1,
         "fields": {
@@ -580,6 +725,16 @@
         "fields": {
             "requester": 3,
             "addressee": 4,
+            "created_at": "2024-04-24T02:04:51.557Z",
+            "updated_at": "2024-04-24T02:04:51.557Z"
+        }
+    },
+    {
+        "model": "user.Friends_Request",
+        "pk": 5,
+        "fields": {
+            "requester": 10,
+            "addressee": 2,
             "created_at": "2024-04-24T02:04:51.557Z",
             "updated_at": "2024-04-24T02:04:51.557Z"
         }

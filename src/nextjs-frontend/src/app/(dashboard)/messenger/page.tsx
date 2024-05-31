@@ -90,7 +90,7 @@ const page = () => {
 											className='flex items-center justify-between p-7'>
 											<Image
 												className='bg-white  w-[53px] h-[53px] rounded-full'
-												src={selectedChat.href}
+												src={selectedChat.href || ""}
 												alt='Profile Image'
 												width={53}
 												height={53}

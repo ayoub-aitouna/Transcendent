@@ -30,7 +30,7 @@ class TestUserAPI(BaseTestCase):
     def test_decline_friend_request(self):
         friend_request = self.friend_requests[1]
         response = self.client.delete(
-            reverse('decline-friend-request', args=[friend_request.id]))
+            reverse('manage-friend-request', args=[friend_request.id]))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_block_user(self):

@@ -19,7 +19,7 @@
 ## My TASKS
 
 #### TODO
-
+      - fix appending when accept 
       - finish tournament matchmaking system
       - move game app to another microservice
       - add block and remove button in profile page 
@@ -35,7 +35,7 @@
 ##
 
 #### IN TESTING
-
+      - added user-graph 
       - link settings page with backend
       - link notification system to backend
       - link profile page with backend and dynamically change content in cases like [myProfile],[myFriend],[otherUser]

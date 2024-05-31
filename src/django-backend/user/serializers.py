@@ -213,20 +213,16 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
     username = serializers.CharField(source='requester.username')
-    accept_fiend_request = serializers.SerializerMethodField()
-    decline_fiend_request = serializers.SerializerMethodField()
+    manage_fiend_request = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['id','username', 'fullname', 'image_url',
-                  'url', 'accept_fiend_request', 'decline_fiend_request']
+                  'url',  'manage_fiend_request']
 
-    def get_decline_fiend_request(self, obj):
-        return reverse('decline-friend-request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
-
-    def get_accept_fiend_request(self, obj):
-        return reverse('accept-friend-request', kwargs={"pk": obj.id},  request=self.context.get('request'))
+    def get_manage_fiend_request(self, obj):
+        return reverse('manage-friend-request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
 
     def get_url(self, obj):
         print(obj)
