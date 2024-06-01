@@ -87,15 +87,11 @@ export const SendFriendRequest = async (id: number): Promise<void> => {
 }
 
 export const RemoveFriendRequest = async (id: number): Promise<void> => {
-    await apiMock.delete(`/users/remove-friend-request/${id}/`)
-}
-
-export const DeclineFriendRequest = async (id: number): Promise<void> => {
-    await apiMock.delete(`/users/decline-friend-request/${id}/`)
+    await apiMock.delete(`/users/manage_friend_request/${id}/`)
 }
 
 export const AcceptFriendRequest = async (id: number): Promise<void> => {
-    await apiMock.post(`/users/accept-friend-request/${id}/`)
+    await apiMock.put(`/users/manage_friend_request/${id}/`)
 }
 
 export const getRankLogs = async (): Promise<RankLogs[]> => {
