@@ -24,8 +24,6 @@ export type user = {
     rank: Rank;
     current_xp: number;
     rankProgressPercentage: number;
-    friends: Friend[];
-    friend_requests: FriendRequest[];
     achievements: any[];
     ranking_logs: any[];
     send_request: string;

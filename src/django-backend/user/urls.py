@@ -12,6 +12,7 @@ urlpatterns = [
          name='recommended-users'),
     path('appending-requests/', view=views.AppendingRequests.as_view(),
          name='appending-requests'),
+    path('friend-list', view=views.FriendList.as_view(), name='friend-list'),
     path('ranking/', view=views.Ranking.as_view(), name='ranking'),
     path('top-players/', view=views.TopPlayers.as_view(), name='top-players'),
     path('send-friend-request/<int:pk>/',

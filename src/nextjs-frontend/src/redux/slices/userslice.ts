@@ -24,8 +24,6 @@ const initialState: userState = {
         rank: {} as Rank,
 		friend_request_state: FriendRequestState.NONE,
         current_xp: 0,
-        friends: [] as Friend[],
-        friend_requests: [] as FriendRequest[],
         achievements: [] as any[],
         ranking_logs: [] as any[],
         send_request: '',

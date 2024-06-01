@@ -133,7 +133,6 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     send_request = serializers.HyperlinkedIdentityField(
         view_name='send-friend-request', lookup_field='pk')
     achievements = AchievementsSerializer(many=True, read_only=True)
-    friends = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
     ranking_logs = RankSerializer(read_only=True, many=True)
     rank = RankSerializer(read_only=True)
@@ -160,8 +159,7 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
         model = User
         fields = ['id', 'image_file', 'fullname', 'username', 'first_name', 'last_name', 'enabled_2fa', 'is_my_profile', 'is_friend', 'is_blocked',
                   'friend_request_state', 'email', 'image_url', 'registration_method', 'status', 'coins', 'rank',
-                  'current_xp', 'rankProgressPercentage', 'friends', 'achievements',
-                  'ranking_logs', 'send_request']
+                  'current_xp', 'rankProgressPercentage', 'achievements', 'ranking_logs', 'send_request']
 
     def update(self, instance, validated_data):
         return super().update(instance, self.create_avatar(validated_data))
@@ -169,14 +167,6 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     def create(self, validated_data):
         return super().create(self.create_avatar(validated_data))
 
-    def get_friends(self, obj):
-        block_list = BlockList.objects.filter(
-            Q(user=obj) | Q(blocked_user=obj))
-        friend_query = obj.friends.all().exclude(
-            id__in=block_list.values_list('blocked_user', flat=True))\
-            .exclude(id__in=block_list.values_list('user', flat=True))
-        return UserFriendsSerializer(friend_query, many=True,
-                                     context=self.context).data
 
     def get_rankProgressPercentage(self, obj):
         if obj.rank is None:
