@@ -64,7 +64,7 @@ const handleInvite = async (
     const res = await InvitePlayer(data.id);
     console.log(res);
     router.push(
-      `/making-machine/?game_id=${res.game_room_id}&player=${data.id}`
+      `/making-machine/?game_id=${res.game_room_id}&player=${data.username}`
     );
   } catch (err: any) {
     console.log("err", err);

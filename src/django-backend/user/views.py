@@ -309,27 +309,38 @@ class SearchUser(generics.ListAPIView):
 
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_my_friends_query(self, search_query):
+        user = self.request.user
+        block_list = BlockList.objects.filter(
+            Q(user=user) | Q(blocked_user=user))
+        return user.friends.all().filter(
+            Q(username__icontains=search_query) | Q(email__icontains=search_query))\
+            .exclude(id__in=block_list
+                     .values_list('blocked_user', flat=True))\
+            .exclude(id__in=block_list.values_list('user', flat=True))
+
+    def get_none_friends_query(self, search_query):
+        user = self.request.user
+        return User.objects.filter(
+            Q(username__icontains=search_query) | Q(email__icontains=search_query))\
+            .exclude(id__in=user.friends.all()).exclude(id=user.id)
 
     def get_queryset(self):
-        print('Get Quey')
-        user = self.request.user
         none_friend_only = False
         search_query = ""
-
         query_serializer = self.QuerySerializer(data=self.request.query_params)
         if query_serializer.is_valid():
             none_friend_only = query_serializer.validated_data.get(
                 'none_friend_only')
             search_query = query_serializer.validated_data.get('search_query')
         search_query = search_query if search_query is not None else ""
-        base_query = User.objects.filter(
-            Q(username__icontains=search_query) | Q(email__icontains=search_query))
-        if user.is_anonymous:
-            return base_query
-        elif not none_friend_only:
-            return base_query.exclude(id=user.id)
+
+        if not none_friend_only:
+            return self.get_my_friends_query(search_query)
         else:
-            return base_query.exclude(id__in=user.friends.all()).exclude(id=user.id)
+            return self.get_none_friends_query(search_query)
 
 
 class RecommendUsers(generics.ListAPIView):
@@ -365,10 +376,9 @@ class FriendList(generics.ListAPIView):
         user = self.request.user
         block_list = BlockList.objects.filter(
             Q(user=user) | Q(blocked_user=user))
-        return user.friends.all().exclude(id__in=block_list\
-            .values_list('blocked_user', flat=True))\
+        return user.friends.all().exclude(id__in=block_list
+                                          .values_list('blocked_user', flat=True))\
             .exclude(id__in=block_list.values_list('user', flat=True))
-
 
 
 class UnblockUser(generics.DestroyAPIView):
