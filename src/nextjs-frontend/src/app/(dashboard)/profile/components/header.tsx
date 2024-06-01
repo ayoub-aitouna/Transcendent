@@ -1,19 +1,22 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import Empty from "@/app/ui/dashboard/component/Empty";
 import Link from "next/link";
 import { Achievement } from "@/type/dashboard";
-import { useToast } from "@/app/provider/ToastProvider";
 import { useManageFRAction, user, FriendRequestState } from "@/type/auth/user";
+import { BlockUser, RemoveFriend } from "@/api/user";
+import DropDownMenu, {
+	MenuButton,
+} from "@/app/ui/dashboard/component/drop-down-menu";
 import {
 	InvitePlayer,
 	RemoveFriendRequest,
 	SendFriendRequest,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/app/provider/ToastProvider";
 
 const Cta = ({
 	src,
@@ -240,8 +243,39 @@ const ActionButton = ({
 
 const Header = ({ data: inputData }: { data: user }) => {
 	const [data, setData] = useState<user>(inputData);
+	const router = useRouter();
+	const { addToast } = useToast();
 	const handelAction = (newData: user) => {
 		setData(newData);
+	};
+	const BlockCurrentUser = async () => {
+		try {
+			await BlockUser(inputData.id);
+			router.push("/home");
+		} catch (err) {
+			addToast({
+				id: data.id,
+				title: "Error",
+				message: `we have encountered an error while trying to Block ${inputData.username} please try again later.`,
+				icon: "/assets/icons/light_close.png",
+				backgroundColor: "bg-red-500",
+			});
+		}
+	};
+	const UnfriendCurrentUser = async () => {
+		try {
+			await RemoveFriend(inputData.id);
+			console.log("UnfriendCurrentUser -> inputData", inputData);
+			router.replace(`/profile/${data.username}`);
+		} catch (err) {
+			addToast({
+				id: data.id,
+				title: "Error",
+				message: `we have encountered an error while trying to Block ${inputData.username} please try again later.`,
+				icon: "/assets/icons/light_close.png",
+				backgroundColor: "bg-red-500",
+			});
+		}
 	};
 	return (
 		<div className='relative min-h-[21.8rem] w-full rounded-lg overflow-hidden'>
@@ -339,7 +373,22 @@ const Header = ({ data: inputData }: { data: user }) => {
 					</div>
 				</div>
 			</div>
-			<div className='absolute h-8 w-8 rounded-tr-lg rounded-bl-xl bg-secondary-300 right-0 top-0'></div>
+			{data.is_friend && (
+				<div className='absolute h-8 w-8 rounded-tr-lg rounded-bl-xl bg-secondary-300 right-0 top-0 p-1'>
+					<DropDownMenu username={inputData.username}>
+						<MenuButton
+							title='Unfriend'
+							icon='/assets/icons/profile-remove.svg'
+							onClick={() => UnfriendCurrentUser()}
+						/>
+						<MenuButton
+							title='Block User'
+							icon='/assets/icons/profile-delete.svg'
+							onClick={() => BlockCurrentUser()}
+						/>
+					</DropDownMenu>
+				</div>
+			)}
 		</div>
 	);
 };

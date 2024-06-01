@@ -19,7 +19,6 @@
 ## My TASKS
 
 #### TODO
-      - fix appending when accept 
       - finish tournament matchmaking system
       - move game app to another microservice
       - add block and remove button in profile page 
@@ -35,6 +34,7 @@
 ##
 
 #### IN TESTING
+      - fix appending when accept 
       - added user-graph 
       - link settings page with backend
       - link notification system to backend

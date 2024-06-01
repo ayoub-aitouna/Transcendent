@@ -35,7 +35,7 @@ class TestUserAPI(BaseTestCase):
 
     def test_block_user(self):
         response = self.client.post(
-            reverse('block-user', args=[self.user_2.id]))
+            reverse('block-user', args=[self.user_2.username]))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_online_player(self):

@@ -108,6 +108,12 @@ class BlockUser(generics.CreateAPIView):
         blocked_user = get_object_or_404(User, pk=pk)
         serializer.save(user=self.request.user, blocked_user=blocked_user)
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except IntegrityError:
+            return Response({"message": "this entry already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Profile(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
@@ -190,6 +196,17 @@ class ManageFriendRequest(APIView, BaseNotification):
             requester=self.request.user, addressee=user)).delete()
         return Response(status=204)
 
+
+class RemoveFriend(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        pk = self.kwargs.get("pk")
+        friend = get_object_or_404(User, pk=pk)
+        self.request.user.friends.remove(friend)
+        friend.friends.remove(self.request.user)
+        return
 
 class OnlineFriendsList(generics.ListAPIView):
     class QuerySerializer(serializers.Serializer):
