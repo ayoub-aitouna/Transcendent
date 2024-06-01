@@ -1,4 +1,5 @@
-from .models import Tournament, stream
+import uuid
+from .models import Tournament, stream, Matchup, Brackets
 from celery import shared_task
 from channels.layers import get_channel_layer
 from transcendent.consumers import NotifyUser
@@ -18,20 +19,30 @@ def NotifyTournamentUsers(tournament_id):
         if len(matched_users) == 2:
             print(f'Notify {matched_users[0].username} and {matched_users[1].username} \
                   about {tournament.name}')
-            game_room = f'/ws/game/{random.randint(1000, 9999)}{random.randint(1000, 9999)}/'
+
+            game_room = str(uuid.uuid4())
+
+            # Create match
+            match = Matchup(first_player=matched_users[0], second_player=matched_users[1],
+                            tournament=tournament)
+            match.save()
+
+            # Notify users
             NotifyUser(matched_users[0], tournament, game_room)
             NotifyUser(matched_users[1], tournament, game_room)
+
             # create stream
             stream_obj = stream(
                 stream_url=game_room, player1=matched_users[0], player2=matched_users[1])
             tournament.streams.add(stream_obj)
+
             matched_users.clear()
-        if len(matched_users) == 1:
-            game_room = f'/ws/game/{random.randint(1000, 9999)}{random.randint(1000, 9999)}/'
-            print(
-                f'Notify {matched_users[0].username} about {tournament.name}')
-            # NotifyUser(matched_users[0], tournament)
-            matched_users.clear()
+
+    if len(matched_users) == 1:
+        bracket = Brackets(tournament=tournament,
+                           round_number=1, player=matched_users[0])
+        bracket.save()
+        matched_users.clear()
     return
 
 

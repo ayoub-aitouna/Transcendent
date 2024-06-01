@@ -109,23 +109,12 @@ class InGame(AsyncWebsocketConsumer):
         }))
 
 
-def classification_by_players_xp(xp):
-    if xp < 1000:
-        return 'Beginner'
-    elif xp < 5000:
-        return 'Intermediate'
-    elif xp < 10000:
-        return 'Advanced'
-    else:
-        return 'Expert'
+class Toutnament(AsyncWebsocketConsumer):
+    async def connect(self):
+        return await super().connect()
 
+    async def receive(self, text_data=None, bytes_data=None):
+        return await super().receive(text_data, bytes_data)
 
-def preferred_classification_search_order(xp):
-    if xp < 1000:
-        return ['Beginner', 'Intermediate', 'Advanced', 'Expert']
-    elif xp < 5000:
-        return ['Intermediate', 'Beginner', 'Advanced', 'Expert']
-    elif xp < 10000:
-        return ['Advanced', 'Intermediate', 'Beginner', 'Expert']
-    else:
-        return ['Expert', 'Advanced', 'Intermediate', 'Beginner']
+    async def disconnect(self, code):
+        return await super().disconnect(code)
