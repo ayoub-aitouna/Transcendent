@@ -117,3 +117,21 @@ export const BlockUser = async (id: number) => {
 export const RemoveFriend = async (id: number) => {
     await apiMock.delete(`/users/remove-friend/${id}/`);
 }
+
+export const GetFriendsData = async (q: string | null) => {
+	let response = null;
+	if (!q || q === '') {
+		response = await apiMock.get(`/users/friend-list`);
+
+	} else {
+		response = await apiMock.get(`/users/search-user/?none_friend_only=false&search_query=${q}`);
+	}
+	return response?.data.results || [];
+};
+
+export const getUser = async (username: string | '') => {
+	let response;
+	response = await apiMock.get(`/users/${username}`);
+
+	return response?.data as user
+}

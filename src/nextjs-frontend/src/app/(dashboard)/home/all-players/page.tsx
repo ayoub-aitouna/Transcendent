@@ -4,6 +4,7 @@ import apiMock from '@/lib/axios-mock';
 import { FriendRequest } from '@/type/auth/user';
 import { PendingContainer, RecommendedContainer } from '@/app/ui/dashboard/home/content_area/friends-containers';
 import SearchBar from '@/app/ui/dashboard/home/content_area/SearchBar';
+import Error from "@/app/ui/dashboard/component/Error";
 
 
 export const GetRecommendedAndPendingUsers = async (q: string | null) => {
@@ -28,7 +29,17 @@ const Page = async ({
 	};
 }) => {
 	const q = searchParams?.q || null;
-	const [pendingResults, recommendedResults] = await GetRecommendedAndPendingUsers(q);
+	let [pendingResults, recommendedResults]: [FriendRequest[], FriendRequest[]] = [[], []];
+	try {
+		[pendingResults, recommendedResults] = await GetRecommendedAndPendingUsers(q);;
+	} catch (e) {
+		return (
+			<Error
+				title='User not found'
+				desc='The User you are looking for does not exist.'
+			/>
+		);
+	}
 	return (
 		<div className='flex items-center justify-center w-full'>
 			<div className='p-10 w-[894px] h-[890px]'>
