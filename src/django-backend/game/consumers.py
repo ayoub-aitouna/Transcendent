@@ -87,6 +87,7 @@ class InGame(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(
             self.room_group_name, self.channel_name
         )
+        self.class_record = {}
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -95,10 +96,41 @@ class InGame(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data=None, bytes_data=None):
+        try:
+            data = json.loads(text_data)
+            message_type = data.get('type')
+            if message_type == 'position':
+                await self.handle_position(data)
+            elif message_type == 'goal_declaration':
+                await self.handle_goal_declaration(data)
+            else:
+                print('Unknown message type:', message_type)
+           
+            # if len(self.class_record) != 0:
+            #     print(f"\n-------------------\n{self.class_record['test']}\n-------------------\n")
+            # else:
+            #     self.class_record['test'] = 3
+            #     print('\n-------------------\n set class record \n-------------------\n')
+        except:
+            print('failed to convert data into json')
+    
+    async def handle_goal_declaration(self, data):
+        "handle goal declaration, winner declars the goal and get set in db "
+        "tjem"
         await self.channel_layer.group_send(
-            self.room_group_name, {
+            self.room_group_name, 
+            {
                 "type": 'broadcast',
-                'message': text_data
+                'message': data
+            }
+        )
+    async def handle_position(self, data):
+        "Handle player position update"
+        await self.channel_layer.group_send(
+            self.room_group_name, 
+            {
+                "type": 'broadcast',
+                'message': data
             }
         )
 
