@@ -2,10 +2,16 @@
 import Image from 'next/image';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import Link from "next/link";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { PaginationApiResponse } from '@/type';
+import { Tournament } from '@/type/dashboard/tournament';
+import apiMock from '@/lib/axios-mock';
+import { GetAnnouncedTournaments } from '@/api/Tournament';
+import Error from "@/app/ui/dashboard/component/Error";
 
 
-function SliderContent() {
+
+function SliderContent({ Tournament }: { Tournament: Tournament }) {
 	const buttonStyles = {
 		borderRadius: '4px',
 		width: '145px',
@@ -28,11 +34,10 @@ function SliderContent() {
 					<button className={` ${styles.highlighted}`} style={buttonStyles} >  REGISTRATION OPENS </button>
 				</div>
 				<div className=" pt-10 flex flex-col justify-center  w-[334px] h-[101px]">
-					<div className=' text-[42px] font-bold'> VALORANT VCT </div>
-					<div className='text-[42px] font-bold m-0 p-0'> CUP 2024 </div>
+					<div className=' text-[42px] font-bold'> {Tournament.name} </div>
 				</div>
 				<div className="pt-16 flex items-center w-[334px] h-[45px] ">
-					<div className='text-[12px] font-normal text-[#999999] tracking-tighter'>Valorant is a free-to-play first-person tactical hero shooter developed and published by Riot Games, for Windows. Teased under the codename Project A in October 2019, the game...</div>
+					<div className='text-[12px] font-normal text-[#999999] tracking-tighter'>{Tournament.description}</div>
 				</div>
 				<div className='pt-[63px]'>
 					<div className=" flex items-center " aria-label="Navigate to profile">
@@ -62,10 +67,26 @@ function SliderContent() {
 
 function NewTournaments() {
 	const btn = useRef<HTMLButtonElement>(null);
+	let response: Tournament[] = [];
 	useEffect(() => {
 		btn?.current?.click();
 	},
 		[btn])
+
+	useEffect(() => {
+		const fetchAnnouncedTournaments = async () => {
+			try {
+				response = await GetAnnouncedTournaments();
+				console.log(response)
+			} catch (error) {
+				<Error
+					title='Tournaments Announce not found'
+					desc='The Announced Tournaments looking for does not exist.'
+				/>
+			}
+		};
+		fetchAnnouncedTournaments();
+	}, []);
 
 	return (
 		<div className="bootstrap-namespace position-relative ">
@@ -76,15 +97,21 @@ function NewTournaments() {
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
 				</div>
 				<div className="carousel-inner bg-white" >
-					<div className="carousel-item active" style={{ height: '456px', userSelect: 'none' }}>
-						<SliderContent />
+					{/* <div className="carousel-item active" style={{ height: '456px', userSelect: 'none' }}>
+						<SliderContent Tournament={response} />
 					</div>
 					<div className="carousel-item" style={{ height: '456px', userSelect: 'none' }}>
 						<SliderContent />
-					</div>
-					<div className="carousel-item" style={{ height: '456px', userSelect: 'none' }}>
-						<SliderContent />
-					</div>
+					</div> */}
+
+					{
+						response.map((item, index) => (
+							<div key={item.id} className={`carousel-item ${index === 0 ? 'active' : ''}`} style={{ height: '456px', userSelect: 'none' }}>
+								{/* <SliderContent Tournament={item} /> */}
+								<h1>SASDAS:DLKAS:L</h1>
+							</div>
+						))
+					}
 				</div>
 				<button ref={btn} className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
 					<span className="visually-hidden  carousel-control-prev-icon" aria-hidden="true"></span>

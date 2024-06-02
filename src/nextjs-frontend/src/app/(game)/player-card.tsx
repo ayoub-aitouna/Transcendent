@@ -2,11 +2,12 @@
 import React from 'react'
 import Image from 'next/image'
 
-const PlayerCard = ({ href, name, lvl }:
+const PlayerCard = ({ href, name, lvl, icon }:
 	{
 		href: string;
 		name: string;
 		lvl: string;
+		icon: string;
 	}) => {
 	return (
 		<div className='flex w-[299px]  h-[440px] bg-[rgb(55,55,55)] rounded-xl overflow-hidden'>
@@ -17,7 +18,7 @@ const PlayerCard = ({ href, name, lvl }:
 				<div
 					className='absolute bottom-[-10%] left-[45%] w-[48.45px] h-[60px]'>
 					<Image
-						src='/assets/icons/Gold_3_Rank.png'
+						src={icon}
 						width={48.45}
 						height={60}
 						alt='close-icon'

@@ -2,12 +2,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import RightArrow from '@/app/ui/dashboard/icons/content_area/RightArrow';
-import { useAppSelector } from '@/redux/store';
 import Empty from '@/app/ui/dashboard/component/Empty';
-import apiMock from '@/lib/axios-mock';
 import SearchBar from '@/app/ui/dashboard/home/content_area/SearchBar';
-import { Friend } from '@/type/auth/user';
 import { Key } from 'react';
+import { GetFriendsData } from '@/api/user';
+import Error from "@/app/ui/dashboard/component/Error";
+
 
 
 export function FriendContainer({ name, href, number, id }: { name: string; href: string; number: number; id: number }) {
@@ -30,20 +30,21 @@ export function FriendContainer({ name, href, number, id }: { name: string; href
 	);
 }
 
-export const GetData = async (q: string | null) => {
-	let response = null;
-	if (!q || q === '') {
-		response = await apiMock.get(`/users/search-user/?none_friend_only=false`);
 
-	} else {
-		response = await apiMock.get(`/users/search-user/?none_friend_only=false&search_query=${q}`);
-	}
-	return response?.data.results || [];
-};
 
 const Page = async ({ searchParams }: { searchParams?: { q?: string } }) => {
 	const q = searchParams?.q || null;
-	const filteredFriends = await GetData(q);
+	let filteredFriends = null;
+	try {
+		filteredFriends = await await GetFriendsData(q);
+	} catch (e) {
+		return (
+			<Error
+				title='Friend not found'
+				desc='The Friend you are looking for does not exist.'
+			/>
+		);
+	}
 
 	return (
 		<div className="flex items-center justify-center w-full">

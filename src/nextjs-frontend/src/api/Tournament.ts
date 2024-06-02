@@ -46,3 +46,9 @@ export const CreateTournament = async (
 	const data: Tournament = Response.data;
 	return data;
 };
+
+export const GetAnnouncedTournaments = async (): Promise<Tournament[]>=> {
+	const Response = await apiMock.get('/game/Tournament-announcements/');
+	const data: Tournament[] = Response.data.results;
+	return data;
+};
