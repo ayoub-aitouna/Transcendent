@@ -66,6 +66,7 @@ function SliderContent({ Tournament }: { Tournament: Tournament }) {
 
 
 function NewTournaments() {
+	const [tournaments, setTournament] = useState<Tournament[]>();
 	const btn = useRef<HTMLButtonElement>(null);
 	let response: Tournament[] = [];
 	useEffect(() => {
@@ -77,6 +78,7 @@ function NewTournaments() {
 		const fetchAnnouncedTournaments = async () => {
 			try {
 				response = await GetAnnouncedTournaments();
+				setTournament(response)
 				console.log(response)
 			} catch (error) {
 				<Error
@@ -97,18 +99,10 @@ function NewTournaments() {
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
 				</div>
 				<div className="carousel-inner bg-white" >
-					{/* <div className="carousel-item active" style={{ height: '456px', userSelect: 'none' }}>
-						<SliderContent Tournament={response} />
-					</div>
-					<div className="carousel-item" style={{ height: '456px', userSelect: 'none' }}>
-						<SliderContent />
-					</div> */}
-
 					{
-						response.map((item, index) => (
+						tournaments && tournaments.map((item, index) => (
 							<div key={item.id} className={`carousel-item ${index === 0 ? 'active' : ''}`} style={{ height: '456px', userSelect: 'none' }}>
-								{/* <SliderContent Tournament={item} /> */}
-								<h1>SASDAS:DLKAS:L</h1>
+								<SliderContent Tournament={item} />
 							</div>
 						))
 					}
