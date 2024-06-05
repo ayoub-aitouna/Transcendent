@@ -60,8 +60,6 @@ class TournamentsRegisteredPlayers(models.Model):
 
 
 class Matchup(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE,
-                             related_name='game')
     first_player = models.ForeignKey(User, on_delete=models.CASCADE,
                                      related_name='first_player')
     second_player = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -71,6 +69,7 @@ class Matchup(models.Model):
     Winner = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='winner', null=True)
     game_over = models.BooleanField(default=False)
+    game_uuid = models.CharField(max_length=200, blank=False, null=False)
     first_player_score = models.IntegerField(null=False, default=0)
     second_player_score = models.IntegerField(null=False, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
