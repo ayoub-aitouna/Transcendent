@@ -8,86 +8,101 @@ from .models import Matchup
 
 
 class Ball():
-    width = -1
-    height = -1
-    radius = 5
+    RADIUS = 5
+    SPEED = 5
 
-    def __init__(self, width, height, dx, dy):
+    def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.x = width / 2
-        self.y = height / 2
-        self.dx = dx
-        self.dy = dy
-        self.speed = 5
+        self.radius = Ball.RADIUS
+        self.reset()
 
     def setAngle(self, angle):
-        self.angle = math.radians(angle)
-        self.dx = self.speed * math.cos(angle)
-        self.dy = self.speed * math.sin(angle)
+        self.angle = angle
+        self.dx = self.speed * math.cos(self.angle)
+        self.dy = self.speed * math.sin(self.angle)
 
     def reset(self):
-        self.x = 0
-        self.y = 0
-        self.dx = 5
-        self.dy = 5
+        self.x = self.width / 2
+        self.y = self.height / 2
+        self.speed = Ball.SPEED
+        self.setAngle(0)
 
-    def update(self):
+    def update(self, callback):
         self.x += self.dx
         self.y += self.dy
-        if self.y - self.radius < 0 or self.y + self.radius > self.height:
-            self.dy *= -1
-        if self.x - self.radius < 0 or self.x + self.radius > self.width:
+
+        # Collision with the left paddle
+        if (self.x - self.radius < self.leftPaddle.x + self.leftPaddle.WIDTH / 2 and
+                self.leftPaddle.is_on_same_level(self)):
+            self.setAngle(self.leftPaddle.get_hit_angle(self))
+            # self.dx *= -1
+
+        # Collision with the right paddle
+        if (self.x + self.radius > self.rightPaddle.x - self.rightPaddle.WIDTH / 2 and
+                self.rightPaddle.is_on_same_level(self)):
+            self.setAngle(self.rightPaddle.get_hit_angle(self))
             self.dx *= -1
 
-    def does_collide(self, paddle, is_left) -> bool:
-        is_level = self.y > paddle.y - paddle.height/2\
-            and self.y < paddle.y + paddle.height / 2
-        if not is_level:
-            return False
-        if is_left:
-            return self.x - self.radius < paddle.x + paddle.width / 2
-        return self.x + self.radius > paddle.x - paddle.width / 2
+        # Collision with the top or bottom wall
+        if self.y - self.radius < 0 or self.y + self.radius > self.height:
+            self.dy *= -1
+
+        # Ball out of bounds (left or right)
+        if self.x - self.radius < 0 or self.x + self.radius > self.width:
+            self.reset()
+            callback()
+
+    def setPaddles(self, leftPaddle, rightPaddle):
+        self.leftPaddle = leftPaddle
+        self.rightPaddle = rightPaddle
 
 
 class Paddle():
-    def __init__(self, x, y) -> None:
-        self.height = 10
-        self.width = 5
+    HEIGHT = 60
+    WIDTH = 10
+
+    def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def updatePosition(self, x, y):
-        self.x = x
+    def updatePosition(self, y):
         self.y = y
 
     def get_hit_angle(self, ball):
         diff = ball.y - self.y
-        return map_value(diff, -self.height / 2, self.height / 2,
-                         -math.pi / 4, math.pi / 4)
+        return map_value(diff, -Paddle.HEIGHT / 2, Paddle.HEIGHT / 2, -math.pi / 4, math.pi / 4)
+
+    def is_on_same_level(self, ball):
+        return self.y - Paddle.HEIGHT / 2 <= ball.y <= self.y + Paddle.HEIGHT / 2
 
 
 class Game():
-    width = 800
-    height = 600
-    paddle_width = 10
-    paddle_height = 60
-    paddle_speed = 5
-    channel_layer = get_channel_layer()
-    waiting_in_ms = 0
+    WIDTH = 800
+    HEIGHT = 600
 
     def __init__(self, room_id):
         self.room_id = room_id
+        self.is_running = True
         self.players = []
-        self.ball = Ball(self.width, self.height, 5, 5)
-        self.player_1_paddle = Paddle(30, self.height / 2)
-        self.player_2_paddle = Paddle(self.width - 30, self.height / 2)
+        self.ball = Ball(Game.WIDTH, Game.HEIGHT)
+        self.player_1_paddle = Paddle(
+            10,  (Game.HEIGHT / 2) - Paddle.HEIGHT / 2)
+        self.player_2_paddle = Paddle(
+            Game.WIDTH - 20, (Game.HEIGHT / 2) - Paddle.HEIGHT / 2)
+        self.ball.setPaddles(self.player_1_paddle, self.player_2_paddle)
+        self.channel_layer = get_channel_layer()
+        self.pause = False
+        self.waiting_in_ms = 0
 
     @classmethod
     async def create(cls, room_id):
-        self = Game(room_id)
+        self = cls(room_id)
         self.lock = asyncio.Lock()
-        self.matchup = await self.get_match(self.room_id)
+        try:
+            self.matchup = await database_sync_to_async(Matchup.objects.get)(game_uuid=room_id)
+        except Matchup.DoesNotExist:
+            self.matchup = None
         return self
 
     async def add_player(self, player):
@@ -98,15 +113,21 @@ class Game():
                 self.players.append(player)
             return True
 
+    async def move_paddle(self, player, y):
+        async with self.lock:
+            # if player == self.matchup.first_player else self.player_2_paddle
+            paddle = self.player_1_paddle
+            paddle.updatePosition(y=y)
+
     async def remove_player(self, player):
-        return True
         async with self.lock:
             if player in self.players:
                 player.remove(player)
             return len(self.players) == 0
 
     async def game_loop(self):
-        while True:
+        while self.is_running:
+            await asyncio.sleep(1/60)
             # if len(self.players) != 2:
             #     self.waiting_in_ms += 16
             #     if self.waiting_in_ms >= 20 * 1000:
@@ -117,19 +138,29 @@ class Game():
             #         })
             #         return
             #     continue
-
-            self.ball.update()
-            if self.ball.does_collide(self.player_1_paddle, True):
-                self.ball.setAngle(
-                    self.player_1_paddle.get_hit_angle(self.ball))
-            if self.ball.does_collide(self.player_2_paddle, False):
-                self.ball.setAngle(
-                    self.player_2_paddle.get_hit_angle(self.ball))
+            if self.pause:
+                self.waiting_in_ms += 16
+                if self.waiting_in_ms >= 1 * 1000:
+                    self.pause = False
+                continue
+            self.waiting_in_ms = 0
+            self.ball.update(lambda: self.new_point())
             await self.emit({
-                'x': self.ball.x,
-                'y': self.ball.y
+                'type': 'update',
+                'ball': {
+                    'x': self.ball.x,
+                    'y': self.ball.y
+                },
+                'leftPaddle': {
+                    'x': self.player_1_paddle.x,
+                    'y': self.player_1_paddle.y
+                },
+                'rightPaddle': {
+                    'x': self.player_2_paddle.x,
+                    'y': self.player_2_paddle.y
+                }
+
             })
-            await asyncio.sleep(1/60)
 
     async def emit(self, dict_data):
         await self.channel_layer.group_send(
@@ -140,19 +171,27 @@ class Game():
             }
         )
 
+    def new_point(self):
+        self.pause = True
+        self.player_1_paddle.updatePosition(
+            (Game.HEIGHT / 2) - Paddle.HEIGHT / 2)
+        self.player_2_paddle.updatePosition(
+            (Game.HEIGHT / 2) - Paddle.HEIGHT / 2)
+
     async def handle_goal_declaration(self, data):
+        pause = True
         try:
             if self.user == self.match.first_player:
-                await self.update_match(
-                    player1_score=self.match.first_player_score + 1)
+                self.match.first_player_score += 1
             elif self.user == self.match.second_player:
-                await self.update_match(
-                    player2_score=self.match.second_player_score + 1)
+                self.match.second_player_score += 1
             winner = self.determine_winner()
             if winner:
-                await self.update_match(winner=winner)
+                self.match.Winner = winner
+                self.match.game_over = True
                 data['winner'] = winner.username
                 data['game_over'] = True
+            await database_sync_to_async(self.match.save)()
             await self.emit(data)
         except:
             print('failed to handle goal declaration')
@@ -168,24 +207,8 @@ class Game():
             return self.match.second_player
         return None
 
-    @database_sync_to_async
-    def get_match(self, uuid):
-        try:
-            return Matchup.objects.get(game_uuid=uuid)
-        except Matchup.DoesNotExist:
-            return None
-
-    @database_sync_to_async
-    def update_match(self, player1_score=None, player2_score=None, winner=None):
-        if player1_score:
-            self.match.first_player_score = player1_score
-        if player2_score:
-            self.match.second_player_score = player2_score
-        if winner:
-            self.match.Winner = winner
-            self.match.game_over = True
-        self.match.save()
-        return
+    async def cleanup(self):
+        self.is_running = False
 
 
 class GameManager():
@@ -199,7 +222,7 @@ class GameManager():
         return self.lock
 
     async def get_or_create_game(self, room_id):
-        print("called get_or_create_game")
+        print(f"called get_or_create_game {room_id}")
         self.lock = await self.get_lock()
         async with self.lock:
             if room_id not in self.games:
@@ -207,16 +230,15 @@ class GameManager():
                 game = await Game.create(room_id)
                 self.games[room_id] = game
                 asyncio.create_task(game.game_loop())
+
             return self.games[room_id]
 
     async def remove_game(self, room_id):
         self.lock = await self.get_lock()
         async with self.lock:
             if room_id in self.games:
+                await self.games[room_id].cleanup()
                 del self.games[room_id]
-
-    def __str__(self) -> str:
-        return "GameManager"
 
 
 class MatchMaker():

@@ -84,8 +84,11 @@ class InGame(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        print('User Disconnected')
         if await self.game.remove_player(self.user):
-            self.game_manager.remove_game(self.room_name)
+            print(
+                f'No player left in the game. Removing game. {self.room_name}')
+            await self.game_manager.remove_game(self.room_name)
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
@@ -94,8 +97,8 @@ class InGame(AsyncWebsocketConsumer):
         try:
             data = json.loads(text_data)
             message_type = data.get('type')
-            if message_type == 'position':
-                await self.handle_position(data)
+            if message_type == 'move':
+                await self.game.move_paddle(self.user, data['y'])
             elif message_type == 'goal_declaration':
                 await self.handle_goal_declaration(data)
             elif message_type == 'game_update':
