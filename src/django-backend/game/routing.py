@@ -1,8 +1,9 @@
 from django.urls import include, re_path
 from . import consumers
-from .GameManager import GameManager, MatchMaker
+from .GameManager import GameManager, MatchMaker, TournamentManager
 game_manager = GameManager()
 match_maker = MatchMaker()
+tournament_manager = TournamentManager()
 
 ws_urlpatterns = [
     re_path(r'ws/game/normal/looby/', consumers.GameLobby.as_asgi(), {
@@ -12,5 +13,7 @@ ws_urlpatterns = [
         'game_manager': game_manager
     }),
     re_path(r'ws/game/tournament/(?P<tournament_id>\w+)/$',
-            consumers.Tournament.as_asgi()),
+            consumers.TournamentConsumer.as_asgi(), {
+                'tournament_manager': tournament_manager
+            }),
 ]
