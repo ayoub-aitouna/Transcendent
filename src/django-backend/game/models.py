@@ -22,7 +22,8 @@ class Tournament(models.Model):
     is_public = models.BooleanField(default=False)
     is_monetized = models.BooleanField(default=False)
     owner = models.ForeignKey('user.User', on_delete=models.CASCADE,
-                               related_name='owner')
+                              related_name='owner')
+    uuid = models.CharField(max_length=200, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -70,6 +71,7 @@ class Matchup(models.Model):
                                related_name='winner', null=True)
     game_over = models.BooleanField(default=False)
     game_uuid = models.CharField(max_length=200, blank=False, null=False)
+    round_number = models.IntegerField(default=1)
     first_player_score = models.IntegerField(null=False, default=0)
     second_player_score = models.IntegerField(null=False, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
