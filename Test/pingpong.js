@@ -12,14 +12,23 @@ let rightPaddle = { x: 0, y: 0 };
 y = 0;
 // WebSocket setup
 const socket = new WebSocket('ws://localhost:8000/ws/game/test/');
-
+let started = false;
 // Listen for messages from the server
 socket.addEventListener('message', function (event) {
     const data = JSON.parse(event.data);
-    ball = data.ball;
-    leftPaddle = data.leftPaddle;
-    rightPaddle = data.rightPaddle;
-    // console.log('ball', ball, 'leftPaddle', leftPaddle, 'rightPaddle', rightPaddle);
+
+    switch (data.type) {
+        case 'update':
+            started = true;
+            ball = data.ball;
+            leftPaddle = data.leftPaddle;
+            rightPaddle = data.rightPaddle;
+            break;
+        case 'game_over':
+            alert('Game Over!');
+            break;
+    }
+
 });
 
 // Draw everything
@@ -30,7 +39,6 @@ function draw() {
     // Draw the paddles
     context.fillStyle = 'white';
     // left paddle
-    console.log('leftPaddle', leftPaddle.y);
     context.fillRect(leftPaddle.x - paddleWidth / 2, leftPaddle.y - paddleHeight / 2, paddleWidth, paddleHeight);
 
     // right paddle
@@ -44,7 +52,8 @@ function draw() {
 
 // Game loop
 function gameLoop() {
-    draw();
+    if (started)
+        draw();
     requestAnimationFrame(gameLoop);
 }
 

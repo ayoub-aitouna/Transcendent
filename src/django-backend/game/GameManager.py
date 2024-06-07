@@ -120,6 +120,9 @@ class Game():
             paddle = self.player_1_paddle
             paddle.updatePosition(y=y)
 
+            paddle = self.player_2_paddle
+            paddle.updatePosition(y=y)
+
     async def remove_player(self, player):
         async with self.lock:
             if player in self.players:
@@ -134,7 +137,7 @@ class Game():
             #     if self.waiting_in_ms >= 20 * 1000:
             #         # update db and set game as over
             #         await self.emit({
-            #             'game_over': True,
+            #             'type': 'game_over',
             #             'reason': 'player did not not register'
             #         })
             #         return

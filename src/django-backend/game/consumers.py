@@ -1,7 +1,6 @@
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-import asyncio
 import uuid
 from channels.db import database_sync_to_async
 from .models import Matchup
@@ -100,12 +99,6 @@ class InGame(AsyncWebsocketConsumer):
             message_type = data.get('type')
             if message_type == 'move':
                 await self.game.move_paddle(self.user, data['y'])
-            elif message_type == 'goal_declaration':
-                await self.handle_goal_declaration(data)
-            elif message_type == 'game_update':
-                await self.handle_game_update(data)
-            else:
-                print('Unknown message type:', message_type)
         except Exception as e:
             print(f'Failed to convert data into JSON: {e}')
 

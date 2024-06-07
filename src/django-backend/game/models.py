@@ -64,7 +64,7 @@ class Matchup(models.Model):
     first_player = models.ForeignKey(User, on_delete=models.CASCADE,
                                      related_name='first_player')
     second_player = models.ForeignKey(User, on_delete=models.CASCADE,
-                                      related_name='second_player')
+                                      related_name='second_player', null=True)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE,
                                    related_name='tournament_match_up', null=True)
     Winner = models.ForeignKey(User, on_delete=models.CASCADE,
