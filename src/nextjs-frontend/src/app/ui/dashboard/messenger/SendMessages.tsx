@@ -32,18 +32,18 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 		fetchMessages();
 	}, [selectedChat]);
 
-	// useEffect(() => {
-	// 	const newSocket: Socket = io();
-	// 	setSocket(newSocket);
-	// 	newSocket.on('receiveMessage', (message: MessageItem) => {
-	// 		setMessages((prevMessages) => [...prevMessages, message]);
-	// 	});
-	// 	return () => {
-	// 		if (socket) {
-	// 			socket.disconnect();
-	// 		}
-	// 	};
-	// }, [socket]);
+	useEffect(() => {
+		const newSocket: Socket = io();
+		setSocket(newSocket);
+		newSocket.on('receiveMessage', (message: MessageItem) => {
+			setMessages((prevMessages) => [...prevMessages, message]);
+		});
+		return () => {
+			if (socket) {
+				socket.disconnect();
+			}
+		};
+	}, []);
 
 	const handleSendMessage = async () => {
 		if (!selectedChat?.id || !messageContent.trim()) return;
