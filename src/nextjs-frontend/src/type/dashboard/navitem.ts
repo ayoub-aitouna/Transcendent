@@ -1,4 +1,5 @@
 import React, { SVGProps } from "react";
+import { number } from "yup";
 
 export type navItem = {
 	name: string;
@@ -33,7 +34,7 @@ export type NotificationItem = {
 }
 
 export type MessagesItem = {
-	message: string;
+	message: string | File;
 	time: string;
 }
 
@@ -44,4 +45,4 @@ export type MessengerItem = {
 	time: string;
 	messagesNbr:Number;
 }
-	
+

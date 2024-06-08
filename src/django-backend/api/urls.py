@@ -6,7 +6,7 @@ urlpatterns = [
     path('auth/', include('authentication.urls')),
     path('users/', include('user.urls')),
     path('game/', include('game.urls')),
-    
+    path('chat/', include('chat.urls')),
     path('notifications/',view=NotificationView.as_view(), name='notifications'),
     path('notifications/<int:pk>/', view=NotificationAction.as_view(), name='notification-action'),
     

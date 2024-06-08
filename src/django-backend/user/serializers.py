@@ -127,7 +127,6 @@ class UserSerializer(serializers.ModelSerializer, BaseUserSerializer):
         fields = ['id', 'image_url', 'fullname',
                   'username', 'rank', 'current_xp', 'coins', 'url', 'send_request']
 
-
 class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     registration_method = serializers.CharField(read_only=True)
     send_request = serializers.HyperlinkedIdentityField(

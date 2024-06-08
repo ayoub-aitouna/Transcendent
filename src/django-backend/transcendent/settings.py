@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
- 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'authentication',
     'api',
     'user',
-    'game'
+    'game',
+    'chat',
 
 ]
 
@@ -112,7 +113,7 @@ DATABASES = {
         'HOST': 'db',
         'PORT': '5432'
     },
-    'test':{
+    'test': {
         'NAME': f'test_postgres'
     }
 }
@@ -137,7 +138,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'user.User'
-
 
 
 # Internationalization
@@ -167,13 +167,12 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "DEFAULT_PERMISSION_CLASSES":[
+    "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
-      ],
+    ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 1000
 }
-
 
 
 CORS_ALLOWED_ORIGINS = [
@@ -184,8 +183,11 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_URLS_REGEX = r"^/api/.*$"
 
+MEDIA_URL = '/media/'
 
-BASE_FRONTEND_URL = os.getenv('DJANGO_BASE_FRONTEND_URL', default='http://192.168.122.1:3000')
+
+BASE_FRONTEND_URL = os.getenv(
+    'DJANGO_BASE_FRONTEND_URL', default='http://192.168.122.1:3000')
 
 # Google OAuth2 settings
 GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID')
@@ -203,7 +205,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
-        "KEY_PREFIX":"example"
+        "KEY_PREFIX": "example"
     }
 }
 
@@ -217,12 +219,10 @@ CELERY_TIMEZONE = 'UTC'  # or your timezone
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 
-
-
-EMAIL_HOST= os.getenv('Email_HOST')
-EMAIL_PORT= 465
-EMAIL_USE_SSL= True
-EMAIL_HOST_USER= os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD= os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST = os.getenv('Email_HOST')
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

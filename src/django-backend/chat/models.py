@@ -1,32 +1,41 @@
 from django.db import models
 from user.models import User
 
-# Create your models here.
-class ChatRooms(models.Model):
-    name = models.CharField(max_length=200)
-    admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
 
-    def __str__(self):
-        return self.name
-    
-class RoomMembers(models.Model):
-    room = models.ForeignKey(ChatRooms, on_delete=models.CASCADE, related_name='room')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
-    blocked = models.BooleanField(default=False)
+class ChatRoom(models.Model):
+    typeChoices = [
+        ('private', 'Private'),
+        ('group', 'Group')
+    ]
 
-    def __str__(self):
-        return self.room.name + ' - ' + self.user.username
-
-class Messages(models.Model):
-    room = models.ForeignKey(ChatRooms, on_delete=models.CASCADE, related_name='room')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
-    text = models.TextField()
-    image_url = models.URLField(blank=True, null=True)
-    seen = models.BooleanField(default=False)
-    seen_at = models.DateTimeField(blank=True, null=True)
+    name = models.CharField(max_length=20, null=True, blank=True)
+    members = models.ManyToManyField(User, related_name='members')
+    admin = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name='chatroom_admin')
+    icon = models.ImageField(upload_to='public/chat/', null=True, blank=True)
+    type = models.CharField(
+        max_length=10, choices=typeChoices, default='private')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.room.name + ' - ' + self.sender.username + ' - ' + self.text[:20] + '...'
+        return str(self.name)
+
+
+class ChatMessage(models.Model):
+    chatRoom = models.ForeignKey(
+        ChatRoom, on_delete=models.SET_NULL, null=True, related_name='messages_chat_room')
+    sender = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name='message_sender')
+    message = models.CharField(max_length=255)
+    image_file = models.ImageField(
+        upload_to='public/chat/', null=True, blank=True)
+    seen = models.BooleanField(default=False)
+    seen_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.message

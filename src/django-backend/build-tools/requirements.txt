@@ -16,3 +16,4 @@ pillow
 
 pytest-django
 pytest-asyncio
+shortuuid
