@@ -70,7 +70,8 @@ class Matchup(models.Model):
     Winner = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='winner', null=True)
     game_over = models.BooleanField(default=False)
-    game_uuid = models.CharField(max_length=200, blank=False, null=False)
+    game_uuid = models.CharField(
+        max_length=200, blank=False, null=False, unique=True)
     round_number = models.IntegerField(default=1)
     first_player_score = models.IntegerField(null=False, default=0)
     second_player_score = models.IntegerField(null=False, default=0)
