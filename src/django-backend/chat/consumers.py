@@ -1,6 +1,8 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
+from channels.db import database_sync_to_async
+
 
 channel_layer = get_channel_layer()
 
@@ -33,6 +35,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         message = event['message']
+        # check if USER is the sender NOT SEND MESSAGE
+        sender = message.get('sender')
+        if self.user == sender:
+            return
         await self.send(text_data=json.dumps({
             'message': message
         }))

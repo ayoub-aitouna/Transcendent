@@ -26,7 +26,7 @@ const page = () => {
 	const [selectedChat, setSelectedChat] = useState<roomItem>();
 	useEffect(() => {
 		const fetchMessages = async () => {
-			if (clickedIndex !== null) {
+			if (clickedIndex !== 0) {
 				try {
 					const response = await apiMock.get(`/chat/rooms/${clickedIndex}/`);
 					setSelectedChat(response.data);
@@ -54,10 +54,10 @@ const page = () => {
 	}, []);
 	return (
 		<>
-			<div className='h-full max-h-[82vh] overflow-hidden rounded-xl'>
+			<div className='h-full  overflow-hidden rounded-xl'>
 				<div className='h-full flex-1 flex flex-col gap-4'>
 					<div className='h-full flex flex-row flex-wrap gap-5'>
-						<div className='  overflow-y-scroll hide-scrollbar  w-[440px] bg-[#292929] rounded-xl p-4'>
+						<div className='  overflow-y-scroll hide-scrollbar  w-full sm:w-full  lg:max-w-[440px] bg-[#292929] rounded-xl p-4'>
 							<div className='flex flex-row items-center justify-between p-2 relative'>
 								<input
 									className='flex-row items-center justify-between rounded-lg overflow-hidden bg-[#363636] pl-[60px] p-2 h-[40px] w-[336px]'
@@ -79,7 +79,7 @@ const page = () => {
 											href={item.room_icon}
 											LastMessage={item.last_message}
 											messagesNbr={item.unseen_messages_count}
-											isSelected={clickedIndex === index}
+											isSelected={clickedIndex === item.id}
 											onClick={() => handleIconClick(item.id)}
 										/>
 									</div>
@@ -87,7 +87,7 @@ const page = () => {
 							</div>
 						</div>
 						<div
-							className={`flex-1 h-full bg-secondary-400  min-w-[400px] rounded-xl relative overflow-hidden`}>
+							className={`flex-1 h-full bg-secondary-400  min-w-[300px]  rounded-xl relative overflow-hidden`}>
 							{selectedChat ? (
 								<div className=''>
 									<SendMessage selectedChat={selectedChat || {}} />

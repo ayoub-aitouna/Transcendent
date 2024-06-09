@@ -52,8 +52,9 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 	isSelected: boolean;
 	onClick: () => void;
 }) {
+	console.log("isSelected", isSelected);
 	const lastMassage = get_last_message({ lastMessage: LastMessage });
-	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected);
+	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage.id !== 0);
 	
 	const handleClick = () => {
 		onClick();
@@ -64,21 +65,9 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 		}
 	};
 
-	useEffect(() => {
-		const fetchMessages = async () => {
-			if (viewsMessages !== null) {
-				try {
-					await apiMock.put(`/chat/message/${LastMessage.id}/`);
-				} catch (error) {
-					console.error('Error fetching chat Messages', error);
-				}
-			}
-		};
-		fetchMessages();
-	}, [viewsMessages]);
 	return (
-		<button
-			className={`mt-2 w-[404px] h-[69px] flex items-center justify-between rounded-lg 
+		<div
+			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded-lg 
                 ${isSelected ? "bg-[#494949]" : (viewsMessages ? styles.highlightMess : "bg-[#292929]")}   overflow-hidden  p-2 mb-[10px]`}
 			onClick={handleClick}
 		>
@@ -92,7 +81,7 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 			</div>
 			{
 				lastMassage && (
-					<div className="flex flex-col items-center p-2">
+					<div className="flex flex-col items- p-2">
 						{viewsMessages ? (
 							<div className={`rounded-full h-5 w-5 bg-[#00D400] mb-1 flex justify-center items-center`}>
 								<div className="font-bold text-[12px]">{messagesNbr}</div>
@@ -107,6 +96,6 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 					</div>
 				)}
 
-		</button>
+		</div>
 	);
 };

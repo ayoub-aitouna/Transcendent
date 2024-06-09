@@ -28,7 +28,7 @@ class ChatMessage(models.Model):
         ChatRoom, on_delete=models.SET_NULL, null=True, related_name='messages_chat_room')
     sender = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='message_sender')
-    message = models.CharField(max_length=255)
+    message = models.CharField(max_length=1000)
     image_file = models.ImageField(
         upload_to='public/chat/', null=True, blank=True)
     seen = models.BooleanField(default=False)

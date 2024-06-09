@@ -2,8 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers, generics, status
 from rest_framework.generics import ListCreateAPIView
-from rest_framework.pagination import LimitOffsetPagination
-from .serializers import ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer
+from .serializers import ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer, UnseenMessagesListSerializer
 from .models import ChatRoom, ChatMessage
 from rest_framework.permissions import IsAuthenticated
 from asgiref.sync import async_to_sync
@@ -28,7 +27,8 @@ class MessagesView(ListCreateAPIView):
     def get_queryset(self):
         id = self.kwargs['id']
         return ChatMessage.objects.\
-            filter(chatRoom__id=id).order_by('created_at')
+            filter(chatRoom__id=id, chatRoom__members=self.
+                   request.user).order_by('created_at')
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -45,6 +45,7 @@ class MessagesView(ListCreateAPIView):
                 'type': 'chat_message',
                 'message': RetrieveUpdateDestroyAPIView.data,
             }
+
         )
 
 
@@ -54,20 +55,21 @@ class ChatRoomView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         room_id = self.kwargs['pk']
-        return ChatRoom.objects.filter(id=room_id)
+        user = self.request.user
+        room = ChatRoom.objects.filter(id=room_id)
+        unseen_messages = ChatMessage.objects.filter(
+            chatRoom=room.first(), seen=False).exclude(sender=user)
+        for message in unseen_messages:
+            message.seen = True
+            message.save()
+        return room
 
 
-class ChatMessageAction(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ChatMessage.objects.all()
-    serializer_class = serializers.Serializer
+class unSeenMessagesListView(ListCreateAPIView):
+    serializer_class = UnseenMessagesListSerializer
+    queryset = ChatRoom.objects.all()
     permission_classes = [IsAuthenticated]
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance.sender == request.user:
-            return Response({'error': 'You are not authorized to mark this message as seen.'}, status=status.HTTP_403_FORBIDDEN)
-
-        instance.seen = True
-        instance.seen_at = instance.created_at
-        instance.save()
-        return Response({'Details': 'Message Updated!'})
+    def get_queryset(self):
+        user = self.request.user
+        return ChatRoom.objects.filter(members=user)
