@@ -9,11 +9,10 @@ function get_last_message({ lastMessage }: { lastMessage: MessageItem }) {
 	if (lastMessage === null)
 		return ""
 	if (typeof lastMessage.message === 'string') {
-		return lastMessage.sender_username + ": " + lastMessage.message;
+		return  lastMessage.message;
 	} else {
 		return lastMessage.sender_username + " " + "send a photo";
 	}
-
 }
 
 function formatTime(timestamp: string): string {
