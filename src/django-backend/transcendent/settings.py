@@ -37,7 +37,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'django_celery_beat',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'authentication',
+    "django_apscheduler",
     'api',
     'user',
     'game',

@@ -13,6 +13,7 @@ class Game():
     HEIGHT = 600
     first_player = None
     second_player = None
+    tournament = None
 
     def __init__(self, room_id):
         self.room_id = room_id
@@ -36,6 +37,7 @@ class Game():
             self.matchup = await database_sync_to_async(Matchup.objects.get)(game_uuid=room_id)
             self.first_player = await database_sync_to_async(lambda: self.matchup.first_player)()
             self.second_player = await database_sync_to_async(lambda: self.matchup.second_player)()
+            self.tournament = await database_sync_to_async(lambda: self.matchup.tournament)()
         except Matchup.DoesNotExist:
             self.matchup = None
         return self
@@ -122,12 +124,13 @@ class Game():
             self.matchup.first_player_score += 1
         else:
             self.matchup.second_player_score += 1
-        
+
         winner = self.determine_winner()
-        
+
         if winner:
             self.matchup.Winner = winner
             self.matchup.game_over = True
+            await self.noifyTournamentManager()
             await self.emit(dict_data={
                 'type': 'game_over',
                 'winner': winner.username
@@ -150,6 +153,20 @@ class Game():
         elif self.matchup.second_player_score >= 20 and self.matchup.second_player_score > self.matchup.first_player_score:
             return self.second_player
         return None
+
+    async def noifyTournamentManager(self):
+        if self.tournament is None:
+            return
+        await self.channel_layer.group_send(
+            f'tournament_{self.tournament.id}',
+            {
+                'type': 'broadcast',
+                'message':  json.dumps({
+                    "match_id": self.matchup.id,
+                    "winner_id": self.matchup.Winner.id
+                })
+            }
+        )
 
     async def cleanup(self):
         self.is_running = False
