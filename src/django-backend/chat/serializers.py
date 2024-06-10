@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import ChatRoom, ChatMessage
 from user.serializers import BaseUserSerializer
 from user.models import User
+from django.utils import timezone
 
 
 class UserSerializer(serializers.ModelSerializer, BaseUserSerializer):
@@ -28,7 +29,6 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
     last_message = serializers.SerializerMethodField()
     unseen_messages_count = serializers.SerializerMethodField()
     all_messages_count = serializers.SerializerMethodField()
-    
 
     class Meta:
         model = ChatRoom
@@ -88,9 +88,68 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
         unseen_messages_count = ChatMessage.objects.filter(
             chatRoom=obj, seen=False).exclude(sender=user).filter(sender__in=members).count()
         return unseen_messages_count
+
     def get_all_messages_count(self, obj):
         user = self.context['request'].user
         return ChatMessage.objects.filter(seen=False).exclude(sender=user).count()
+
+
+class WsChatRoomSerializer(serializers.ModelSerializer):
+    room_name = serializers.SerializerMethodField()
+    room_icon = serializers.SerializerMethodField()
+    last_message = serializers.SerializerMethodField()
+    unseen_messages_count = serializers.SerializerMethodField()
+    all_messages_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ChatRoom
+        fields = ['id', 'all_messages_count', 'room_icon',
+                  'unseen_messages_count', 'last_message', 'type', 'room_name']
+
+    def get_last_message(self, obj):
+        last_message = ChatMessage.objects.filter(
+            chatRoom=obj).order_by('-created_at').first()
+        if last_message:
+            return {
+                'id': last_message.id,
+                'message': last_message.message,
+                'created_at': timezone.localtime(last_message.created_at).isoformat(),
+                'sender': last_message.sender.username if last_message.sender else None,
+                'seen': last_message.seen,
+            }
+        return None
+
+    def get_room_icon(self, obj):
+        if obj.type == 'group':
+            return obj.icon.url
+        user = self.context['request'].user
+        member = obj.members.exclude(id=user.id).first()
+        if member is None:
+            return None
+        return member.image_url
+
+    def get_room_name(self, obj):
+        if obj.type == 'group':
+            return obj.name
+        user = self.context['request'].user
+        member = obj.members.exclude(id=user.id).first()
+        if member is None:
+            return None
+        if member.first_name + member.last_name != '':
+            return member.first_name + ' ' + member.last_name
+        return member.username
+
+    def get_unseen_messages_count(self, obj):
+        members = obj.members.all()
+        user = self.context['request'].user
+        unseen_messages_count = ChatMessage.objects.filter(
+            chatRoom=obj, seen=False).exclude(sender=user).filter(sender__in=members).count()
+        return unseen_messages_count
+
+    def get_all_messages_count(self, obj):
+        user = self.context['request'].user
+        return ChatMessage.objects.filter(seen=False).exclude(sender=user).count()
+
 
 class ChatMessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
@@ -104,7 +163,7 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatMessage
         fields = ['id', 'room_id', 'sender_username', 'message', 'seen',
-            'seen_at', 'created_at', 'sender']
+                  'seen_at', 'created_at', 'sender']
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -120,18 +179,9 @@ class ChatRoomSerializer(ChatRoomsListSerializer):
 
     class Meta(ChatRoomsListSerializer.Meta):
         fields = ['id', 'room_name', 'room_icon', 'unseen_messages_count',
-            'type', 'last_message', 'receiverUser', 'members']
+                  'type', 'last_message', 'receiverUser', 'members']
 
     def get_receiverUser(self, obj):
         user = self.context['request'].user
         receiverUser = obj.members.exclude(id=user.id)
         return UserSerializer(receiverUser, many=True, context=self.context).data
-
-class UnseenMessagesListSerializer(serializers.Serializer):
-    all_messages_count = serializers.SerializerMethodField()
-    class Meta:
-        fields = ['all_messages_count']
-
-    def get_all_messages_count(self, obj):
-        user = self.context['request'].user
-        return ChatMessage.objects.filter(seen=False).exclude(sender=user).count()

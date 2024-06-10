@@ -11,6 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAppSelector } from '@/redux/store';
 import moment from 'moment';
+import LeftArrow from '../icons/content_area/left-arrow';
 
 export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 	const [clickedThreePoints, setClickedThreePoints] = useState(false);
@@ -24,7 +25,9 @@ export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 				className={`w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden`}>
 				<Link
 					href={"/profile"}
-					className='flex items-center justify-between p-7'>
+					className='flex items-center justify-between '>
+						{/* <div><LeftArrow/></div>  */} 
+						{/* handle left arrow when the screen is small */}
 					<Image
 						className='bg-white  w-[53px] h-[53px] rounded-full'
 						src={selectedChat?.room_icon || ""}
@@ -119,6 +122,7 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 	const [messageContent, setMessageContent] = useState('');
 	const socket = useRef<WebSocket | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const { username } = useAppSelector((state) => state.user.user);
 
 
 
@@ -160,7 +164,6 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 					sender_username: receivedMessage.message.sender_username,
 				};
 				setMessages((prevMessages) => [...prevMessages, newMessage]);
-				setMessageContent('');
 			}
 		}
 		return () => {
@@ -170,24 +173,31 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 		}
 
 	}, [selectedChat.id, socket]);
+
 	const SendMessage = useCallback(async (messageContent: string) => {
 		try {
 			const formData = new FormData();
 			formData.append('message', messageContent);
-			await apiMock.post(`/chat/room/${selectedChat.id}/`, formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data'
-				}
-			});
+			socket.current?.send(JSON.stringify({ message: messageContent }));
+			setMessageContent('');
 		} catch (error) {
 			console.error('Error sending message:', error);
 		}
-
 	}, [selectedChat.id])
 
 	const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement>) => {
-		event.preventDefault()
-		SendMessage(messageContent)
+		event.preventDefault();
+
+		const newLocalMessage: MessageItem = {
+			message: messageContent,
+			seen: false,
+			created_at: String(moment()),
+			id: selectedChat.id, 
+			sender_username: username
+		};
+		setMessages(prevMessages => [...prevMessages, newLocalMessage]);
+		SendMessage(messageContent);
+		setMessageContent('');
 	}
 	useEffect(() => {
 		const element = containerRef.current;
@@ -204,7 +214,7 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 	return (
 		<div className='h-full' >
 			<ChatPanel selectedChat={selectedChat} />
-			<div className='overflow-y-scroll hide-scrollbar max-h-[880px]' ref={containerRef}>
+			<div className='overflow-y-scroll hide-scrollbar max-h-[780px]' ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
 						<ChatMessage

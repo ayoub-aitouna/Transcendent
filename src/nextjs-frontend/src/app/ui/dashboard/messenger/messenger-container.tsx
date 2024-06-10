@@ -19,13 +19,11 @@ function formatTime(timestamp: string): string {
 	const messageDate = new Date(timestamp);
 	const currentDate = new Date();
 
-	// If the message is from the same day
 	if (messageDate.toDateString() === currentDate.toDateString()) {
 		const hours = messageDate.getHours().toString().padStart(2, '0');
 		const minutes = messageDate.getMinutes().toString().padStart(2, '0');
 		return `${hours}:${minutes}`;
 	}
-	// If the message is older than the current day
 	else {
 		const daysAgo = Math.floor((currentDate.getTime() - messageDate.getTime()) / (1000 * 60 * 60 * 24));
 		if (daysAgo === 1) {
@@ -34,7 +32,6 @@ function formatTime(timestamp: string): string {
 			const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 			return weekdays[messageDate.getDay()];
 		} else {
-			// Format the date as YYYY/MM/DD
 			const year = messageDate.getFullYear();
 			const month = (messageDate.getMonth() + 1).toString().padStart(2, '0');
 			const day = messageDate.getDate().toString().padStart(2, '0');

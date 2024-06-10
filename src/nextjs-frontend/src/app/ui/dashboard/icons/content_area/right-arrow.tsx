@@ -19,3 +19,5 @@ const RightArrow = (props: SVGProps<SVGSVGElement>) => (
 );
 
 export default RightArrow;
+
+

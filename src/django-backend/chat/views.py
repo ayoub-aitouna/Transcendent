@@ -2,11 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers, generics, status
 from rest_framework.generics import ListCreateAPIView
-from .serializers import ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer, UnseenMessagesListSerializer
+from .serializers import ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer
 from .models import ChatRoom, ChatMessage
 from rest_framework.permissions import IsAuthenticated
 from asgiref.sync import async_to_sync
-from .consumers import get_channel_layer
+from .consumers.chat_consumers import get_channel_layer
 
 
 class ChatRoomsListView(ListCreateAPIView):
@@ -29,7 +29,7 @@ class MessagesView(ListCreateAPIView):
         return ChatMessage.objects.\
             filter(chatRoom__id=id, chatRoom__members=self.
                    request.user).order_by('created_at')
-
+ 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.seen = True
@@ -63,13 +63,3 @@ class ChatRoomView(generics.RetrieveAPIView):
             message.seen = True
             message.save()
         return room
-
-
-class unSeenMessagesListView(ListCreateAPIView):
-    serializer_class = UnseenMessagesListSerializer
-    queryset = ChatRoom.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return ChatRoom.objects.filter(members=user)
