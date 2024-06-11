@@ -16,4 +16,5 @@ export type roomItem = {
 	type: number;
 	last_message: MessageItem;
 	receiverUser: user[];
+	members: user[];
 }

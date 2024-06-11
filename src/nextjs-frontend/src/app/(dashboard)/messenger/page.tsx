@@ -1,29 +1,57 @@
 "use client";
-import Image from "next/image";
+
 import Filter from "@/app/ui/dashboard/icons/content_area/filters";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import SearchIcon from "@/app/ui/dashboard/icons/messenger/search";
 import { MessengerContainer } from "@/app/ui/dashboard/messenger/messenger-container";
-import { ChatMessage } from "@/app/ui/dashboard/messenger/chat-message";
-import ThreePointsIcon from "@/app/ui/dashboard/icons/messenger/three-points";
-import EmojiIcon from "@/app/ui/dashboard/icons/messenger/emoji";
-import Upload from "@/app/ui/dashboard/icons/messenger/Upload";
-import SendIcon from "@/app/ui/dashboard/icons/messenger/send";
 import apiMock from "@/lib/axios-mock";
-import { MessageItem, roomItem } from "@/api/chat";
-import { io, Socket } from 'socket.io-client';
+import { roomItem } from "@/api/chat";
 import SendMessage from "@/app/ui/dashboard/messenger/SendMessages";
+import { useRouter } from 'next/router'
+import { useAppSelector } from "@/redux/store";
 
 // search query is `chatroom`
 // example http://localhost:3000/messenger?chatroom=1
 
+const getRoomId = (rooms: roomItem[], userId: number): number => {
+	const { id } = useAppSelector((state) => state.user.user);
 
-const page = () => {
+	for (const room of rooms) {
+		if (room.members && room.members.length === 2) {
+			const memberIds = room.members.map(member => member.id);
+			if (memberIds.includes(userId) && memberIds.includes(id)) {
+				console.log('Room found with ID:', room.id);
+				return room.id;
+			}
+		}
+	}
+	return 0;
+};
+
+const page = ({ searchParams }: {
+	searchParams?: {
+		chatroom?: string;
+	};
+}) => {
 
 	const [rooms, setRooms] = useState<roomItem[]>([]);
 	const [clickedIndex, setClickedIndex] = useState<number | 0>(0);
 	const [selectedChat, setSelectedChat] = useState<roomItem>();
+	const chatroom = searchParams?.chatroom || "";
+	const roomId = getRoomId(rooms, parseInt(chatroom));
+
+	useEffect(() => {
+		const fetchRooms = async () => {
+			try {
+				const response = await apiMock.get('/chat/rooms/');
+				setRooms(response.data.results);
+			} catch (error) {
+				console.error('Error fetching chat Rooms', error);
+			}
+		};
+		fetchRooms();
+	}, []);
+
 	useEffect(() => {
 		const fetchMessages = async () => {
 			if (clickedIndex !== 0) {
@@ -41,17 +69,6 @@ const page = () => {
 	const handleIconClick = (index: number) => {
 		setClickedIndex((prevIndex) => (prevIndex === index ? 0 : index));
 	};
-	useEffect(() => {
-		const fetchRooms = async () => {
-			try {
-				const response = await apiMock.get('/chat/rooms/');
-				setRooms(response.data.results);
-			} catch (error) {
-				console.error('Error fetching chat Rooms', error);
-			}
-		};
-		fetchRooms();
-	}, []);
 	return (
 		<>
 			<div className='h-full  overflow-hidden rounded-xl'>
@@ -79,7 +96,7 @@ const page = () => {
 											href={item.room_icon}
 											LastMessage={item.last_message}
 											messagesNbr={item.unseen_messages_count}
-											isSelected={clickedIndex === item.id}
+											isSelected={!chatroom ? clickedIndex === item.id : clickedIndex === roomId}
 											onClick={() => handleIconClick(item.id)}
 										/>
 									</div>
