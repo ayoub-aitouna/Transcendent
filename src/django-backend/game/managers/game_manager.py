@@ -46,7 +46,7 @@ class Game():
         async with self.lock:
             if len(self.players) == 2 or player in self.players or not self.matchup:
                 return False
-            if player == self.first_player or player == self.second_Player:
+            if player == self.first_player or player == self.second_player:
                 self.players.append(player)
             return True
 
@@ -75,6 +75,7 @@ class Game():
                     self.matchup.game_over = True
                     self.matchup.Winner = self.first_player
                     await database_sync_to_async(self.matchup.save)()
+                    await self.NotifyTournamentConsumer(self.matchup.Winner)
                     return await self.emit(type='game_over', message='player did not not register')
                 continue
             if self.pause:
@@ -114,6 +115,20 @@ class Game():
             }
         )
 
+    async def NotifyTournamentConsumer(self, Winner):
+        if self.tournament is None:
+            return
+        await self.channel_layer.group_send(
+            f"tournament_{self.tournament.uuid}",
+            {
+                'type': 'match_result',
+                'message':  json.dumps({
+                    'match_id': self.matchup.id,
+                    'winner_id': Winner.id
+                })
+            }
+        )
+
     async def new_point(self, is_left_goal):
         self.pause = True
         self.player_1_paddle.updatePosition(
@@ -124,26 +139,29 @@ class Game():
             self.matchup.first_player_score += 1
         else:
             self.matchup.second_player_score += 1
-
+        await database_sync_to_async(self.matchup.save)()
         winner = self.determine_winner()
 
         if winner:
             self.matchup.Winner = winner
             self.matchup.game_over = True
-            await self.noifyTournamentManager()
+            await database_sync_to_async(self.matchup.save)()
+            await self.NotifyTournamentConsumer(winner)
             await self.emit(dict_data={
                 'type': 'game_over',
                 'winner': winner.username
             })
-        print(f'emit first_player_score: {self.matchup.first_player_score}')
+            self.is_running = False
+
         await self.emit(dict_data={
             'type': 'goal',
             'first_player_score': self.matchup.first_player_score,
             'second_player_score': self.matchup.second_player_score
         })
-        await database_sync_to_async(self.matchup.save)()
 
     def determine_winner(self):
+        # debugging
+        return self.first_player
         if self.matchup.first_player_score >= 15 and self.matchup.first_player_score - self.matchup.second_player_score >= 2:
             return self.first_player
         elif self.matchup.second_player_score >= 15 and self.matchup.second_player_score - self.matchup.first_player_score >= 2:
@@ -153,20 +171,6 @@ class Game():
         elif self.matchup.second_player_score >= 20 and self.matchup.second_player_score > self.matchup.first_player_score:
             return self.second_player
         return None
-
-    async def noifyTournamentManager(self):
-        if self.tournament is None:
-            return
-        await self.channel_layer.group_send(
-            f'tournament_{self.tournament.id}',
-            {
-                'type': 'broadcast',
-                'message':  json.dumps({
-                    "match_id": self.matchup.id,
-                    "winner_id": self.matchup.Winner.id
-                })
-            }
-        )
 
     async def cleanup(self):
         self.is_running = False

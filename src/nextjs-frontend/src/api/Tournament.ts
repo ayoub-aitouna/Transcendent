@@ -27,10 +27,16 @@ export const GetPrivateTournaments = async (): Promise<
 };
 
 export const GetTournamentDetails = async (id: number): Promise<Tournament> => {
-	const Response = await apiMock.get(`/game/Tournament/detail/${id}`);
+	const Response = await apiMock.get(`/game/Tournament/detail/${id}/`);
 	const data: Tournament = Response.data;
 	return data;
 };
+
+export const RegisterTournament = async (id: number): Promise<Tournament> => {
+	const Response = await apiMock.post(`/game/Tournament/register/${id}/`);
+	const data: Tournament = Response.data;
+	return data;
+}
 
 export const CreateTournament = async (
 	icon_file: File | null,
@@ -47,7 +53,7 @@ export const CreateTournament = async (
 	return data;
 };
 
-export const GetAnnouncedTournaments = async (): Promise<Tournament[]>=> {
+export const GetAnnouncedTournaments = async (): Promise<Tournament[]> => {
 	const Response = await apiMock.get('/game/Tournament-announcements/');
 	const data: Tournament[] = Response.data.results;
 	return data;
