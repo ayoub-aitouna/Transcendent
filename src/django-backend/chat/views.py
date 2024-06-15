@@ -18,8 +18,8 @@ class ChatRoomsListView(ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return ChatRoom.objects.filter(members=user)
-
+        #display all chat rooms of the user when last_message is not null
+        return ChatRoom.objects.filter(members=user).exclude(messages_chat_room=None)
 
 class MessagesView(ListCreateAPIView):
     serializer_class = ChatMessageSerializer
@@ -72,12 +72,15 @@ class CheckPrivateChatRoomView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Assuming 'user_id' is captured from the URL
         user_id = self.kwargs.get('id')
-        if user_id is None:
-            raise ValueError('user_id is required')
-
         user = self.request.user
         queryset = ChatRoom.objects.filter(
             type='private', members=user).filter(members=user_id)
+        if not queryset.exists():
+            user2 = User.objects.get(id=user_id)
+            chat_room = ChatRoom.objects.create(type='private')
+            chat_room.members.add(user, user2)
+            chat_room.save()
+            queryset = ChatRoom.objects.filter(
+				type='private', members=user).filter(members=user_id)
         return queryset

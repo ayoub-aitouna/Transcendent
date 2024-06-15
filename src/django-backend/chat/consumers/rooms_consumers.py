@@ -17,6 +17,7 @@ class ConsumerRequest():
 class RoomsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
+        self.rooms = [] 
         if self.user is None:
             await self.close()
         self.user_id = self.user.id
