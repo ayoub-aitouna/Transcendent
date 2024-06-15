@@ -1,4 +1,5 @@
 FROM debian:bullseye
+ENV PYTHONUNBUFFERED 1
 
 # Install Python 3.9
 RUN apt-get update && apt-get install -y python3.9 python3-pip zsh git curl

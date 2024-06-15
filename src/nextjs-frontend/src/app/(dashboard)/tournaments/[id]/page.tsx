@@ -8,12 +8,12 @@ import {
 	StreamingCard,
 } from "@/app/ui/dashboard/tournament/index";
 import { GetTournamentDetails } from "@/api/Tournament";
-import { CountDownTimerButton } from "@/app/ui/dashboard/tournament/count-down-btn";
 import { Bracket } from "@/app/ui/dashboard/tournament/bracket-board";
 import { MatchUp, Tournament } from "@/type/dashboard/tournament";
 import Error from "@/app/ui/dashboard/component/Error";
-import ThreePoints from "@/app/ui/dashboard/icons/messenger/three-points";
 import TournamentMenu from "@/app/ui/dashboard/tournament/tournament-menu";
+import RegisterForm from "@/app/ui/dashboard/tournament/RegisterForm";
+
 function StatusTable({ data }: { data: Array<MatchUp> }) {
 	return (
 		<div className='w-full overflow-x-scroll hide-scrollbar'>
@@ -126,7 +126,7 @@ const page = async ({ params }: any) => {
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-row gap-3 items-center justify-center">
+				<div className='flex flex-row gap-3 items-center justify-center'>
 					<div className='flex flex-col items-start justify-center '>
 						<div className='font-bold text-lg tracking-tight'>
 							{result.max_players}
@@ -135,15 +135,14 @@ const page = async ({ params }: any) => {
 							Max Players
 						</div>
 					</div>
-					{
-						result.is_my_tournament &&
-						<div className="w-5 h-5 flex items-center justify-center">
+					{result.is_my_tournament && (
+						<div className='w-5 h-5 flex items-center justify-center'>
 							<TournamentMenu id={id} />
 						</div>
-					}
+					)}
 				</div>
 			</div>
-			<div className='w-full xl:h-[28.5rem] flex flex-col xl:flex-row gap-5  '>
+			<div className='w-full xl:h-[28.5rem] flex flex-col xl:flex-row gap-5'>
 				<Bracket
 					data={result.tournament_bracket}
 					max_players={result.max_players}
@@ -167,10 +166,7 @@ const page = async ({ params }: any) => {
 					{result.streams.length === 0 && (
 						<Empty text='no Game are available right now' />
 					)}
-					<CountDownTimerButton
-						targetDate={result.start_date}
-					// Onclick={() => handleRegister()}
-					/>
+					<RegisterForm tournament={result} />
 				</div>
 			</div>
 			<div className='rounded-xl bg-secondary-400 flex-1 min-h-80 max-h-[30rem] flex flex-col items-start justify-start px-6 pt-10 pb-4'>

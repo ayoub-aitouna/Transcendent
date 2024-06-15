@@ -6,6 +6,7 @@ import StoreProvider from "@/redux/Provider";
 import BootstrapProvider from "@/app/provider/bootstrap";
 import { ToastProvider } from "@/app/provider/ToastProvider";
 import WithAuth from "@/app/provider/with-auth";
+import { TournamentProvider } from "@/app/provider/TournamentProvider";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -23,7 +24,9 @@ export default function RootLayout({
 				<StoreProvider>
 					<WithAuth>
 						<BootstrapProvider>
-							<ToastProvider>{children}</ToastProvider>
+							<ToastProvider>
+								<TournamentProvider>{children}</TournamentProvider>
+							</ToastProvider>
 						</BootstrapProvider>
 					</WithAuth>
 				</StoreProvider>

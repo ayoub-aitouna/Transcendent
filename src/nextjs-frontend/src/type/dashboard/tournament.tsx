@@ -2,6 +2,7 @@ import { user } from "@/type/auth/user";
 
 export type Tournament = {
 	id: number;
+	uuid: string;
 	icon?: string;
 	name: string;
 	description: string;
@@ -19,6 +20,7 @@ export type Tournament = {
 	url?: string;
 	register?: string;
 	is_my_tournament: boolean;
+	is_registered: boolean;
 };
 export type RegisteredPlayer = {
 	id: number;

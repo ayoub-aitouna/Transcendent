@@ -1,4 +1,3 @@
 const isServer = typeof window === 'undefined';
 
-const Host = 'http://172.20.10.2:8000';
-export const BACKEND_API_URL = `${Host}/api/v1`
+export const BACKEND_API_URL = `http://${process.env.NEXT_PUBLIC_BACKEND_HOST}:8000/api/v1`

@@ -1,5 +1,6 @@
 from django.db import models
 from user.models import User
+import uuid
 
 
 class Game(models.Model):
@@ -23,7 +24,9 @@ class Tournament(models.Model):
     is_monetized = models.BooleanField(default=False)
     owner = models.ForeignKey('user.User', on_delete=models.CASCADE,
                               related_name='owner')
-    uuid = models.CharField(max_length=200, blank=False, null=False)
+    uuid = models.CharField(max_length=200, blank=False,
+                            null=False, default=uuid.uuid4)
+    finished = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -71,7 +74,7 @@ class Matchup(models.Model):
                                related_name='winner', null=True)
     game_over = models.BooleanField(default=False)
     game_uuid = models.CharField(
-        max_length=200, blank=False, null=False, unique=True)
+        max_length=200, blank=False, null=False, unique=True, default=uuid.uuid4)
     round_number = models.IntegerField(default=1)
     first_player_score = models.IntegerField(null=False, default=0)
     second_player_score = models.IntegerField(null=False, default=0)

@@ -24,24 +24,13 @@ services:
       - mynetwork
     ports:
       - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
     volumes:
       - django_backend_volume:/var/app
     depends_on:
       - db
       - redis
-
-  # celery:
-  #   restart: always
-  #   container_name: celery
-  #   build:
-  #     context: ./django-backend/build-tools
-  #   command: ["celery", "-A", "transcendent", "worker", "--loglevel=info"]
-  #   networks:
-  #     - mynetwork
-  #   volumes:
-  #     - django_backend_volume:/var/app
-  #   depends_on:
-  #     - redis
 
   redis:
     restart: always
