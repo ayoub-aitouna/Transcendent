@@ -42,7 +42,8 @@ export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 						</div>
 						<div
 							className={`ml-[10px]  text-[#878787] text-[14px] truncate font-normal`}>
-							{selectedChat?.receiverUser[0].status}
+							{/* {selectedChat?.receiverUser[0].status} */}
+							online
 						</div>
 					</div>
 				</Link>
@@ -203,7 +204,6 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 		const element = containerRef.current;
 		console.log("Container element:", element);
 		if (element) {
-			console.log("Scrolling to bottom...");
 			element.scrollTo({
 				top: element.scrollHeight,
 				behavior: 'smooth'

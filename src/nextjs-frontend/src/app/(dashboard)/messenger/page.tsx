@@ -7,26 +7,10 @@ import { MessengerContainer } from "@/app/ui/dashboard/messenger/messenger-conta
 import apiMock from "@/lib/axios-mock";
 import { roomItem } from "@/api/chat";
 import SendMessage from "@/app/ui/dashboard/messenger/SendMessages";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useAppSelector } from "@/redux/store";
+import axios from "axios";
 
-// search query is `chatroom`
-// example http://localhost:3000/messenger?chatroom=1
-
-const getRoomId = (rooms: roomItem[], userId: number): number => {
-	const { id } = useAppSelector((state) => state.user.user);
-
-	for (const room of rooms) {
-		if (room.members && room.members.length === 2) {
-			const memberIds = room.members.map(member => member.id);
-			if (memberIds.includes(userId) && memberIds.includes(id)) {
-				console.log('Room found with ID:', room.id);
-				return room.id;
-			}
-		}
-	}
-	return 0;
-};
 
 const page = ({ searchParams }: {
 	searchParams?: {
@@ -36,9 +20,10 @@ const page = ({ searchParams }: {
 
 	const [rooms, setRooms] = useState<roomItem[]>([]);
 	const [clickedIndex, setClickedIndex] = useState<number | 0>(0);
-	const [selectedChat, setSelectedChat] = useState<roomItem>();
+	const [selectedChat, setSelectedChat] = useState<roomItem | null >();
 	const chatroom = searchParams?.chatroom || "";
-	const roomId = getRoomId(rooms, parseInt(chatroom));
+	console.log("chat room : ", chatroom,", slectecatRoom", selectedChat?.id)
+	const router = useRouter()
 
 	useEffect(() => {
 		const fetchRooms = async () => {
@@ -54,17 +39,37 @@ const page = ({ searchParams }: {
 
 	useEffect(() => {
 		const fetchMessages = async () => {
-			if (clickedIndex !== 0) {
+			if(!clickedIndex && chatroom){
 				try {
-					const response = await apiMock.get(`/chat/rooms/${clickedIndex}/`);
+					const response = await apiMock.get(`/chat/get-chat-room/${chatroom}`);
 					setSelectedChat(response.data);
+					console.log("slected chat id after fitchen is :", selectedChat)
 				} catch (error) {
 					console.error('Error fetching chat Messages', error);
 				}
 			}
+			else 
+				if (clickedIndex !== 0 ) {
+					try {
+						const response = await apiMock.get(`/chat/rooms/${clickedIndex}/`);
+						setSelectedChat(response.data);
+					} catch (error) {
+						console.error('Error fetching chat Messages', error);
+					}
+				}
 		};
 		fetchMessages();
-	}, [clickedIndex]);
+	}, [clickedIndex, chatroom]);
+
+	useEffect(() => {
+		const setRouter = () => {
+			if (selectedChat && selectedChat.receiverUser && selectedChat.receiverUser.length > 0) {
+				router.push(`?chatroom=${selectedChat.receiverUser[0].id}`);
+			}		
+		};
+		setRouter();
+	}, [selectedChat]);
+	
 
 	const handleIconClick = (index: number) => {
 		setClickedIndex((prevIndex) => (prevIndex === index ? 0 : index));
@@ -96,7 +101,7 @@ const page = ({ searchParams }: {
 											href={item.room_icon}
 											LastMessage={item.last_message}
 											messagesNbr={item.unseen_messages_count}
-											isSelected={!chatroom ? clickedIndex === item.id : clickedIndex === roomId}
+											isSelected={!selectedChat && chatroom ? true : clickedIndex === item.id}
 											onClick={() => handleIconClick(item.id)}
 										/>
 									</div>

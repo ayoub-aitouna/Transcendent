@@ -49,7 +49,7 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 	isSelected: boolean;
 	onClick: () => void;
 }) {
-	console.log("isSelected", isSelected);
+	console.log("isSelected", isSelected, 'name : ', name);
 	const lastMassage = get_last_message({ lastMessage: LastMessage });
 	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage.id !== 0);
 	

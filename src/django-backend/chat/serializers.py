@@ -185,3 +185,16 @@ class ChatRoomSerializer(ChatRoomsListSerializer):
         user = self.context['request'].user
         receiverUser = obj.members.exclude(id=user.id)
         return UserSerializer(receiverUser, many=True, context=self.context).data
+
+
+class GetChatRoomSerializer(ChatRoomSerializer):
+    receiverUser = serializers.SerializerMethodField()
+
+    class Meta(ChatRoomsListSerializer.Meta):
+        fields = ['id', 'room_name', 'room_icon', 'unseen_messages_count',
+                'type', 'last_message', 'receiverUser', 'members']
+
+    def get_receiverUser(self, obj):
+        user = self.context['request'].user
+        receiverUser = obj.members.exclude(id=user.id)
+        return UserSerializer(receiverUser, many=True, context=self.context).data

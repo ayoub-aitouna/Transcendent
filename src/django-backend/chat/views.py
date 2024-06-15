@@ -2,11 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers, generics, status
 from rest_framework.generics import ListCreateAPIView
-from .serializers import ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer
+from rest_framework.generics import ListAPIView
+from .serializers import ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer, GetChatRoomSerializer
 from .models import ChatRoom, ChatMessage
 from rest_framework.permissions import IsAuthenticated
 from asgiref.sync import async_to_sync
 from .consumers.chat_consumers import get_channel_layer
+from user.models import User
 
 
 class ChatRoomsListView(ListCreateAPIView):
@@ -29,7 +31,7 @@ class MessagesView(ListCreateAPIView):
         return ChatMessage.objects.\
             filter(chatRoom__id=id, chatRoom__members=self.
                    request.user).order_by('created_at')
- 
+
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.seen = True
@@ -63,3 +65,19 @@ class ChatRoomView(generics.RetrieveAPIView):
             message.seen = True
             message.save()
         return room
+
+
+class CheckPrivateChatRoomView(ListAPIView):
+    serializer_class = ChatRoomSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Assuming 'user_id' is captured from the URL
+        user_id = self.kwargs.get('id')
+        if user_id is None:
+            raise ValueError('user_id is required')
+
+        user = self.request.user
+        queryset = ChatRoom.objects.filter(
+            type='private', members=user).filter(members=user_id)
+        return queryset
