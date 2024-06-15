@@ -43,12 +43,7 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({
 			);
 			ws.current.onopen = () => {
 				console.log("connected to ws");
-				ws.current?.send(
-					JSON.stringify({
-						type: "register_player",
-						player_id: user.user.id,
-					})
-				);
+			
 			};
 			ws.current.onclose = () => {
 				console.log("disconnected from ws");

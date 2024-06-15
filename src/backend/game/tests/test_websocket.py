@@ -53,7 +53,7 @@ async def test_matchmaking(users):
     communicators = []
     for i in range(10):
         communicator = WebsocketCommunicator(
-            application, 'ws/game/normal/looby/', headers=headers(users[i]))
+            application, 'ws/game/normal/looby/?game_mode=singleplayer', headers=headers(users[i]))
         communicators.append(communicator)
         connected = await communicator.connect()
         assert connected

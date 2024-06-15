@@ -35,10 +35,9 @@ class TournamentRoutine():
                 self.waiting_players.append(player)
 
     async def remove_player(self, player):
-        print(
-            f'called remove_player {player.username} from tournament_{self.uuid}')
         async with self.lock:
-            self.waiting_players.remove(player)
+            if player in self.waiting_players:
+                self.waiting_players.remove(player)
             return len(self.waiting_players) == 0
 
     async def emit_match_info(self, match):

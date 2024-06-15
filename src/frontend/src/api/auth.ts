@@ -52,6 +52,7 @@ const setCookies = (data: Partial<AuthApiResponse>) => {
     setCookie(null, 'refresh', data.refresh as string, { maxAge: 30 * 24 * 60 * 60, path: '/' })
 }
 
+
 export const clearCookies = () => {
     destroyCookie(null, 'access')
     destroyCookie(null, 'refresh')

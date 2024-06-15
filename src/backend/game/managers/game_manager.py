@@ -38,6 +38,7 @@ class Game():
             self.first_player = await database_sync_to_async(lambda: self.matchup.first_player)()
             self.second_player = await database_sync_to_async(lambda: self.matchup.second_player)()
             self.tournament = await database_sync_to_async(lambda: self.matchup.tournament)()
+            print(f'Game created for {self.first_player.username} and {self.second_player.username}')
         except Matchup.DoesNotExist:
             self.matchup = None
         return self
@@ -85,7 +86,7 @@ class Game():
                 continue
             self.waiting_in_ms = 0
             await self.ball.update(lambda is_left_goal: self.new_point(is_left_goal))
-            if True or self.second_player in None:
+            if self.second_player is None:
                 self.player_2_paddle.ai_update(self.ball)
             await self.emit(dict_data={
                 'type': 'update',
@@ -161,7 +162,7 @@ class Game():
 
     def determine_winner(self):
         # debugging
-        return self.first_player
+        # return self.first_player
         if self.matchup.first_player_score >= 15 and self.matchup.first_player_score - self.matchup.second_player_score >= 2:
             return self.first_player
         elif self.matchup.second_player_score >= 15 and self.matchup.second_player_score - self.matchup.first_player_score >= 2:

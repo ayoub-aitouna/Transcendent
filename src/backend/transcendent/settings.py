@@ -178,7 +178,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://localhost:3000",
-    "http://192.168.122.1:3000"
+    "http://192.168.1.155:3000"
 ]
 
 CORS_URLS_REGEX = r"^/api/.*$"
@@ -226,3 +226,4 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+

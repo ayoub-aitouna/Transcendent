@@ -1,24 +1,24 @@
 version: "3"
 services:
-  nextjs_frontend:
+  frontent:
     restart: always
-    container_name: nextjs_frontend
+    container_name: frontent
     build:
-      context: ./nextjs-frontend/build-tools
+      context: ./frontend/build-tools
     networks:
       - mynetwork
     ports:
       - "3000:3000"
     volumes:
-      - nextjs_frontend_volume:/var/app
+      - frontend_volume:/var/app
     depends_on:
-      - django_backend
+      - backend
 
-  django_backend:
+  backend:
     restart: always
-    container_name: django_backend
+    container_name: backend
     build:
-      context: ./django-backend/build-tools
+      context: ./backend/build-tools
     command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
     networks:
       - mynetwork
@@ -27,7 +27,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-      - django_backend_volume:/var/app
+      - backend_volume:/var/app
     depends_on:
       - db
       - redis
@@ -65,19 +65,19 @@ services:
       - db
 
 volumes:
-  django_backend_volume:
+  backend_volume:
     driver: local
     driver_opts:
       type: "none"
       o: "bind"
-      device: "${PWD}/src/django-backend/"
+      device: "${PWD}/src/backend/"
 
-  nextjs_frontend_volume:
+  frontend_volume:
     driver: local
     driver_opts:
       type: "none"
       o: "bind"
-      device: "${PWD}/src/nextjs-frontend"
+      device: "${PWD}/src/frontend"
   db_volume:
 
 networks:
