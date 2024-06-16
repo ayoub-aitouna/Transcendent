@@ -176,9 +176,12 @@ REST_FRAMEWORK = {
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://localhost:3000",
-    "http://192.168.1.155:3000"
+    "https://localhost",
+    "http://localhost",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+    "http://localhost",
 ]
 
 CORS_URLS_REGEX = r"^/api/.*$"

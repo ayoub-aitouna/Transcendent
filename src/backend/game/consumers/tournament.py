@@ -1,10 +1,7 @@
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from game.managers.tournament_manager import TournamentRoutine, TournamentManager
 import json
-import uuid
-from channels.db import database_sync_to_async
-from game.models import Matchup
-from user.models import User
 
 
 class TournamentConsumer(AsyncWebsocketConsumer):
@@ -15,8 +12,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.accept()
         self.tournament_id = self.scope['url_route']['kwargs']['tournament_id']
         self.tournament_group_name = f'tournament_{self.tournament_id}'
-        self.tournament_manager = self.scope['url_route']['kwargs']['tournament_manager']
-        self.tournament_routine = await self.tournament_manager.get_or_create_tournament(self.tournament_id)
+        self.tournament_manager: TournamentManager = self.scope[
+            'url_route']['kwargs']['tournament_manager']
+        self.tournament_routine: TournamentRoutine = await self.tournament_manager.get_or_create_tournament(self.tournament_id)
+
         if self.tournament_routine is None:
             print('Tournament not found')
             return await self.close(4004, 'Tournament not found')

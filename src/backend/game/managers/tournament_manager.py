@@ -4,7 +4,9 @@ import json
 from channels.db import database_sync_to_async
 from user.models import User
 from game.models import Matchup, Tournament, Brackets
+from game.managers.achievements_manager import AchievementsManager
 import random
+from typing import Dict
 
 
 class TournamentRoutine():
@@ -22,8 +24,9 @@ class TournamentRoutine():
     async def create(cls, uuid):
         self = TournamentRoutine(uuid)
         self.lock = asyncio.Lock()
-        self.tournament = await database_sync_to_async(Tournament.objects.get)(uuid=uuid)
-        if not self.tournament or self.tournament.finished:
+        try:
+            self.tournament = await database_sync_to_async(Tournament.objects.get)(uuid=uuid, finished=False)
+        except Tournament.DoesNotExist:
             return None
         asyncio.create_task(self.tournament_loop())
         return self
@@ -180,6 +183,8 @@ class TournamentRoutine():
                 tournament_winner = await database_sync_to_async(User.objects.get)(id=current_round_winners[0])
                 self.tournament.finished = True
                 await database_sync_to_async(self.tournament.save)()
+                AchievementsManager.handleUserAchievements(
+                    user=tournament_winner, tournament=self.tournament)
                 await self.emit({'status': 'over', 'winner': tournament_winner.username})
 
     async def emit(self, dict_data):
@@ -195,17 +200,17 @@ class TournamentRoutine():
 
 class TournamentManager():
     lock = None
-    tournaments = {}
+    tournaments: Dict[str, TournamentRoutine] = {}
 
     def __init__(self) -> None:
         pass
 
-    async def get_lock(self):
+    async def get_lock(self) -> asyncio.Lock:
         if self.lock is None:
             self.lock = asyncio.Lock()
         return self.lock
 
-    async def get_or_create_tournament(self, uuid):
+    async def get_or_create_tournament(self, uuid) -> TournamentRoutine:
         self.lock = await self.get_lock()
         async with self.lock:
             if uuid not in self.tournaments:
@@ -213,10 +218,11 @@ class TournamentManager():
                 tournament = await TournamentRoutine.create(uuid)
                 if tournament is None:
                     return None
+
                 self.tournaments[uuid] = tournament
             return self.tournaments[uuid]
 
-    async def remove_tournament(self, uuid):
+    async def remove_tournament(self, uuid) -> None:
         self.lock = await self.get_lock()
         async with self.lock:
             if uuid in self.tournaments:
