@@ -42,8 +42,7 @@ export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 						</div>
 						<div
 							className={`ml-[10px]  text-[#878787] text-[14px] truncate font-normal`}>
-							{/* {selectedChat?.receiverUser[0].status} */}
-							online
+							{selectedChat.receiverUser &&  selectedChat?.receiverUser[0].status}
 						</div>
 					</div>
 				</Link>

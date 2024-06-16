@@ -9,7 +9,7 @@ function get_last_message({ lastMessage }: { lastMessage: MessageItem }) {
 	if (lastMessage === null)
 		return ""
 	if (typeof lastMessage.message === 'string') {
-		return  lastMessage.message;
+		return lastMessage.message;
 	} else {
 		return lastMessage.sender_username + " " + "send a photo";
 	}
@@ -41,18 +41,17 @@ function formatTime(timestamp: string): string {
 }
 
 
-export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSelected, onClick }: {
-	name: string;
-	href: string;
-	LastMessage: MessageItem;
-	messagesNbr: number;
-	isSelected: boolean;
-	onClick: () => void;
+export function MessengerContainer({ name, href, LastMessage, messagesNbr,isSelected, onClick }: {
+    name: string;
+    href: string;
+    LastMessage: MessageItem;
+    messagesNbr: number;
+    isSelected: boolean;
+    onClick: () => void;
 }) {
 	console.log("isSelected", isSelected, 'name : ', name);
 	const lastMassage = get_last_message({ lastMessage: LastMessage });
 	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage.id !== 0);
-	
 	const handleClick = () => {
 		onClick();
 		if (isSelected) {

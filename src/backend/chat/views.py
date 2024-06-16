@@ -76,6 +76,12 @@ class CheckPrivateChatRoomView(ListAPIView):
         user = self.request.user
         queryset = ChatRoom.objects.filter(
             type='private', members=user).filter(members=user_id)
+        #id message not seen yet set it to seen
+        unseen_messages = ChatMessage.objects.filter(
+			chatRoom=queryset.first(), seen=False).exclude(sender=user)
+        for message in unseen_messages:
+            message.seen = True
+            message.save()
         if not queryset.exists():
             user2 = User.objects.get(id=user_id)
             chat_room = ChatRoom.objects.create(type='private')

@@ -15,7 +15,7 @@ export type roomItem = {
 	unseen_messages_count: number;
 	type: number;
 	last_message: MessageItem;
-	receiverUser?: { id: string }[];
+	receiverUser?: { id: string, status:string }[];
 	members: user[];
 }
 
