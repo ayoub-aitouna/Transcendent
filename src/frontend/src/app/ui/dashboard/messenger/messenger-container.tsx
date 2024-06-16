@@ -49,7 +49,6 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr,isSele
     isSelected: boolean;
     onClick: () => void;
 }) {
-	console.log("isSelected", isSelected, 'name : ', name);
 	const lastMassage = get_last_message({ lastMessage: LastMessage });
 	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage.id !== 0);
 	const handleClick = () => {
@@ -78,7 +77,7 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr,isSele
 			{
 				lastMassage && (
 					<div className="flex flex-col items- p-2">
-						{viewsMessages ? (
+						{viewsMessages && messagesNbr !== 0 ? (
 							<div className={`rounded-full h-5 w-5 bg-[#00D400] mb-1 flex justify-center items-center`}>
 								<div className="font-bold text-[12px]">{messagesNbr}</div>
 							</div>

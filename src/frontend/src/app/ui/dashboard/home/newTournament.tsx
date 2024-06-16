@@ -8,6 +8,7 @@ import { Tournament } from '@/type/dashboard/tournament';
 import apiMock from '@/lib/axios-mock';
 import { GetAnnouncedTournaments } from '@/api/Tournament';
 import Error from "@/app/ui/dashboard/component/Error";
+import Empty from '../component/Empty';
 
 
 
@@ -91,32 +92,48 @@ function NewTournaments() {
 	}, []);
 
 	return (
-		<div className="bootstrap-namespace position-relative ">
-			<div id="carouselExampleIndicators" className="carousel slide" style={{ maxWidth: '100%', height: '456px', overflow: 'hidden' }} data-bs-ride="true">
-				<div className="carousel-indicators">
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-				</div>
-				<div className="carousel-inner bg-white" >
-					{
-						tournaments && tournaments.map((item, index) => (
-							<div key={item.id} className={`carousel-item ${index === 0 ? 'active' : ''}`} style={{ height: '456px', userSelect: 'none' }}>
-								<SliderContent Tournament={item} />
-							</div>
-						))
-					}
-				</div>
-				<button ref={btn} className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-					<span className="visually-hidden  carousel-control-prev-icon" aria-hidden="true"></span>
-					<span className="visually-hidden">Previous</span>
-				</button>
-				<button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-					<span className="visually-hidden carousel-control-next-icon" aria-hidden="true"></span>
-					<span className="visually-hidden">Next</span>
-				</button>
-			</div>
+		<div>
+			{tournaments && tournaments.length >= 1 ?
+				<div className="bootstrap-namespace position-relative ">
+					<div id="carouselExampleIndicators" className="carousel slide" style={{ maxWidth: '100%', height: '456px', overflow: 'hidden' }} data-bs-ride="true">
+						<div className="carousel-indicators">
+							<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+							{
+								tournaments && tournaments.length > 1 &&
+								<><button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2">
+								</button><button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button></>
+							}
+						</div>
+						<div className="carousel-inner bg-white" >
+							{
+								tournaments && tournaments.map((item, index) => (
+									<div key={item.id} className={`carousel-item ${index === 0 ? 'active' : ''}`} style={{ height: '456px', userSelect: 'none' }}>
+										<SliderContent Tournament={item} />
+									</div>
+								))
+							}
+						</div>
+						<button ref={btn} className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+							<span className="visually-hidden  carousel-control-prev-icon" aria-hidden="true"></span>
+							<span className="visually-hidden">Previous</span>
+						</button>
+						<button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+							<span className="visually-hidden carousel-control-next-icon" aria-hidden="true"></span>
+							<span className="visually-hidden">Next</span>
+						</button>
+					</div>
 
+				</div>
+				:
+				<div>
+					<div className="flex justify-center items-center flex-col h-[456px]">
+						<div className="text-3xl font-bold">Tournaments</div>
+						<div className="text-lg font-light mt-2">
+							No Tournaments Announced yet.
+						</div>
+					</div>
+				</div>
+			}
 		</div>
 
 	)

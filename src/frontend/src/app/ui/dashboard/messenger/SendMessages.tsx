@@ -213,7 +213,7 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 	return (
 		<div className='h-full' >
 			<ChatPanel selectedChat={selectedChat} />
-			<div className='overflow-y-scroll hide-scrollbar max-h-[780px]' ref={containerRef}>
+			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
 						<ChatMessage

@@ -1,21 +1,20 @@
-// components/Layout.tsx
 'use client';
 
 import Filter from "@/app/ui/dashboard/icons/content_area/filters";
 import SearchIcon from "@/app/ui/dashboard/icons/messenger/search";
 import { MessengerContainer } from "@/app/ui/dashboard/messenger/messenger-container";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { roomItem } from "@/api/chat";
 import apiMock from "@/lib/axios-mock";
-
 
 interface ChatRooms {
 	clickedIndex: number;
 	handleIconClick: (index: number) => void;
 }
 
-const ChatRoomsPanel: React.FC<ChatRooms> = ({clickedIndex, handleIconClick}) => {
+const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick }) => {
 	const [rooms, setRooms] = useState<roomItem[]>([]);
+
 	useEffect(() => {
 		const fetchRooms = async () => {
 			try {
@@ -26,6 +25,55 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({clickedIndex, handleIconClick}) =>
 			}
 		};
 		fetchRooms();
+
+		// WebSocket connection
+		const socket = new WebSocket(`ws://localhost:8000/ws/rooms/`);
+
+		socket.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			console.log('Received message --------->:', data);
+
+			// Extracting relevant details
+			const { message, chat_room } = data;
+			const roomId = message.room_id.toString();
+
+			setRooms((prevRooms) => {
+				const roomIndex = prevRooms.findIndex(room => {
+					console.log('Comparing room IDs:', room.id.toString(), roomId);
+					return room.id.toString() === roomId;
+				});
+
+				if (roomIndex !== -1) {
+					console.log('Updating existing room:', roomId);
+					const updatedRooms = [...prevRooms];
+					updatedRooms[roomIndex] = {
+						...updatedRooms[roomIndex],
+						last_message: chat_room.last_message,
+						unseen_messages_count: chat_room.unseen_messages_count,
+					};
+					return updatedRooms;
+				} else {
+					console.log('Adding new room:', roomId);
+					return [...prevRooms, {
+						id: roomId,
+						room_name:  chat_room.room_name,
+						room_icon: "http://localhost:8000" + chat_room.room_icon,
+						last_message: chat_room.last_message,
+						unseen_messages_count: chat_room.unseen_messages_count,
+						type: chat_room.type,
+						members: chat_room.members,
+					}];
+				}
+			});
+		};
+
+		socket.onerror = (error) => {
+			console.error('WebSocket error', error);
+		};
+
+		return () => {
+			socket.close();
+		};
 	}, []);
 
 	return (
@@ -62,4 +110,5 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({clickedIndex, handleIconClick}) =>
 		</div>
 	);
 };
+
 export default ChatRoomsPanel;
