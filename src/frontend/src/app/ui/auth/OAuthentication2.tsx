@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback } from 'react'
-const REACT_APP_REDIRECT_URL_ENDPOINT = 'http://localhost:3000'
+const REACT_APP_REDIRECT_URL_ENDPOINT = 'https://localhost'
 
 const OAuthentication2 = ({ children, provider, AuthUrl, scope, client_id }: Readonly<{
     children: React.ReactNode;

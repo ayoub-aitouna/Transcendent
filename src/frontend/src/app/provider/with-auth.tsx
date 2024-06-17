@@ -5,6 +5,7 @@ import { parseCookies } from "nookies";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { ProfileData } from "@/api/user";
 import { Login } from "@/redux/slices/userslice";
+
 export default function WithAuth({
 	children,
 }: {
@@ -21,6 +22,8 @@ export default function WithAuth({
 	}, []);
 	const handleProfileData = async () => {
 		try {
+			const nookies = parseCookies();
+			if (!nookies.access || !nookies.refresh) return;
 			const data = await ProfileData();
 			dispatch(
 				Login({

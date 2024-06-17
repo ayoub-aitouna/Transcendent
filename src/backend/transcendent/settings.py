@@ -190,13 +190,13 @@ MEDIA_URL = '/media/'
 
 
 BASE_FRONTEND_URL = os.getenv(
-    'DJANGO_BASE_FRONTEND_URL', default='http://192.168.122.1:3000')
+    'DJANGO_BASE_FRONTEND_URL', default='https://localhost/auth')
 
 # Google OAuth2 settings
 GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID')
 GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET')
 
-# Google OAuth2 settings
+# Intra OAuth2 settings
 INTRA_OAUTH2_CLIENT_ID = os.getenv('INTRA_OAUTH2_CLIENT_ID')
 INTRA_OAUTH2_CLIENT_SECRET = os.getenv('INTRA_OAUTH2_CLIENT_SECRET')
 

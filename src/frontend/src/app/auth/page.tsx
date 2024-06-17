@@ -10,11 +10,10 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { oauth2Providers } from "@/constant/Auth";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch } from "@/redux/store";
 import { Login } from "@/redux/slices/userslice";
 import { ProfileData } from "@/api/user";
 import LoadingIcon from "@/app/ui/icons/loading-icon";
-
 const schema = yup.object().shape({
 	email: yup
 		.string()
@@ -24,11 +23,7 @@ const schema = yup.object().shape({
 		.trim(),
 	password: yup
 		.string()
-		// .min(8, "password must be at least 8 characters")
-		// .matches(/[a-z]/, "password must have at least one lowercase letter")
-		// .matches(/[A-Z]/, "password must have at least one uppercase letter")
-		// .matches(/\d/, "password must have at least one digit")
-		// .matches(/[!@#$%^&*]/, "password must have at least one special character")
+		.min(8, "password must be at least 8 characters")
 		.required("password is required"),
 });
 
@@ -36,7 +31,6 @@ const page = () => {
 	const params = useSearchParams();
 	const router = useRouter();
 	const Dispatch = useAppDispatch();
-
 	const {
 		register,
 		handleSubmit,
@@ -52,6 +46,7 @@ const page = () => {
 				provider: provider,
 				params: location.search,
 			});
+			console.log(res);
 			Dispatch(
 				Login({
 					user: res.user,
@@ -63,12 +58,12 @@ const page = () => {
 			);
 			router.replace("/");
 		} catch (error: any) {
-			console.error(error?.response?.data);
+			console.error(error);
+			
 		}
 	};
 
 	const onSubmit = async (data: any) => {
-		console.log("clicked....");
 		try {
 			const res: any = await LoginUser({ ...data });
 			const user = await ProfileData();
@@ -99,10 +94,6 @@ const page = () => {
 		}
 	}, []);
 
-	const __handleSubmit = (e: any) => {
-		e.preventDefault();
-		console.log("clicked");
-	};
 	return (
 		<div className='flex justify-center items-center w-full h-full'>
 			<AuthForm

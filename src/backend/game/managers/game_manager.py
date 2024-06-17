@@ -1,8 +1,8 @@
 import asyncio
-import math
 from channels.layers import get_channel_layer
 import json
 from channels.db import database_sync_to_async
+from game.managers.achievements_manager import AchievementsManager
 from user.models import User
 from game.models import Matchup, Tournament
 from game.utils.game_utils import Ball, Paddle
@@ -38,7 +38,8 @@ class Game():
             self.first_player = await database_sync_to_async(lambda: self.matchup.first_player)()
             self.second_player = await database_sync_to_async(lambda: self.matchup.second_player)()
             self.tournament = await database_sync_to_async(lambda: self.matchup.tournament)()
-            print(f'Game created for {self.first_player.username} and {self.second_player.username}')
+            print(
+                f'Game created for {self.first_player.username} and {self.second_player.username}')
         except Matchup.DoesNotExist:
             self.matchup = None
         return self
@@ -152,6 +153,9 @@ class Game():
                 'type': 'game_over',
                 'winner': winner.username
             })
+            if self.tournament is None:
+                await AchievementsManager.handleUserAchievements(
+                    user=winner, match_up=self.matchup)
             self.is_running = False
 
         await self.emit(dict_data={

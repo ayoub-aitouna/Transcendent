@@ -10,11 +10,11 @@ const nextConfig = {
                 protocol: 'http',
                 hostname: 'localhost',
             },
-			{
-				protocol: 'http',
-				hostname: '127.0.0.1',
-				port: '8000',
-			},
+            {
+                protocol: 'http',
+                hostname: '127.0.0.1',
+                port: '8000',
+            },
             {
                 protocol: 'http',
                 hostname: process.env.NEXT_PUBLIC_BACKEND_HOST,
@@ -23,6 +23,10 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'lh3.googleusercontent.com',
             },
+            {
+                protocol: 'https',
+                hostname: 'cdn.intra.42.fr',
+            }
         ],
     },
 

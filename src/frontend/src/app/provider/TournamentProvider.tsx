@@ -10,6 +10,7 @@ import React, {
 import { useToast } from "./ToastProvider";
 import { useAppSelector } from "@/redux/store";
 import { Tournament } from "@/type/dashboard/tournament";
+import { parseCookies } from "nookies";
 
 type TournamentContextType = {
 	useSetTournament: (tournament: any) => void;
@@ -35,67 +36,71 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({
 	let ws = useRef<WebSocket | null>(null);
 	let ConnectedTournamentUuid = useRef<string | null>(null);
 	const { addToast } = useToast();
-	const useSetTournament = useCallback((tournament: Tournament) => {
-		if (!ws.current || ConnectedTournamentUuid.current !== tournament.uuid) {
-			ConnectedTournamentUuid.current = tournament.uuid;
-			ws.current = new WebSocket(
-				`ws://localhost:8000/ws/game/tournament/${tournament.uuid}/`
-			);
-			ws.current.onopen = () => {
-				console.log("connected to ws");
-			
-			};
-			ws.current.onclose = () => {
-				console.log("disconnected from ws");
-			};
+	const useSetTournament = useCallback(
+		(tournament: Tournament) => {
+			if (!ws.current || ConnectedTournamentUuid.current !== tournament.uuid) {
+				ConnectedTournamentUuid.current = tournament.uuid;
+				ws.current = new WebSocket(
+					`ws://localhost:8000/ws/game/tournament/${tournament.uuid}/`
+				);
+				ws.current.onopen = () => {
+					console.log("connected to ws");
+				};
+				ws.current.onclose = () => {
+					console.log("disconnected from ws");
+				};
 
-			ws.current.onmessage = (event) => {
-				const data = JSON.parse(event.data);
-				switch (data.type) {
-					case "start":
-						addToast({
-							id: tournament.id || 0,
-							title: `${tournament.name} is about to start`,
-							message:
-								"Tournament is about to start, get ready!, check the bracket for more info",
-							icon: "https://placehold.co/400x400.png",
-							backgroundColor: "bg-primary",
-						});
-						break;
-					case "match_info":
-						addToast({
-							id: tournament.id || 0,
-							title: "Match info",
-							message: `Match ${data.match_id} is about to start`,
-							icon: "https://placehold.co/400x400.png",
-							backgroundColor: "bg-primary",
-						});
-						break;
-					case "status":
-						addToast({
-							id: tournament.id || 0,
-							title: "Tournament status",
-							message: `${data.status} ${
-								(data.winner && "winner is " + data.winner) || data.reason
-							}`,
-							icon: "https://placehold.co/400x400.png",
-							backgroundColor: "bg-primary",
-						});
-						if (data.status === "over") {
-							ws.current?.close();
-						}
-						break;
-				}
-			};
-		}
-	}, []);
+				ws.current.onmessage = (event) => {
+					const data = JSON.parse(event.data);
+					switch (data.type) {
+						case "start":
+							addToast({
+								id: tournament.id || 0,
+								title: `${tournament.name} is about to start`,
+								message:
+									"Tournament is about to start, get ready!, check the bracket for more info",
+								icon: "https://placehold.co/400x400.png",
+								backgroundColor: "bg-primary",
+							});
+							break;
+						case "match_info":
+							addToast({
+								id: tournament.id || 0,
+								title: "Match info",
+								message: `Match ${data.match_id} is about to start`,
+								icon: "https://placehold.co/400x400.png",
+								backgroundColor: "bg-primary",
+							});
+							break;
+						case "status":
+							addToast({
+								id: tournament.id || 0,
+								title: "Tournament status",
+								message: `${data.status} ${
+									(data.winner && "winner is " + data.winner) || data.reason
+								}`,
+								icon: "https://placehold.co/400x400.png",
+								backgroundColor: "bg-primary",
+							});
+							if (data.status === "over") {
+								ws.current?.close();
+							}
+							break;
+					}
+				};
+			}
+		},
+		[ConnectedTournamentUuid, ws]
+	);
 
 	useEffect(() => {
-		console.log("connecting to ws");
+		const nookies = parseCookies();
+		if (!nookies.access || !nookies.refresh) return;
 		if (!ws.current) {
+			console.log("connecting to ws");
 			ws.current = new WebSocket("ws://localhost:8000/ws/game/tournament/");
 		}
-	}, [ws]);
+	}, []);
 
 	const useEmitMessage = useCallback(
 		(message: any) => {

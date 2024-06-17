@@ -28,17 +28,21 @@ const Register = ({ NextStep }: { NextStep: () => void }) => {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting },
+		setError,
 	} = useForm({
 		resolver: yupResolver(schema),
 	});
 
 	const onSubmit = async (data: { email: string }) => {
 		try {
-			const res = await RegisterEmail({ ...data });
+			await RegisterEmail({ ...data });
 			setFormValues({ email: data.email });
 			NextStep();
-		} catch (e) {
+		} catch (e: any) {
 			console.error(e);
+			setError("email", {
+				message: e?.response?.data?.detail || "An error occurred",
+			});
 		}
 	};
 

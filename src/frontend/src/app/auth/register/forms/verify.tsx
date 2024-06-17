@@ -20,15 +20,20 @@ const verify = ({ NextStep }: { NextStep: () => void }) => {
 
 	const [otp, setOtp] = React.useState<validation>({ value: "" });
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-	const handleSubmit = (e: any) => {
+
+	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		const email = getFormValues().email;
 		try {
 			setIsSubmitting(true);
-			const data = VerifyEmail({ email, code: otp.value });
+			await VerifyEmail({ email, code: otp.value });
 			NextStep();
-		} catch (e) {
+		} catch (e: any) {
 			console.log(e);
+			setOtp((prev) => ({
+				...prev,
+				error: e?.response?.data?.detail || "An error occurred",
+			}));
 		}
 		setIsSubmitting(false);
 	};
