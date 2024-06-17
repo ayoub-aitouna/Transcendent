@@ -1,17 +1,24 @@
-import { MessageItem, roomItem } from '@/api/chat';
-import apiMock from '@/lib/axios-mock';
-import React, { useRef, useEffect, useState, ChangeEvent, useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
-import Upload from '../icons/messenger/Upload';
-import SendIcon from '../icons/messenger/send';
-import EmojiIcon from '../icons/messenger/emoji';
-import { ChatMessage } from './chat-message';
-import ThreePointsIcon from '../icons/messenger/three-points';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useAppSelector } from '@/redux/store';
-import moment from 'moment';
-import LeftArrow from '../icons/content_area/left-arrow';
+import { MessageItem, roomItem } from "@/api/chat";
+import apiMock from "@/lib/axios-mock";
+import React, {
+	useRef,
+	useEffect,
+	useState,
+	ChangeEvent,
+	useCallback,
+} from "react";
+import { io, Socket } from "socket.io-client";
+import Upload from "../icons/messenger/Upload";
+import SendIcon from "../icons/messenger/send";
+import EmojiIcon from "../icons/messenger/emoji";
+import { ChatMessage } from "./chat-message";
+import ThreePointsIcon from "../icons/messenger/three-points";
+import Link from "next/link";
+import Image from "next/image";
+import { useAppSelector } from "@/redux/store";
+import moment from "moment";
+import LeftArrow from "../icons/content_area/left-arrow";
+import { ImageSrc } from "@/lib/ImageSrc";
 
 export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 	const [clickedThreePoints, setClickedThreePoints] = useState(false);
@@ -23,14 +30,12 @@ export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 		<div>
 			<button
 				className={`w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden`}>
-				<Link
-					href={"/profile"}
-					className='flex items-center justify-between '>
-						{/* <div><LeftArrow/></div>  */} 
-						{/* handle left arrow when the screen is small */}
+				<Link href={"/profile"} className='flex items-center justify-between '>
+					{/* <div><LeftArrow/></div>  */}
+					{/* handle left arrow when the screen is small */}
 					<Image
 						className='bg-white  w-[53px] h-[53px] rounded-full'
-						src={selectedChat?.room_icon || ""}
+						src={ImageSrc(selectedChat?.room_icon, selectedChat.room_name)}
 						alt='Profile Image'
 						width={53}
 						height={53}
@@ -42,7 +47,8 @@ export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 						</div>
 						<div
 							className={`ml-[10px]  text-[#878787] text-[14px] truncate font-normal`}>
-							{selectedChat.receiverUser &&  selectedChat?.receiverUser[0].status}
+							{selectedChat.receiverUser &&
+								selectedChat?.receiverUser[0].status}
 						</div>
 					</div>
 				</Link>
@@ -89,18 +95,14 @@ export function SendImage() {
 					<div className='p-2'>
 						<Upload color=' #3342ff ' />{" "}
 					</div>
-					<div className='text-[10px] text-[#3342ff]'>
-						Uploaded
-					</div>
+					<div className='text-[10px] text-[#3342ff]'>Uploaded</div>
 				</div>
 			) : (
 				<label className='p-2 pr-8'>
 					<div className='p-1'>
 						<Upload color='#878787' />{" "}
 					</div>
-					<div className='text-[10px] text-[#878787]'>
-						Upload
-					</div>
+					<div className='text-[10px] text-[#878787]'>Upload</div>
 					<input
 						type='file'
 						className='hidden'
@@ -110,7 +112,7 @@ export function SendImage() {
 				</label>
 			)}
 		</div>
-	)
+	);
 }
 
 interface WebSocketEvent extends Event {
@@ -119,13 +121,10 @@ interface WebSocketEvent extends Event {
 
 const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 	const [messages, setMessages] = useState<MessageItem[]>([]);
-	const [messageContent, setMessageContent] = useState('');
+	const [messageContent, setMessageContent] = useState("");
 	const socket = useRef<WebSocket | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { username } = useAppSelector((state) => state.user.user);
-
-
-
 
 	useEffect(() => {
 		const fetchMessages = async () => {
@@ -133,7 +132,7 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 				const response = await apiMock.get(`/chat/room/${selectedChat?.id}/`);
 				setMessages(response.data.results);
 			} catch (error) {
-				console.error('Error fetching messages:', error);
+				console.error("Error fetching messages:", error);
 			}
 		};
 
@@ -142,19 +141,21 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 
 	useEffect(() => {
 		if (selectedChat.id && !socket.current)
-			socket.current = new WebSocket(`ws://localhost:8000/ws/chat/${selectedChat.id}/`)
+			socket.current = new WebSocket(
+				`ws://localhost:8000/ws/chat/${selectedChat.id}/`
+			);
 		if (socket.current) {
 			socket.current.onopen = () => {
-				console.log("webSocket connection opened: ", socket.current)
-			}
+				console.log("webSocket connection opened: ", socket.current);
+			};
 			socket.current.onerror = (err) => {
-				console.log("webSocket closed by an error : ", err)
-			}
+				console.log("webSocket closed by an error : ", err);
+			};
 			socket.current.onclose = (event) => {
-				console.log("webSocket connection closed : ", event)
-			}
+				console.log("webSocket connection closed : ", event);
+			};
 			socket.current.onmessage = (event) => {
-				console.log("webSocket message received : ", event.data)
+				console.log("webSocket message received : ", event.data);
 				const receivedMessage = JSON.parse(event.data);
 				const newMessage: MessageItem = {
 					message: receivedMessage.message.message,
@@ -164,26 +165,28 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 					sender_username: receivedMessage.message.sender_username,
 				};
 				setMessages((prevMessages) => [...prevMessages, newMessage]);
-			}
+			};
 		}
 		return () => {
 			if (socket.current) {
-				socket.current.onmessage = null
+				socket.current.onmessage = null;
 			}
-		}
-
+		};
 	}, [selectedChat.id, socket]);
 
-	const SendMessage = useCallback(async (messageContent: string) => {
-		try {
-			const formData = new FormData();
-			formData.append('message', messageContent);
-			socket.current?.send(JSON.stringify({ message: messageContent }));
-			setMessageContent('');
-		} catch (error) {
-			console.error('Error sending message:', error);
-		}
-	}, [selectedChat.id])
+	const SendMessage = useCallback(
+		async (messageContent: string) => {
+			try {
+				const formData = new FormData();
+				formData.append("message", messageContent);
+				socket.current?.send(JSON.stringify({ message: messageContent }));
+				setMessageContent("");
+			} catch (error) {
+				console.error("Error sending message:", error);
+			}
+		},
+		[selectedChat.id]
+	);
 
 	const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
@@ -192,34 +195,32 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 			message: messageContent,
 			seen: false,
 			created_at: String(moment()),
-			id: selectedChat.id, 
-			sender_username: username
+			id: selectedChat.id,
+			sender_username: username,
 		};
-		setMessages(prevMessages => [...prevMessages, newLocalMessage]);
+		setMessages((prevMessages) => [...prevMessages, newLocalMessage]);
 		SendMessage(messageContent);
-		setMessageContent('');
-	}
+		setMessageContent("");
+	};
 	useEffect(() => {
 		const element = containerRef.current;
 		console.log("Container element:", element);
 		if (element) {
 			element.scrollTo({
 				top: element.scrollHeight,
-				behavior: 'smooth'
-
+				behavior: "smooth",
 			});
 		}
 	}, [messages]);
 	return (
-		<div className='h-full' >
+		<div className='h-full'>
 			<ChatPanel selectedChat={selectedChat} />
-			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
+			<div
+				className='overflow-y-scroll hide-scrollbar max-h-[500px]'
+				ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
-						<ChatMessage
-							key={index}
-							messages={item}
-						/>
+						<ChatMessage key={index} messages={item} />
 					))}
 				</div>
 			</div>
@@ -229,11 +230,11 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 						<div className='pt-2'>
 							<EmojiIcon />
 						</div>
-						<div className='text-[10px] text-[#878787]'>
-							Invite{" "}
-						</div>
+						<div className='text-[10px] text-[#878787]'>Invite </div>
 					</div>
-					<div className=''><SendImage /></div>
+					<div className=''>
+						<SendImage />
+					</div>
 					<textarea
 						className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
 						placeholder='Type a message'
@@ -248,7 +249,6 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 			</div>
 		</div>
 	);
-}
-
+};
 
 export default SendMessage;

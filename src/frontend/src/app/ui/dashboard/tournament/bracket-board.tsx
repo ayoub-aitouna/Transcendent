@@ -1,5 +1,6 @@
 "use client";
 import { useDragToScroll } from "@/hooks/drag-to-scroll";
+import { ImageSrc } from "@/lib/ImageSrc";
 import { processBracketData } from "@/lib/bracket-data-processer";
 import { user } from "@/type/auth/user";
 import { Brackets } from "@/type/dashboard/tournament";
@@ -39,8 +40,8 @@ const BracketCard = ({
 						"relative w-7 h-7  rounded-full border border-[#A2A2A2] overflow-hidden "
 					}>
 					<Image
-						src={player1?.image_url || "/assets/images/profile.jpg"}
-						alt='profile'
+						src={ImageSrc(player1?.image_url, player1?.username)}
+						alt='profile Icon'
 						layout='fill'
 						className='object-cover'
 					/>

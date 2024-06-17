@@ -13,6 +13,7 @@ import { MatchUp, Tournament } from "@/type/dashboard/tournament";
 import Error from "@/app/ui/dashboard/component/Error";
 import TournamentMenu from "@/app/ui/dashboard/tournament/tournament-menu";
 import RegisterForm from "@/app/ui/dashboard/tournament/RegisterForm";
+import { ImageSrc } from "@/lib/ImageSrc";
 
 function StatusTable({ data }: { data: Array<MatchUp> }) {
 	return (
@@ -112,7 +113,7 @@ const page = async ({ params }: any) => {
 				<div className='flex flex-row gap-4'>
 					<Image
 						className='rounded-md overflow-hidden'
-						src={result.icon || "https://placehold.co/400x400.png"}
+						src={ImageSrc(result.icon, `T${result.id}`)}
 						alt={`icon of ${result.name}`}
 						width={73}
 						height={73}

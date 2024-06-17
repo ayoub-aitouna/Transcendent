@@ -13,6 +13,7 @@ import apiMock from "@/lib/axios-mock";
 import { PaginationApiResponse } from "@/type";
 import { user } from "@/type/auth/user";
 import NotificationMenu from "./notification-menu";
+import { ImageSrc } from "@/lib/ImageSrc";
 
 const PlayNowIcon = () => {
 	const pathname = usePathname();
@@ -46,21 +47,30 @@ function NotificationContent({notifications}:{notifications: Notifications}) {
 	const send_at = new Date(notifications.created_at).toLocaleString();
 	return (
 		<div
-			className={`p-2 h-[50px] flex  flex-row items-center justify-between rounded-sm my-[3px]  w-[260px] overflow-hidden ${!notifications.seen ? "bg-[#474747]" : ""}`}>
+			className={`p-2 h-[50px] flex  flex-row items-center justify-between rounded-sm my-[3px]  w-[260px] overflow-hidden ${
+				!notifications.seen ? "bg-[#474747]" : ""
+			}`}>
 			<div className='flex items-center rounded-sm'>
-				<div className="rounded-ful flex items-start ">
+				<div className='rounded-ful flex items-start '>
 					<Image
-						className="bg-white  w-[35px] h-[35px] rounded-full"
-						src={notifications.sender.image_url}
-						alt="Profile Image"
-						width={35} height={35} />
+						className='bg-white  w-[35px] h-[35px] rounded-full'
+						src={ImageSrc(
+							notifications.sender.image_url,
+							notifications.sender.username
+						)}
+						alt='Profile Image'
+						width={35}
+						height={35}
+					/>
 				</div>
 				<div className='pl-2 flex flex-col items-start w-[203px] '>
 					<div className=' text-white font-light text-[12px] overflow-hidden max-h-[80px] '>
 						{" "}
 						{truncatedNotification}
 					</div>
-					<div className=' font-normal text-[#878787] text-[10px]  '>{send_at}</div>
+					<div className=' font-normal text-[#878787] text-[10px]  '>
+						{send_at}
+					</div>
 				</div>
 			</div>
 			<div className=''>
