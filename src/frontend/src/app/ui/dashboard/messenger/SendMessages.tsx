@@ -19,6 +19,8 @@ import { useAppSelector } from "@/redux/store";
 import moment from "moment";
 import LeftArrow from "../icons/content_area/left-arrow";
 import { ImageSrc } from "@/lib/ImageSrc";
+import { Friend } from "@/type/auth/user";
+import { GetFriendsData } from "@/api/user";
 
 export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 	const [clickedThreePoints, setClickedThreePoints] = useState(false);
@@ -125,6 +127,18 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 	const socket = useRef<WebSocket | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { username } = useAppSelector((state) => state.user.user);
+	const [friends, setFriends] = useState<Friend[]>([])
+	const getFriendsList = async () => {
+		try {
+			const data = await GetFriendsData('')
+			setFriends(data)
+		} catch (error) {
+		}
+	}
+	useEffect(() => {
+		getFriendsList()
+	}, [])
+	const isFriend = friends.some(friend => friend.username === selectedChat.room_name);;
 
 	useEffect(() => {
 		const fetchMessages = async () => {
@@ -142,7 +156,7 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 	useEffect(() => {
 		if (selectedChat.id && !socket.current)
 			socket.current = new WebSocket(
-				`ws://localhost:8000/ws/chat/${selectedChat.id}/`
+				`wss://localhost/ws/chat/${selectedChat.id}/`
 			);
 		if (socket.current) {
 			socket.current.onopen = () => {
@@ -188,9 +202,10 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 		[selectedChat.id]
 	);
 
-	const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (messageContent.trim() === '') 
+			return;
 		event.preventDefault();
-
 		const newLocalMessage: MessageItem = {
 			message: messageContent,
 			seen: false,
@@ -225,27 +240,40 @@ const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
 				</div>
 			</div>
 			<div className=' absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
-				<div className='flex flex-row items-center justify-center h-full'>
-					<div className='p-2'>
-						<div className='pt-2'>
-							<EmojiIcon />
+				{
+					isFriend ?
+						<div className='flex flex-row items-center justify-center h-full'>
+							<div className='p-2'>
+								<div className='pt-2'>
+									<EmojiIcon />
+								</div>
+								<div className='text-[10px] text-[#878787]'>Invite </div>
+							</div>
+							<div className=''>
+								<SendImage />
+							</div>
+							<textarea
+								className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
+								placeholder='Type a message'
+								value={messageContent}
+								maxLength={1000}
+								onChange={(e) => setMessageContent(e.target.value)}
+								onKeyPress={(e) => {
+									if (e.key === 'Enter') {
+										e.preventDefault();
+										handleSendMessage(e);
+									}
+								}}
+							/>
+							<button className='p-2' onClick={handleSendMessage}>
+								<SendIcon />
+							</button>
 						</div>
-						<div className='text-[10px] text-[#878787]'>Invite </div>
-					</div>
-					<div className=''>
-						<SendImage />
-					</div>
-					<textarea
-						className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
-						placeholder='Type a message'
-						value={messageContent}
-						maxLength={1000}
-						onChange={(e) => setMessageContent(e.target.value)}
-					/>
-					<button className='p-2' onClick={handleSendMessage}>
-						<SendIcon />
-					</button>
-				</div>
+						:
+						<div className='flex flex-row items-center justify-center h-full'>
+							You can't send a message to a user that you are not friends with
+						</div>
+				}
 			</div>
 		</div>
 	);
