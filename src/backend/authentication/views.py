@@ -8,13 +8,9 @@ from user.models import User
 from .mixins import ApiErrorsMixin, OAuth2Authentication
 from django.core.cache import cache
 from django.core.mail import send_mail
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 import random
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
+from django.db import IntegrityError
 
 
 class AuthApi(generics.GenericAPIView):
@@ -26,13 +22,13 @@ class AuthApi(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        return Response(status=200, data={'detail': 'success'})
+        return Response(status=status.HTTP_200_OK, data={'detail': 'success'})
 
 
 class MixinsGoogleLoginApi(ApiErrorsMixin, APIView, OAuth2Authentication):
     access_token_url = 'https://oauth2.googleapis.com/token'
     client_id = settings.GOOGLE_OAUTH2_CLIENT_ID
-    client_secret = settings.GOOGLE_OAUTH2_CLIENT_SECRET,
+    client_secret = settings.GOOGLE_OAUTH2_CLIENT_SECRET
     user_info_url = 'https://www.googleapis.com/oauth2/v3/userinfo'
     serializer_class = GoogleUserSerializer
 
@@ -40,7 +36,7 @@ class MixinsGoogleLoginApi(ApiErrorsMixin, APIView, OAuth2Authentication):
 class IntraLoginApi(ApiErrorsMixin, APIView, OAuth2Authentication):
     access_token_url = 'https://api.intra.42.fr/oauth/token'
     client_id = settings.INTRA_OAUTH2_CLIENT_ID
-    client_secret = settings.INTRA_OAUTH2_CLIENT_SECRET,
+    client_secret = settings.INTRA_OAUTH2_CLIENT_SECRET
     user_info_url = 'https://api.intra.42.fr/v2/me'
     serializer_class = IntraUserSerializer
 
@@ -54,13 +50,21 @@ class RegisterEmailApi(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+
         try:
+            serializer.is_valid(raise_exception=True)
+            if User.objects.filter(email=serializer.validated_data.get('email')).exists():
+                raise serializers.ValidationError(
+                    'User with this email already exists')
             self.send_mail(serializer)
+        except serializers.ValidationError as e:
+            errorMessage = e.detail[0] if isinstance(
+                e.detail, list) else e.detail
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': errorMessage})
         except Exception as e:
-            print(f'error => {e}')
-            return Response(status=400, data={'detail': str(e)})
-        return Response(status=200)
+            print(f'error => {e.detail}')
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': str(e.detail)})
+        return Response(status=status.HTTP_200_OK)
 
     def send_mail(self, serializer):
         validated_data = serializer.validated_data
@@ -74,6 +78,7 @@ class RegisterEmailApi(generics.CreateAPIView):
             recipient_list=[email],
             fail_silently=False,
         )
+
 
 class VerifyEmailApi(generics.CreateAPIView):
     class VerifySerializer(serializers.Serializer):
@@ -89,8 +94,8 @@ class VerifyEmailApi(generics.CreateAPIView):
             self.verify_email(serializer)
         except Exception as e:
             print(f'error => {e}')
-            return Response(status=400, data={'detail': str(e)})
-        return Response(status=200)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': str(e)})
+        return Response(status=status.HTTP_200_OK)
 
     def verify_email(self, serializer):
         validated_data = serializer.validated_data
@@ -110,5 +115,14 @@ class RegisterUserApi(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     queryset = User.objects.all()
 
-    def perform_create(self, serializer):
-        User.objects.create_user(**serializer.validated_data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            User.objects.create_user(**serializer.validated_data)
+        except IntegrityError as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'User with this username already exists'})
+        except Exception as e:
+            print(f'error => {e}')
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': str(e)})
+        return Response(status=status.HTTP_201_CREATED)

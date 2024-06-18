@@ -23,13 +23,17 @@ const schema = yup.object().shape({
 	fullname: yup
 		.string()
 		.matches(/^[a-zA-Z]+ [a-zA-Z]+$/, {
-			message: "Full name must contain Firsrname and Lastname",
+			message: "Full name must contain FirstName and LastName",
 		})
 		.required("Full name is required"),
 	password: yup
 		.string()
-		.min(8, "Password must be at least 8 characters")
-		.required("Password is required"),
+		.min(8, "password must be at least 8 characters")
+		.matches(/[a-z]/, "password must have at least one lowercase letter")
+		.matches(/[A-Z]/, "password must have at least one uppercase letter")
+		.matches(/\d/, "password must have at least one digit")
+		.matches(/[!@#$%^&*]/, "password must have at least one special character")
+		.required("password is required"),
 });
 
 const Info = () => {
@@ -39,6 +43,7 @@ const Info = () => {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting },
+		setError,
 	} = useForm({
 		resolver: yupResolver(schema),
 	});
@@ -52,10 +57,13 @@ const Info = () => {
 			last_name: data.fullname.split(" ")[1],
 		} as user;
 		try {
-			const res: Partial<AuthApiResponse> = await RegisterUser({ ...user });
+			await RegisterUser({ ...user });
 			router.replace("/");
-		} catch (e) {
+		} catch (e: any) {
 			console.error(e);
+			setError("username", {
+				message: e?.response?.data?.detail || "An error occurred",
+			});
 		}
 	};
 

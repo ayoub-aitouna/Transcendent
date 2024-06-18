@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import ToastContainer from "@/app/ui/dashboard/Toast/toast-container";
 import { Toast } from "@/type/dashboard/index";
+import { parseCookies } from "nookies";
 
 type ToastContextType = {
 	toasts: Toast[];
@@ -56,8 +57,10 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 	);
 
 	useEffect(() => {
-		console.log("connecting to ws");
+		const nookies = parseCookies();
+		if (!nookies.access || !nookies.refresh) return;
 		if (!ws.current) {
+			console.log("connecting to ws");
 			ws.current = new WebSocket("ws://localhost:8000/ws/user/connect/");
 			ws.current.onopen = () => {
 				console.log("connected to ws");

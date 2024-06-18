@@ -39,8 +39,8 @@ function TeamLeader() {
 				</div>
 			</Link>
 			<div className=' mt-10 h-[12px] text-white font-light text-sx flex justify-between">'>
-				<div className=' text-[10px] font-light'>{rank.name}</div>
-				<div className="ml-auto text-[10px] font-light">{current_xp}/{rank.xp_required}</div>
+				<div className=' text-[10px] font-light'>{rank?.name}</div>
+				<div className="ml-auto text-[10px] font-light">{current_xp}/{rank?.xp_required}</div>
 			</div>
 			<div className='mt-5 h-[161px] w-full flex justify-center items-center'>
 				{

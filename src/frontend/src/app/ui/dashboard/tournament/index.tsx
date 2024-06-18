@@ -1,18 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { user } from "@/type/auth/user";
+import { ImageSrc } from "@/lib/ImageSrc";
 
 export const ProfileImage = ({
 	className,
 	image_url,
+	username,
 }: {
 	className?: string;
 	image_url?: string;
+	username?: string;
 }) => {
 	return (
 		<div className={className}>
 			<Image
-				src={image_url || ""}
+				src={ImageSrc(image_url, username)}
 				alt='profile'
 				layout='fill'
 				className='object-cover'
@@ -49,10 +52,12 @@ export const StreamingCard = ({
 				<div className='flex flex-row items-center justify-center flex-nowrap'>
 					<ProfileImage
 						image_url={user1.image_url}
+						username={user1.username}
 						className='relative w-12 h-12  rounded-full border border-[#A2A2A2] overflow-hidden '
 					/>
 					<ProfileImage
 						image_url={user2.image_url}
+						username={user2.username}
 						className='relative w-12 h-12 ml-[-20px] rounded-full border border-[#A2A2A2] overflow-hidden'
 					/>
 				</div>

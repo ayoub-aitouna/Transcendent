@@ -9,27 +9,47 @@ import Link from "next/link";
 import { PaginationApiResponse } from "@/type";
 import apiMock from "@/lib/axios-mock";
 import { Player} from "@/type/dashboard/players";
+import { ImageSrc } from "@/lib/ImageSrc";
 
 
 export function PlayersContainer({ player }: {player: Player}) {
 	return (
-		<button className={`mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3`}>
-			<Link href={`/profile/${player.id}`} className='flex items-center justify-between '>
-				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={player.image_url} alt="Profile Image" width={53} height={53} />
+		<button
+			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3`}>
+			<Link
+				href={`/profile/${player.id}`}
+				className='flex items-center justify-between '>
+				<Image
+					className='bg-white  w-[53px] h-[53px] rounded-full'
+					src={ImageSrc(player.image_url, player.username)}
+					alt='Profile Image'
+					width={53}
+					height={53}
+				/>
 				<div />
-				<div className="flex items-start flex-col max-w-[80px]">
-					<div className="ml-[10px]  text-white truncate text-[18px] font-bold">{player.username}</div>
-					<div className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>Level {String(player.level)}</div>
+				<div className='flex items-start flex-col max-w-[80px]'>
+					<div className='ml-[10px]  text-white truncate text-[18px] font-bold'>
+						{player.username}
+					</div>
+					<div
+						className={`ml-[10px]  text-[#878787] text-[12px] truncate font-medium`}>
+						Level {String(player.level)}
+					</div>
 				</div>
 			</Link>
 
-			<Link href={`/making-machine?player=${player.username}`}
+			<Link
+				href={`/making-machine?player=${player.username}`}
 				className={`flex-row items-center rounded-[4px]  bg-[#FF3D00] w-[87px] h-[27px]`}>
-				<div className='flex items-center justify-between ml-2 mx-auto text-white text-[16px] font-medium"'> <InviteIcon /> <div />
-					<div className=" flex items-center justify-between mx-auto text-white text-[16px] font-medium"> Invite </div>
+				<div className='flex items-center justify-between ml-2 mx-auto text-white text-[16px] font-medium"'>
+					{" "}
+					<InviteIcon /> <div />
+					<div className=' flex items-center justify-between mx-auto text-white text-[16px] font-medium'>
+						{" "}
+						Invite{" "}
+					</div>
 				</div>
 			</Link>
-
 		</button>
 	);
 };

@@ -7,6 +7,7 @@ import LogOut from "../icons/content_area/logout";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { Logout } from "@/redux/slices/userslice";
 import { clearCookies } from "@/api/auth";
+import { ImageSrc } from "@/lib/ImageSrc";
 
 export const ProfileIcon = () => {
 	const [isClicked, setIsClicked] = useState(false);
@@ -53,7 +54,7 @@ export const ProfileIcon = () => {
 					<div className='rounded-ful flex items-start '>
 						<Image
 							className='bg-white  w-10 h-[38.9px] rounded-full'
-							src={image_url}
+							src={ImageSrc(image_url, username)}
 							alt='Profile Image'
 							width={40}
 							height={38.9}
@@ -115,7 +116,7 @@ export const ProfileIcon = () => {
 							<div className='rounded-full flex items-start w-[30px] h-[30px]'>
 								<Image
 									className='bg-white w-[30px] h-[30px] rounded-full'
-									src={image_url}
+									src={ImageSrc(image_url, username)}
 									alt='Profile Image'
 									width={30}
 									height={30}

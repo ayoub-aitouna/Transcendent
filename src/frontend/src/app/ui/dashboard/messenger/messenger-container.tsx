@@ -4,6 +4,7 @@ import styles from '@/app/ui/dashboard/nav/nav.module.css';
 import { useEffect, useState } from 'react';
 import { MessageItem } from '@/api/chat';
 import apiMock from '@/lib/axios-mock';
+import { ImageSrc } from '@/lib/ImageSrc';
 
 function get_last_message({ lastMessage }: { lastMessage: MessageItem }) {
 	if (lastMessage === null)
@@ -63,34 +64,53 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr,isSele
 	return (
 		<div
 			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded-lg 
-                ${isSelected ? "bg-[#494949]" : (viewsMessages ? styles.highlightMess : "bg-[#292929]")}   overflow-hidden  p-2 mb-[10px]`}
-			onClick={handleClick}
-		>
+                ${
+									isSelected
+										? "bg-[#494949]"
+										: viewsMessages
+										? styles.highlightMess
+										: "bg-[#292929]"
+								}   overflow-hidden  p-2 mb-[10px]`}
+			onClick={handleClick}>
 			<div className='flex items-center justify-between '>
-				<Image className="bg-white  w-[53px] h-[53px] rounded-full" src={href} alt="Profile Image" width={53} height={53} />
+				<Image
+					className='bg-white  w-[53px] h-[53px] rounded-full'
+					src={ImageSrc(href, name)}
+					alt='Messenger Profile Image'
+					width={53}
+					height={53}
+				/>
 				<div />
-				<div className="flex items-start flex-col max-w-[80px]">
-					<div className="ml-[10px]  text-white truncate text-[18px] font-bold">{name}</div>
-					<div className={`ml-[10px] ${viewsMessages ? "text-white" : "text-[#878787]"}text-[14px] w-[250px] truncate font-normal`}>{lastMassage}</div>
+				<div className='flex items-start flex-col max-w-[80px]'>
+					<div className='ml-[10px]  text-white truncate text-[18px] font-bold'>
+						{name}
+					</div>
+					<div
+						className={`ml-[10px] ${
+							viewsMessages ? "text-white" : "text-[#878787]"
+						}text-[14px] w-[250px] truncate font-normal`}>
+						{lastMassage}
+					</div>
 				</div>
 			</div>
-			{
-				lastMassage && (
-					<div className="flex flex-col items- p-2">
-						{viewsMessages && messagesNbr !== 0 ? (
-							<div className={`rounded-full h-5 w-5 bg-[#00D400] mb-1 flex justify-center items-center`}>
-								<div className="font-bold text-[12px]">{messagesNbr}</div>
-							</div>
-						) : (
-							<div className="mb-2 px-2 text-[#292929]">{' .'}</div>
-						)}
-						<div className={`rounded-md p-1 bg-[#242424] mb-2  flex justify-center items-center`}>
-							<div className="font-light text-[13px]">{formatTime(LastMessage?.created_at)}</div>
-
+			{lastMassage && (
+				<div className='flex flex-col items- p-2'>
+					{viewsMessages && messagesNbr !== 0 ? (
+						<div
+							className={`rounded-full h-5 w-5 bg-[#00D400] mb-1 flex justify-center items-center`}>
+							<div className='font-bold text-[12px]'>{messagesNbr}</div>
+						</div>
+					) : (
+						<div className='mb-2 px-2 text-[#292929]'>{" ."}</div>
+					)}
+					<div
+						className={`rounded-md p-1 bg-[#242424] mb-2  flex justify-center items-center`}>
+						<div className='font-light text-[13px]'>
+							{formatTime(LastMessage?.created_at)}
 						</div>
 					</div>
-				)}
-
+				</div>
+			)}
 		</div>
 	);
 };

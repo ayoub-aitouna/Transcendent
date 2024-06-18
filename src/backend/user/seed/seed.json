@@ -303,11 +303,11 @@
         "model": "user.Achievements",
         "pk": 1,
         "fields": {
-            "name": "Win Strick",
+            "name": "Win streak",
             "icon": "/media/public/badges/Arctic-Code-Vault-Contributor.png",
-            "description": "You won your first Lucky strick",
+            "description": "You won your first Lucky streak",
             "requirement_value": 5,
-            "requirement_type": "win strick",
+            "requirement_type": "win_streak",
             "created_at": "2024-04-24T13:30:16.345Z",
             "updated_at": "2024-04-24T13:30:16.345Z"
         }
@@ -318,7 +318,7 @@
         "fields": {
             "name": "Win With Zero Loss",
             "icon": "/media/public/badges/GalaxyBrain.png",
-            "description": "You won your first Win With Zero Loss",
+            "description": "You won 10 games without losing any points, pretty impressive!",
             "requirement_value": 10,
             "requirement_type": "win_with_zero_loss",
             "created_at": "2024-04-24T13:30:16.345Z",
@@ -344,7 +344,7 @@
         "fields": {
             "name": "Total Points",
             "icon": "/media/public/badges/OpenSourcerer.png",
-            "description": "You won your first Total Points",
+            "description": "You won your first 200 Points",
             "requirement_value": 200,
             "requirement_type": "total_points",
             "created_at": "2024-04-24T13:30:16.345Z",
