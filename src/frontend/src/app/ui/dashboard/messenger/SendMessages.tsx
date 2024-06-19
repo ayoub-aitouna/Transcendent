@@ -7,7 +7,6 @@ import React, {
 	ChangeEvent,
 	useCallback,
 } from "react";
-import { io, Socket } from "socket.io-client";
 import Upload from "../icons/messenger/Upload";
 import SendIcon from "../icons/messenger/send";
 import EmojiIcon from "../icons/messenger/emoji";
@@ -17,7 +16,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/store";
 import moment from "moment";
-import LeftArrow from "../icons/content_area/left-arrow";
 import { ImageSrc } from "@/lib/ImageSrc";
 import { Friend } from "@/type/auth/user";
 import { GetFriendsData } from "@/api/user";
@@ -76,207 +74,223 @@ export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 	);
 }
 
-export function SendImage() {
-	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+export function SendImage({ onImageUpload }: { onImageUpload: (image: File | null) => void }) {
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files && e.target.files[0];
-		if (file) {
-			console.log("Uploaded file:", file);
-			setSelectedImage(URL.createObjectURL(file));
-		}
-	};
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+            setSelectedImage(URL.createObjectURL(file));
+            onImageUpload(file);
+        }
+    };
 
-	const removeImage = () => {
-		setSelectedImage(null);
-	};
-	return (
-		<div>
-			{selectedImage ? (
-				<div className='p-2 pr-8' onClick={removeImage}>
-					<div className='p-2'>
-						<Upload color=' #3342ff ' />{" "}
-					</div>
-					<div className='text-[10px] text-[#3342ff]'>Uploaded</div>
-				</div>
-			) : (
-				<label className='p-2 pr-8'>
-					<div className='p-1'>
-						<Upload color='#878787' />{" "}
-					</div>
-					<div className='text-[10px] text-[#878787]'>Upload</div>
-					<input
-						type='file'
-						className='hidden'
-						onChange={handleImageUpload}
-						accept='image/*'
-					/>
-				</label>
-			)}
-		</div>
-	);
-}
+    const removeImage = () => {
+        setSelectedImage(null);
+        onImageUpload(null);
+    };
 
-interface WebSocketEvent extends Event {
-	currentTarget: WebSocket;
-}
+    return (
+        <div>
+            {selectedImage ? (
+                <div className='p-2 pr-8' onClick={removeImage}>
+                    <div className='p-2'>
+                        <Upload color=' #3342ff ' />
+                    </div>
+                    <div className='text-[10px] text-[#3342ff]'>Uploaded</div>
+                </div>
+            ) : (
+                <label className='p-2 pr-8'>
+                    <div className='p-1'>
+                        <Upload color='#878787' />
+                    </div>
+                    <div className='text-[10px] text-[#878787]'>Upload</div>
+                    <input
+                        type='file'
+                        className='hidden'
+                        onChange={handleImageUpload}
+                        accept='image/*'
+                    />
+                </label>
+            )}
+        </div>
+    );
+};
 
-const SendMessage = ({ selectedChat }: { selectedChat: roomItem }) => {
-	const [messages, setMessages] = useState<MessageItem[]>([]);
-	const [messageContent, setMessageContent] = useState("");
-	const socket = useRef<WebSocket | null>(null);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const { username } = useAppSelector((state) => state.user.user);
-	const [friends, setFriends] = useState<Friend[]>([])
-	const getFriendsList = async () => {
-		try {
-			const data = await GetFriendsData('')
-			setFriends(data)
-		} catch (error) {
-		}
-	}
-	useEffect(() => {
-		getFriendsList()
-	}, [])
-	const isFriend = friends.some(friend => friend.username === selectedChat.room_name);;
 
-	useEffect(() => {
-		const fetchMessages = async () => {
-			try {
-				const response = await apiMock.get(`/chat/room/${selectedChat?.id}/`);
-				setMessages(response.data.results);
-			} catch (error) {
-				console.error("Error fetching messages:", error);
+const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
+
+		const [messages, setMessages] = useState<MessageItem[]>([]);
+		const [messageContent, setMessageContent] = useState<string>("");
+		const [selectedImage, setSelectedImage] = useState<File | null>(null);
+		const socket = useRef<WebSocket | null>(null);
+		const containerRef = useRef<HTMLDivElement>(null);
+		const { username } = useAppSelector((state) => state.user.user);
+		const [friends, setFriends] = useState<{ username: string }[]>([]);
+	
+		useEffect(() => {
+			const getFriendsList = async () => {
+				try {
+					const data = await GetFriendsData('');
+					setFriends(data);
+				} catch (error) {
+					console.error("Error fetching friends:", error);
+				}
+			};
+			getFriendsList();
+		}, []);
+	
+		const isFriend = friends.some(friend => friend.username === selectedChat.room_name);
+	
+		useEffect(() => {
+			const fetchMessages = async () => {
+				try {
+					const response = await apiMock.get(`/chat/room/${selectedChat?.id}/`);
+					setMessages(response.data.results);
+				} catch (error) {
+					console.error("Error fetching messages:", error);
+				}
+			};
+			fetchMessages();
+		}, [selectedChat]);
+	
+		useEffect(() => {
+			if (selectedChat.id && !socket.current) {
+				socket.current = new WebSocket(`wss://localhost/ws/chat/${selectedChat.id}/`);
 			}
-		};
-
-		fetchMessages();
-	}, [selectedChat]);
-
-	useEffect(() => {
-		if (selectedChat.id && !socket.current)
-			socket.current = new WebSocket(
-				`wss://localhost/ws/chat/${selectedChat.id}/`
-			);
-		if (socket.current) {
-			socket.current.onopen = () => {
-				console.log("webSocket connection opened: ", socket.current);
-			};
-			socket.current.onerror = (err) => {
-				console.log("webSocket closed by an error : ", err);
-			};
-			socket.current.onclose = (event) => {
-				console.log("webSocket connection closed : ", event);
-			};
-			socket.current.onmessage = (event) => {
-				console.log("webSocket message received : ", event.data);
-				const receivedMessage = JSON.parse(event.data);
-				const newMessage: MessageItem = {
-					message: receivedMessage.message.message,
-					seen: false,
-					created_at: String(moment(receivedMessage.created_at)),
-					id: selectedChat.id,
-					sender_username: receivedMessage.message.sender_username,
-				};
-				setMessages((prevMessages) => [...prevMessages, newMessage]);
-			};
-		}
-		return () => {
+	
 			if (socket.current) {
-				socket.current.onmessage = null;
+				socket.current.onopen = () => {
+					console.log("WebSocket connection opened: ", socket.current);
+				};
+				socket.current.onerror = (err) => {
+					console.log("WebSocket closed by an error: ", err);
+				};
+				socket.current.onclose = (event) => {
+					console.log("WebSocket connection closed: ", event);
+				};
+				socket.current.onmessage = (event) => {
+					const receivedMessage = JSON.parse(event.data);
+					const newMessage: MessageItem = {
+						message: receivedMessage.message.message,
+						image_file: receivedMessage.message.image_file,
+						seen: false,
+						created_at: String(moment(receivedMessage.created_at)),
+						id: selectedChat.id,
+						sender_username: receivedMessage.message.sender_username,
+					};
+					setMessages(prevMessages => [...prevMessages, newMessage]);
+				};
 			}
-		};
-	}, [selectedChat.id, socket]);
-
-	const SendMessage = useCallback(
-		async (messageContent: string) => {
+			return () => {
+				if (socket.current) {
+					socket.current.onmessage = null;
+				}
+			};
+		}, [selectedChat.id]);
+	
+		const sendMessage = useCallback(async (content: string, imageFile: File | null) => {
 			try {
 				const formData = new FormData();
-				formData.append("message", messageContent);
-				socket.current?.send(JSON.stringify({ message: messageContent }));
+				formData.append("message", content);
+				if (imageFile) {
+					formData.append("image_file", imageFile);
+				}
+	
+				const payload = {
+					message: content,
+					room_id: selectedChat.id,
+					image_file: imageFile ? URL.createObjectURL(imageFile) : null,
+				};
+	
+				socket.current?.send(JSON.stringify(payload));
 				setMessageContent("");
+				setSelectedImage(null);
 			} catch (error) {
 				console.error("Error sending message:", error);
 			}
-		},
-		[selectedChat.id]
-	);
-
-	const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if (messageContent.trim() === '') 
-			return;
-		event.preventDefault();
-		const newLocalMessage: MessageItem = {
-			message: messageContent,
-			seen: false,
-			created_at: String(moment()),
-			id: selectedChat.id,
-			sender_username: username,
+		}, [selectedChat.id]);
+	
+		const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
+			event.preventDefault();
+			if (messageContent.trim() === '' && !selectedImage) 
+				return;
+	
+			const newLocalMessage: MessageItem = {
+				message: messageContent,
+				image_file: selectedImage ? URL.createObjectURL(selectedImage) : "",
+				seen: false,
+				created_at: String(moment()),
+				id: selectedChat.id,
+				sender_username: username,
+			};
+	
+			setMessages((prevMessages) => [...prevMessages, newLocalMessage]);
+			sendMessage(messageContent, selectedImage);
+			setMessageContent("");
+			setSelectedImage(null);
 		};
-		setMessages((prevMessages) => [...prevMessages, newLocalMessage]);
-		SendMessage(messageContent);
-		setMessageContent("");
-	};
-	useEffect(() => {
-		const element = containerRef.current;
-		console.log("Container element:", element);
-		if (element) {
-			element.scrollTo({
-				top: element.scrollHeight,
-				behavior: "smooth",
-			});
-		}
-	}, [messages]);
-	return (
-		<div className='h-full'>
-			<ChatPanel selectedChat={selectedChat} />
-			<div
-				className='overflow-y-scroll hide-scrollbar max-h-[500px]'
-				ref={containerRef}>
-				<div className='flex-1 p mt-5'>
-					{messages.map((item, index) => (
-						<ChatMessage key={index} messages={item} />
-					))}
-				</div>
-			</div>
-			<div className=' absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
-				{
-					isFriend ?
-						<div className='flex flex-row items-center justify-center h-full'>
-							<div className='p-2'>
-								<div className='pt-2'>
-									<EmojiIcon />
-								</div>
-								<div className='text-[10px] text-[#878787]'>Invite </div>
-							</div>
-							<div className=''>
-								<SendImage />
-							</div>
-							<textarea
-								className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
-								placeholder='Type a message'
-								value={messageContent}
-								maxLength={1000}
-								onChange={(e) => setMessageContent(e.target.value)}
-								onKeyPress={(e) => {
-									if (e.key === 'Enter') {
-										e.preventDefault();
-										handleSendMessage(e);
-									}
-								}}
-							/>
-							<button className='p-2' onClick={handleSendMessage}>
-								<SendIcon />
-							</button>
-						</div>
-						:
-						<div className='flex flex-row items-center justify-center h-full'>
-							You can't send a message to a user that you are not friends with
-						</div>
-				}
-			</div>
-		</div>
-	);
+	
+		const handleImageUpload = (image: File | null) => {
+			setSelectedImage(image);
+		};
+	
+		useEffect(() => {
+			const element = containerRef.current;
+			if (element) {
+				element.scrollTo({
+					top: element.scrollHeight,
+					behavior: "smooth",
+				});
+			}
+		}, [messages]);
+    return (
+        <div className='h-full'>
+            <ChatPanel selectedChat={selectedChat} />
+            <div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
+                <div className='flex-1 p mt-5'>
+                    {messages.map((item, index) => (
+                        <ChatMessage key={index} messages={item} />
+                    ))}
+                </div>
+            </div>
+            <div className='absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
+                {isFriend ?
+                    <div className='flex flex-row items-center justify-center h-full'>
+                        <div className='p-2'>
+                            <div className='pt-2'>
+                                <EmojiIcon />
+                            </div>
+                            <div className='text-[10px] text-[#878787]'>Invite</div>
+                        </div>
+                        <div>
+                            <SendImage onImageUpload={handleImageUpload} />
+                        </div>
+                        <textarea
+                            className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
+                            placeholder='Type a message'
+                            value={messageContent}
+                            maxLength={1000}
+                            onChange={(e) => setMessageContent(e.target.value)}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleSendMessage(e);
+                                }
+                            }}
+                        />
+                        <button className='p-2' onClick={handleSendMessage}>
+                            <SendIcon />
+                        </button>
+                    </div>
+                    :
+                    <div className='flex flex-row items-center justify-center h-full'>
+                        You can't send a message to a user that you are not friends with
+                    </div>
+                }
+            </div>
+        </div>
+    );
 };
 
-export default SendMessage;
+export default SendMessages;

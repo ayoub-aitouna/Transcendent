@@ -2,7 +2,8 @@ import { user } from "@/type/auth/user";
 export type MessageItem = {
 	id: number;
 	sender_username: string;
-	message: string | File;
+	message: string;
+	image_file: string | '';
 	created_at: string;
 	seen: boolean;
 }

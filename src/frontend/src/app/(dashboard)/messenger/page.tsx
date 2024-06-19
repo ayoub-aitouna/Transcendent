@@ -3,7 +3,7 @@
 import React, { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
 import apiMock from "@/lib/axios-mock";
 import { roomItem } from "@/api/chat";
-import SendMessage from "@/app/ui/dashboard/messenger/SendMessages";
+import SendMessages from "@/app/ui/dashboard/messenger/SendMessages";
 import { useRouter } from 'next/navigation'
 import ChatRoomsPanel from "./ChatRoomsPanel";
 
@@ -54,7 +54,7 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string } }) => {
 					<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} />
 					<div className="flex-1 h-full bg-secondary-400 min-w-[300px] rounded-xl relative overflow-hidden">
 						{selectedChat ? (
-							<SendMessage selectedChat={selectedChat} />
+							<SendMessages selectedChat={selectedChat} />
 						) : (
 							<div className="flex justify-center items-center flex-col h-full">
 								<div className="text-3xl font-bold">Messenger</div>

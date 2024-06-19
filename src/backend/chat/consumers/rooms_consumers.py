@@ -63,7 +63,8 @@ class RoomsConsumer(AsyncWebsocketConsumer):
 
     async def send_message(self, event):
         message = event['message']
-        await self.send(text_data=json.dumps({'message': message}))
+        image_file = event['image_file']
+        await self.send(text_data=json.dumps({'message': message, 'image_file': None}))
 
     @database_sync_to_async
     def save_message(self, room_id, message):
