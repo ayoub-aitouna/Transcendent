@@ -19,7 +19,7 @@ const nextConfig = {
                 port: '8000',
             },
             {
-                protocol: 'http',
+                protocol: 'https',
                 hostname: process.env.NEXT_PUBLIC_BACKEND_HOST,
             },
             {

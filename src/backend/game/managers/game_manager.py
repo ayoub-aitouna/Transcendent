@@ -6,7 +6,7 @@ from game.managers.achievements_manager import AchievementsManager
 from user.models import User
 from game.models import Matchup, Tournament
 from game.utils.game_utils import Ball, Paddle
-
+Debugging = True
 
 class Game():
     WIDTH = 800
@@ -142,7 +142,7 @@ class Game():
         else:
             self.matchup.second_player_score += 1
         await database_sync_to_async(self.matchup.save)()
-        winner = self.determine_winner()
+        winner, Loser = self.determine_winner_and_loser()
 
         if winner:
             self.matchup.Winner = winner
@@ -154,8 +154,8 @@ class Game():
                 'winner': winner.username
             })
             if self.tournament is None:
-                await AchievementsManager.handleUserAchievements(
-                    user=winner, match_up=self.matchup)
+                await AchievementsManager().handleUserAchievements(user=winner)
+            await AchievementsManager().handleLoserUser(user=Loser)
             self.is_running = False
 
         await self.emit(dict_data={
@@ -164,18 +164,18 @@ class Game():
             'second_player_score': self.matchup.second_player_score
         })
 
-    def determine_winner(self):
-        # debugging
-        # return self.first_player
+    def determine_winner_and_loser(self):
+        if Debugging:
+            return [self.first_player, self.second_player]
         if self.matchup.first_player_score >= 15 and self.matchup.first_player_score - self.matchup.second_player_score >= 2:
-            return self.first_player
+            return [self.first_player, self.second_player]
         elif self.matchup.second_player_score >= 15 and self.matchup.second_player_score - self.matchup.first_player_score >= 2:
-            return self.second_player
+            return [self.second_player, self.first_player]
         if self.matchup.first_player_score >= 20 and self.matchup.first_player_score > self.matchup.second_player_score:
-            return self.first_player
+            return [self.first_player, self.second_player]
         elif self.matchup.second_player_score >= 20 and self.matchup.second_player_score > self.matchup.first_player_score:
-            return self.second_player
-        return None
+            return [self.second_player, self.first_player]
+        return [None, None]
 
     async def cleanup(self):
         self.is_running = False

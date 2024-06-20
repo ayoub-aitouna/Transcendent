@@ -7,7 +7,10 @@ from django.db.models import QuerySet
 
 
 class AchievementsManager:
-    async def __init__(self, user):
+    IncrementingXpSteps = 120
+    DecrementingXpSteps = 60
+
+    def __init__(self):
         pass
 
     def relevantGames(self, user: User, achievement_type: str) -> QuerySet:
@@ -89,23 +92,41 @@ class AchievementsManager:
         user.save()
 
     @database_sync_to_async
-    def getNextRank(current_rank_order):
+    def getNextRank(self, current_rank_order):
         try:
             return Ranks.objects.get(hierarchy_order=current_rank_order + 1)
         except Ranks.DoesNotExist:
             return None
 
-    @staticmethod
-    async def handleUserAchievements(user: User, tournament: Tournament, match_up: Matchup):
-        user.current_xp += 120
-        user.total_xp += 120
-        required_xp = user.rank.xp_required
-        next_rank = await AchievementsManager.getNextRank(user.rank.hierarchy_order)
-        if user.current_xp >= required_xp and next_rank is not None:
-            user.current_xp -= required_xp
+    @database_sync_to_async
+    def getPrevRank(self, current_rank_order):
+        if current_rank_order <= 0:
+            return None
+        try:
+            return Ranks.objects.get(hierarchy_order=current_rank_order - 1)
+        except Ranks.DoesNotExist:
+            return None
+
+    async def handleUserAchievements(self, user: User):
+        user.current_xp += self.IncrementingXpSteps
+        user.total_xp += self.IncrementingXpSteps
+        UserRank: Ranks = await database_sync_to_async(lambda: user.rank)()
+        next_rank = await self.getNextRank(UserRank.hierarchy_order)
+        if user.current_xp >= UserRank.xp_required and next_rank is not None:
+            user.current_xp -= UserRank.xp_required
             user.rank = next_rank
         await database_sync_to_async(user.save)()
-        await AchievementsManager.handleWinStreak(user)
-        await AchievementsManager.handleTotalPoints(user)
-        await AchievementsManager.handleZeroLoss(user)
-        await AchievementsManager.handleTotalWins(user)
+        await self.handleWinStreak(user)
+        await self.handleTotalPoints(user)
+        await self.handleZeroLoss(user)
+        await self.handleTotalWins(user)
+
+    async def handleLoserUser(self, user: User):
+        user.current_xp -= self.DecrementingXpSteps
+        user.total_xp -= self.DecrementingXpSteps
+        UserRank: Ranks = await database_sync_to_async(lambda: user.rank)()
+        prevRank = await self.getPrevRank(UserRank.hierarchy_order)
+        if user.current_xp < 0:
+            user.rank = prevRank
+            user.current_xp = await database_sync_to_async(lambda: UserRank.xp_required)() + user.current_xp
+        await database_sync_to_async(user.save)()

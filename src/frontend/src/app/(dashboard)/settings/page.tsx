@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
-import Input from "@/app/ui/auth/input";
 import PersonalInfoForm from "@/app/(dashboard)/settings/Forms/PersonalInfo";
-import FormWrapper from "./Forms/FormWrapper";
 import AccountSecurityFrom from "./Forms/AccountSecurity";
 import ChangePassword from "./Forms/ChangePassword";
 

@@ -26,7 +26,7 @@ class GameLobby(AsyncWebsocketConsumer):
 
     async def matchmaking(self):
         match_user = None
-        if self.game_mode == 'multiplayer':
+        if self.game_mode == 'multiplayer' or self.game_mode is None:
             match_user = await self.match_maker.get_match_users(self.user)
         if match_user or self.game_mode == 'singleplayer':
             game_started_obj = await self.create_game(match_user)

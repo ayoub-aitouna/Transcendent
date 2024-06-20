@@ -183,8 +183,7 @@ class TournamentRoutine():
                 tournament_winner = await database_sync_to_async(User.objects.get)(id=current_round_winners[0])
                 self.tournament.finished = True
                 await database_sync_to_async(self.tournament.save)()
-                AchievementsManager.handleUserAchievements(
-                    user=tournament_winner, tournament=self.tournament)
+                AchievementsManager().handleUserAchievements(user=tournament_winner)
                 await self.emit({'status': 'over', 'winner': tournament_winner.username})
 
     async def emit(self, dict_data):
