@@ -40,9 +40,6 @@ class RoomsConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         message = event['message']
-        sender = message.get('sender')
-        if self.user.id == sender:
-            return
         data = await self.get_room_info(message)
         await self.send(text_data=json.dumps(data))
 
@@ -51,6 +48,7 @@ class RoomsConsumer(AsyncWebsocketConsumer):
         room = ChatRoom.objects.get(id=message['room_id'])
         serializer = WsChatRoomSerializer(
             instance=room, context={'request': ConsumerRequest(self.user)})
+        host = self.scope['host']
 
         return {
             'message': message,
@@ -65,7 +63,8 @@ class RoomsConsumer(AsyncWebsocketConsumer):
 
     async def send_message(self, event):
         message = event['message']
-        await self.send(text_data=json.dumps({'message': message}))
+        image_file = event['image_file']
+        await self.send(text_data=json.dumps({'message': message, 'image_file': None}))
 
     @database_sync_to_async
     def save_message(self, room_id, message):

@@ -27,7 +27,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick }) 
 		fetchRooms();
 
 		// WebSocket connection
-		const socket = new WebSocket(`ws://localhost:8000/ws/rooms/`);
+		const socket = new WebSocket(`wss://localhost/ws/rooms/`);
 
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);

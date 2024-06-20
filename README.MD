@@ -13,6 +13,8 @@
       - fix responsively of homepage .k
       - Messenger page change to use id for individual chat rooms and layout to display all chat-rooms .k
 	  - add action-type to notification model and based on action decide on click event functionality 
+	  - handle error in change photo profile settings .A
+	  - fix accept friend request in backend 
 
 #
 

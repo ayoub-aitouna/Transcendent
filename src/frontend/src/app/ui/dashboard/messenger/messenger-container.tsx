@@ -9,11 +9,11 @@ import { ImageSrc } from '@/lib/ImageSrc';
 function get_last_message({ lastMessage }: { lastMessage: MessageItem }) {
 	if (lastMessage === null)
 		return ""
-	if (typeof lastMessage.message === 'string') {
-		return lastMessage.message;
-	} else {
+	if (lastMessage.image_file) {
 		return lastMessage.sender_username + " " + "send a photo";
 	}
+	else
+		return lastMessage.message;
 }
 
 function formatTime(timestamp: string): string {
@@ -42,13 +42,13 @@ function formatTime(timestamp: string): string {
 }
 
 
-export function MessengerContainer({ name, href, LastMessage, messagesNbr,isSelected, onClick }: {
-    name: string;
-    href: string;
-    LastMessage: MessageItem;
-    messagesNbr: number;
-    isSelected: boolean;
-    onClick: () => void;
+export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSelected, onClick }: {
+	name: string;
+	href: string;
+	LastMessage: MessageItem;
+	messagesNbr: number;
+	isSelected: boolean;
+	onClick: () => void;
 }) {
 	const lastMassage = get_last_message({ lastMessage: LastMessage });
 	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage.id !== 0);
@@ -64,13 +64,12 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr,isSele
 	return (
 		<div
 			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded-lg 
-                ${
-									isSelected
-										? "bg-[#494949]"
-										: viewsMessages
-										? styles.highlightMess
-										: "bg-[#292929]"
-								}   overflow-hidden  p-2 mb-[10px]`}
+                ${isSelected
+					? "bg-[#494949]"
+					: viewsMessages
+						? styles.highlightMess
+						: "bg-[#292929]"
+				}   overflow-hidden  p-2 mb-[10px]`}
 			onClick={handleClick}>
 			<div className='flex items-center justify-between '>
 				<Image
@@ -86,9 +85,8 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr,isSele
 						{name}
 					</div>
 					<div
-						className={`ml-[10px] ${
-							viewsMessages ? "text-white" : "text-[#878787]"
-						}text-[14px] w-[250px] truncate font-normal`}>
+						className={`ml-[10px] ${viewsMessages ? "text-white" : "text-[#878787]"
+							}text-[14px] w-[250px] truncate font-normal`}>
 						{lastMassage}
 					</div>
 				</div>

@@ -42,6 +42,7 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
             return {
                 'id': last_message.id,
                 'message': last_message.message,
+                'image_file': last_message.image_file.url if last_message.image_file else None,
                 'created_at': last_message.created_at,
                 'sender': last_message.sender.username if last_message.sender else None,
                 'seen': last_message.seen,
@@ -159,10 +160,12 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     room_id = serializers.IntegerField(source='chatRoom.id', read_only=True)
     sender_username = serializers.CharField(
         source='sender.username', read_only=True)
+    # message even a message or image file if message not exist file will be exist and if file not exist message will be exist
+    message = serializers.CharField(required=False)
 
     class Meta:
         model = ChatMessage
-        fields = ['id', 'room_id', 'sender_username', 'message', 'seen',
+        fields = ['id', 'room_id', 'sender_username', 'message', 'image_file', 'seen',
                   'seen_at', 'created_at', 'sender']
 
     def create(self, validated_data):
@@ -192,7 +195,7 @@ class GetChatRoomSerializer(ChatRoomSerializer):
 
     class Meta(ChatRoomsListSerializer.Meta):
         fields = ['id', 'room_name', 'room_icon', 'unseen_messages_count',
-                'type', 'last_message', 'receiverUser', 'members']
+                  'type', 'last_message', 'receiverUser', 'members']
 
     def get_receiverUser(self, obj):
         user = self.context['request'].user

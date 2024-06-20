@@ -18,7 +18,6 @@ class ChatRoomsListView(ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        #display all chat rooms of the user when last_message is not null
         return ChatRoom.objects.filter(members=user).exclude(messages_chat_room=None)
 
 class MessagesView(ListCreateAPIView):
