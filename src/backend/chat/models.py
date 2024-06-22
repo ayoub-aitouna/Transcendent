@@ -24,6 +24,10 @@ class ChatRoom(models.Model):
 
 
 class ChatMessage(models.Model):
+    typeChoices = [
+        ('private', 'text'),
+        ('group', 'image')
+    ]
     chatRoom = models.ForeignKey(
         ChatRoom, on_delete=models.SET_NULL, null=True, related_name='messages_chat_room')
     sender = models.ForeignKey(
@@ -33,7 +37,8 @@ class ChatMessage(models.Model):
         upload_to='public/chat/', null=True, blank=True)
     seen = models.BooleanField(default=False)
     seen_at = models.DateTimeField(null=True, blank=True)
-
+    type = models.CharField(
+        max_length=10, choices=typeChoices, default='text')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,11 +1,11 @@
 import json
+import base64
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
 from chat.models import ChatRoom, ChatMessage
-import base64
-import uuid
+from django.core.files.base import ContentFile
 
 channel_layer = get_channel_layer()
 
@@ -17,30 +17,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = 'chat_%s' % self.room_id
         await self.channel_layer.group_add(
             self.room_group_name,
-            self.channel_name
-        )
+            self.channel_name)
         await self.accept()
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.room_group_name,
-            self.channel_name
-        )
+            self.channel_name)
 
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message_text = text_data_json.get('message', '')
-        image_data = text_data_json.get('image_file', None)
-        if image_data:
-            image_file = await self.save_image_file(image_data)
-        else:
-            image_file = None
-        await self.save_message(message_text, image_file)
-        await self.emit_to_all_members(message_text, image_file)
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            self.create_message(message_text, image_file)
-        )
+        data_json = json.loads(text_data)
+        message_type = data_json.get('type')
+
+        if message_type == 'text':
+            message_text = data_json['message']
+            await self.save_message(message_text)
+            await self.emit_to_all_members(message_text)
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                self.create_message(message_text)
+            )
+        elif message_type == 'image':
+            image_data = data_json['image']
+            await self.save_image_message(image_data)
+            await self.emit_to_all_members(image_data)
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                self.create_image_message(image_data)
+            )
 
     async def chat_message(self, event):
         message = event['message']
@@ -51,43 +55,54 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
-    def create_message(self, message, image_file):
+    def create_message(self, message):
         return {
             'type': 'chat_message',
             'message': {
                 'message': message,
-                'image_file': image_file,
                 'sender': self.user.id,
                 'room_id': self.room_id
             }
         }
 
-    async def emit_to_all_members(self, message, image_file):
+    def create_image_message(self, image_data):
+        return {
+            'type': 'chat_message',
+            'message': {
+                'image': image_data,
+                'sender': self.user.id,
+                'room_id': self.room_id
+            }
+        }
+
+    async def emit_to_all_members(self, message):
         chat_room = await database_sync_to_async(ChatRoom.objects.get)(id=self.room_id)
         members_qs = chat_room.members.all()
-        members = await sync_to_async(list)(members_qs)
+        members = await database_sync_to_async(list)(members_qs)
         for member in members:
             await self.channel_layer.group_send(
                 f'user_rooms_{member.id}',
-                self.create_message(message, image_file)
+                self.create_message(message)
             )
 
     @database_sync_to_async
-    def save_message(self, message_text, image_file):
+    def save_message(self, message_text):
         chat_room = ChatRoom.objects.get(id=self.room_id)
         ChatMessage.objects.create(
             chatRoom=chat_room,
             sender=self.user,
-            message=message_text,
-            image_file=image_file
+            message=message_text
         )
 
     @database_sync_to_async
-    def save_image_file(self, image_data):
+    def save_image_message(self, image_data):
+        chat_room = ChatRoom.objects.get(id=self.room_id)
         format, imgstr = image_data.split(';base64,')
         ext = format.split('/')[-1]
-        img_data = base64.b64decode(imgstr)
-        file_name = f"{uuid.uuid4()}.{ext}"
-        with open(f'media/chat_images/{file_name}', 'wb') as f:
-            f.write(img_data)
-        return file_name
+        image_file = ContentFile(base64.b64decode(
+            imgstr), name=f'{self.user.id}_{self.room_id}.{ext}')
+        ChatMessage.objects.create(
+            chatRoom=chat_room,
+            sender=self.user,
+            image_file=image_file
+        )
