@@ -208,3 +208,4 @@ class GetChatRoomSerializer(ChatRoomSerializer):
         user = self.context['request'].user
         receiverUser = obj.members.exclude(id=user.id)
         return UserSerializer(receiverUser, many=True, context=self.context).data
+    

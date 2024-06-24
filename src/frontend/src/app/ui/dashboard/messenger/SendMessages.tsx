@@ -4,7 +4,6 @@ import React, {
 	useRef,
 	useEffect,
 	useState,
-	ChangeEvent,
 	useCallback,
 } from "react";
 import Upload from "../icons/messenger/Upload";
@@ -19,61 +18,77 @@ import moment from "moment";
 import { ImageSrc } from "@/lib/ImageSrc";
 import { Friend } from "@/type/auth/user";
 import { GetFriendsData } from "@/api/user";
+import { useRouter } from 'next/navigation'
 
 export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
 	const [clickedThreePoints, setClickedThreePoints] = useState(false);
-	const handleThreePoints = () => {
-		console.log("Three points clicked");
-		setClickedThreePoints(!clickedThreePoints);
-	};
-	return (
-		<div>
-			<button
-				className={`w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden`}>
-				<Link href={"/profile"} className='flex items-center justify-between '>
-					{/* <div><LeftArrow/></div>  */}
-					{/* handle left arrow when the screen is small */}
-					<Image
-						className='bg-white  w-[53px] h-[53px] rounded-full'
-						src={ImageSrc(selectedChat?.room_icon, selectedChat.room_name)}
-						alt='Profile Image'
-						width={53}
-						height={53}
-					/>
-					<div />
-					<div className='flex items-start flex-col max-w-[80px]'>
-						<div className='ml-[10px]  text-white truncate text-[16px] font-bold'>
-							{selectedChat?.room_name}
-						</div>
-						<div
-							className={`ml-[10px]  text-[#878787] text-[14px] truncate font-normal`}>
-							{selectedChat.receiverUser &&
-								selectedChat?.receiverUser[0].status}
-						</div>
-					</div>
-				</Link>
-				<div className='relative flex flex-col items-center'>
-					<div
-						className='relative flex flex-col items-center p-7'
-						onClick={handleThreePoints}>
-						<ThreePointsIcon />
-					</div>
-				</div>
-				{clickedThreePoints && (
-					<div className='z-50 absolute left-[76%] bottom-[82%] bg-[#161616] h-[150px] w-[200px] p-4 rounded-md'>
-						<div className='flex flex-col  items-start justify-start  text-[16px] text-[#878787] gap-2'>
-							<button className=''> clear chat </button>
-							<button className=''> close char </button>
-							<button className=''> Delete Chat </button>
-							<button className=''> Block </button>
-						</div>
-					</div>
-				)}
-			</button>
-		</div>
-	);
-}
+    const [clear, setClear] = useState(false);
+    const [close, setClose] = useState(false);
+    const [deleteChat, setDelete] = useState(false);
+    const [block, setBlock] = useState(false);
+    const router = useRouter();
 
+    const handleThreePoints = () => {
+        setClickedThreePoints(!clickedThreePoints);
+	};
+
+	const handleClose = () => {
+		setClose(true);
+    };
+	useEffect(() => {
+        if (close) {
+            router.push(` `);
+			 router.refresh()
+        }
+    }, [close, router]);
+
+    return (
+        <div>
+            <button className="w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden">
+                <Link href="/profile" className="flex items-center justify-between">
+                    <Image
+                        className="bg-white w-[53px] h-[53px] rounded-full"
+                        src={ImageSrc(selectedChat?.room_icon, selectedChat.room_name)}
+                        alt="Profile Image"
+                        width={53}
+                        height={53}
+                    />
+                    <div className="flex items-start flex-col max-w-[80px]">
+                        <div className="ml-[10px] text-white truncate text-[16px] font-bold">
+                            {selectedChat?.room_name}
+                        </div>
+                        <div className="ml-[10px] text-[#878787] text-[14px] truncate font-normal">
+                            {selectedChat.receiverUser && selectedChat?.receiverUser[0].status}
+                        </div>
+                    </div>
+                </Link>
+                <div className="relative flex flex-col items-center">
+                    <div className="relative flex flex-col items-center p-7" onClick={handleThreePoints}>
+                        <ThreePointsIcon />
+                    </div>
+                </div>
+                {clickedThreePoints && (
+                    <div className="z-50 absolute left-[76%] bottom-[75%] bg-[#161616] h-[175px] w-[200px] p-2 rounded-md">
+                        <div className="flex flex-col items-start justify-start text-[16px] text-[#878787]">
+                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => setClear(true)}>
+                                <div>Clear Chat</div>
+                            </button>
+                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={handleClose}>
+                                <div>Close Chat</div>
+                            </button>
+                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => setDelete(true)}>
+                                <div>Delete Chat</div>
+                            </button>
+                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => setBlock(true)}>
+                                <div>Block</div>
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </button>
+        </div>
+    );
+}
 export function SendImage({ onImageUpload }: { onImageUpload: (image: File | null) => void }) {
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -160,14 +175,8 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 		}
 
 		if (socket.current) {
-			socket.current.onopen = () => {
-				console.log("WebSocket connection opened: ", socket.current);
-			};
 			socket.current.onerror = (err) => {
 				console.log("WebSocket closed by an error: ", err);
-			};
-			socket.current.onclose = (event) => {
-				console.log("WebSocket connection closed: ", event);
 			};
 			socket.current.onmessage = (event) => {
 				const receivedMessage = JSON.parse(event.data);
@@ -176,7 +185,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 					image_file: receivedMessage.message.type === 'image' ? receivedMessage.message.image_file : null,
 					seen: false,
 					created_at: String(moment(receivedMessage.created_at)),
-					id: selectedChat.id,
+					id: receivedMessage.message.id ? receivedMessage.message.id : 0,
 					sender_username: receivedMessage.message.sender_username,
 				};
 				setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -210,6 +219,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 		}
 		try {
 			const payload = {
+				id: selectedChat.id,
 				message: content,
 				type: imageFile ? 'image' : 'text',
 				room_id: selectedChat.id,
@@ -222,7 +232,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 				image_file: imageFile ? URL.createObjectURL(imageFile) : "",
 				seen: false,
 				created_at: String(moment()),
-				id: selectedChat.id,
+				id:  selectedChat.id ,
 				sender_username: username,
 			}]);
 			setMessageContent("");
@@ -256,6 +266,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 			});
 		}
 	}, [messages]);
+
 	return (
 		<div className='h-full'>
 			<ChatPanel selectedChat={selectedChat} />

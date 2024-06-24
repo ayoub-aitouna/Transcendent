@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
 import apiMock from "@/lib/axios-mock";
@@ -8,12 +8,12 @@ import { useRouter } from 'next/navigation'
 import ChatRoomsPanel from "./ChatRoomsPanel";
 
 
-const Page = ({ searchParams }: { searchParams?: { chatroom?: string } }) => {
+const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string } }) => {
 	const [clickedIndex, setClickedIndex] = useState<number>(0);
 	const [selectedChat, setSelectedChat] = useState<roomItem | null>(null);
 	const chatroom = searchParams?.chatroom || '';
+	const q = searchParams?.q || '';
 	const router = useRouter();
-	const socket = useRef<WebSocket | null>(null);
 
 	useEffect(() => {
 		const fetchMessages = async () => {
@@ -39,7 +39,11 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string } }) => {
 
 	useEffect(() => {
 		if (selectedChat && selectedChat.receiverUser && selectedChat.receiverUser.length > 0) {
-			router.push(`?chatroom=${selectedChat.receiverUser[0].id}`);
+			if(q)
+				router.push(`?chatroom=${selectedChat.receiverUser[0].id}&q=${q}`);
+			else
+				router.push(`?chatroom=${selectedChat.receiverUser[0].id}`);
+			
 		}
 	}, [selectedChat, router]);
 
@@ -51,7 +55,7 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string } }) => {
 		<div className="h-full overflow-hidden rounded-xl">
 			<div className="h-full flex-1 flex flex-col gap-4">
 				<div className="h-full flex flex-row flex-wrap gap-5">
-					<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} />
+					<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
 					<div className="flex-1 h-full bg-secondary-400 min-w-[300px] rounded-xl relative overflow-hidden">
 						{selectedChat ? (
 							<SendMessages selectedChat={selectedChat} />
