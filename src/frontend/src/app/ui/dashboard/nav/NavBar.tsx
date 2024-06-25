@@ -8,16 +8,17 @@ import { navLinks, socialLinks } from "@/constant/dashboard";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";;
+import { usePathname, useRouter } from "next/navigation";
 import apiMock from "@/lib/axios-mock";
 import { PaginationApiResponse } from "@/type";
 import { user } from "@/type/auth/user";
 import NotificationMenu from "./notification-menu";
 import { ImageSrc } from "@/lib/ImageSrc";
+import { SocialItem, navItem } from "@/type/dashboard/navitem";
 
 const PlayNowIcon = () => {
 	const pathname = usePathname();
-	if (pathname.startsWith('/game')) return;
+	if (pathname.startsWith("/game")) return;
 	return (
 		<Link
 			href='/game'
@@ -28,26 +29,36 @@ const PlayNowIcon = () => {
 };
 
 export interface Results {
-	id :number;
-	recipient :user;
-	sender :user;
+	id: number;
+	recipient: user;
+	sender: user;
 }
 export interface Notifications {
 	image_url: string;
 	description: string;
 	created_at: string;
-	id :number;
+	id: number;
 	sender: user;
 	seen: boolean;
 	results: Results[];
 }
 
-function NotificationContent({notifications}:{notifications: Notifications}) {
+export function NotificationContent({
+	notifications,
+}: {
+	notifications: Notifications;
+}) {
+	const [client, setClient] = useState(false);
 	const truncatedNotification = notifications.description;
 	const send_at = new Date(notifications.created_at).toLocaleString();
+
+	useEffect(() => {
+		setClient(true);
+	}, []);
+	if (!client) return null;
 	return (
 		<div
-			className={`p-2 h-[50px] flex  flex-row items-center justify-between rounded-sm my-[3px]  w-[260px] overflow-hidden ${
+			className={`p-2 h-[50px] flex  flex-row items-center justify-between rounded-sm my-[3px] w-[260px] overflow-hidden ${
 				!notifications.seen ? "bg-[#474747]" : ""
 			}`}>
 			<div className='flex items-center rounded-sm'>
@@ -81,17 +92,20 @@ function NotificationContent({notifications}:{notifications: Notifications}) {
 }
 
 function NotificationPanel() {
-	const [notifications, setNotifications] = useState<PaginationApiResponse<Notifications>>();
+	const [notifications, setNotifications] =
+		useState<PaginationApiResponse<Notifications>>();
 	const [viewAllClicked, setViewAllClicked] = useState<boolean>(false);
-	const [notificationClicked, setNotificationClicked] = useState<number | null>(null);
+	const [notificationClicked, setNotificationClicked] = useState<number | null>(
+		null
+	);
 
 	useEffect(() => {
 		const fetchNotifications = async () => {
 			try {
-				const response = await apiMock.get('/notifications/');
+				const response = await apiMock.get("/notifications/");
 				setNotifications(response.data);
 			} catch (error) {
-				console.error('Error fetching notifications:', error);
+				console.error("Error fetching notifications:", error);
 			}
 		};
 		fetchNotifications();
@@ -107,7 +121,7 @@ function NotificationPanel() {
 
 	return (
 		<div
-			id="notification-panel"
+			id='notification-panel'
 			className=' z-50 mt-[3px] absolute top-full right-0 bg-[#242424] w-[276px] p-2 rounded-md flex flex-col'
 			onClick={(e) => e.stopPropagation()}>
 			<div className='font-semibold text-[14px] text-[#666666]'>
@@ -117,21 +131,22 @@ function NotificationPanel() {
 			<div className='w-[256px] border-t-[2px] border-[#363636] pt-3 mt-3'></div>
 			<div className='flex flex-col items-center'>
 				<div
-					className={`${viewAllClicked
-						? "h-[300px] overflow-y-scroll hide-scrollbar"
-						: "h-[300px]"
-						}`}>
-					{notifications?.results.slice(0, viewAllClicked ? (notifications?.results.length ?? 0) : 5).map((item, index) => (
-						<div
-							key={index}
-							className={`container flex flex-col justify-between items-center relative
-							${index === notificationClicked ? item.seen = true : ""}`}
-							onClick={() => handleNotificationClicked(index)}>
-							<NotificationContent
-								notifications={item}
-							/>
-						</div> 
-					))}
+					className={`${
+						viewAllClicked
+							? "h-[300px] overflow-y-scroll hide-scrollbar"
+							: "h-[300px]"
+					}`}>
+					{notifications?.results
+						.slice(0, viewAllClicked ? notifications?.results.length ?? 0 : 5)
+						.map((item, index) => (
+							<div
+								key={index}
+								className={`container flex flex-col justify-between items-center relative
+							${index === notificationClicked ? (item.seen = true) : ""}`}
+								onClick={() => handleNotificationClicked(index)}>
+								<NotificationContent notifications={item} />
+							</div>
+						))}
 				</div>
 				{(notifications?.results.length ?? 0) > 5 && (
 					<button
@@ -147,20 +162,47 @@ function NotificationPanel() {
 				)}
 			</div>
 		</div>
-	)
+	);
 }
-const NavBar = () => {
-	const [clickedIndex, setClickedIndex] = useState(false);
 
+export const Links = ({ navLinks }: { navLinks: navItem[] }) => {
+	return (
+		<ul className='flex flex-col py-2 lg:py-0 lg:flex-row gap-2 lg:gap-8 justify-center items-start'>
+			{navLinks.map((item, index) => (
+				<li key={index} className='w-full px-1 lg:w-auto lg:px-0'>
+					<NavBtn
+						key={index}
+						href={item.href}
+						name={item.name}
+						Icon={item.Icon}
+					/>
+				</li>
+			))}
+		</ul>
+	);
+};
+
+export const SocialPanel = ({
+	socialLinks,
+	fullscreen = true,
+}: {
+	socialLinks: SocialItem[];
+	fullscreen?: boolean;
+}) => {
+	const [clickedIndex, setClickedIndex] = useState(false);
+	const router = useRouter();
 	const handleIconClick = (href: string) => {
-		if (href === "") setClickedIndex(!clickedIndex);
+		if (href === "" && fullscreen) setClickedIndex(!clickedIndex);
+		else if (href === "" && !fullscreen) {
+			router.push("/notifications");
+		}
 	};
 
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
 			const target = event.target as HTMLElement;
-			const panel = document.getElementById('notification-panel');
-			const button = document.getElementById('notification-icon');
+			const panel = document.getElementById("notification-panel");
+			const button = document.getElementById("notification-icon");
 
 			if (
 				panel &&
@@ -171,49 +213,51 @@ const NavBar = () => {
 			}
 		};
 
-		document.addEventListener('mousedown', handleOutsideClick);
+		document.addEventListener("mousedown", handleOutsideClick);
 
 		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick);
+			document.removeEventListener("mousedown", handleOutsideClick);
 		};
 	}, []);
+	return (
+		<ul className='flex flex-row gap-1 justify-center items-center'>
+			{socialLinks.map((item, index) => {
+				return (
+					<div key={index} className='relative'>
+						<div className={``} onClick={() => handleIconClick(item.href)}>
+							<div
+								id='notification-icon'
+								className={`rounded-full ${
+									clickedIndex && item.href === ""
+										? "bg-[#111111]"
+										: "bg-[#303030]"
+								}   h-[30px] lg:h-[40px] w-[30px] lg:w-[40px] aspect-square`}>
+								<NavBtnR href={item.href} Icon={item.Icon} />
+								{item.href === "" && clickedIndex && fullscreen ? (
+									<NotificationPanel />
+								) : null}
+							</div>
+						</div>
+					</div>
+				);
+			})}
+		</ul>
+	);
+};
+
+const NavBar = () => {
 	return (
 		<div className='w-full mt-[40px] mb-[40px] flex flex-row justify-between items-center mx-auto max-w-[100vw]'>
 			<div className='text-white font-semibold flex flex-row gap-16 items-center justify-center'>
 				<PlayNowIcon />
-				<ul className='flex flex-row gap-8 justify-center items-center'>
-					{navLinks.map((item, index) => (
-						<li key={index}>
-							<NavBtn
-								key={index}
-								href={item.href}
-								name={item.name}
-								Icon={item.Icon}
-							/>
-						</li>
-					))}
-				</ul>
+				<div className='hidden lg:block'>
+					<Links navLinks={navLinks} />
+				</div>
 			</div>
 			<div className='flex items-center space-x-2'>
-				{socialLinks.map((item, index) => {
-					return (
-						<div key={index} className='relative'>
-							<div className={``} onClick={() => handleIconClick(item.href)}>
-								<div
-									id='notification-icon'
-									className={`rounded-full ${clickedIndex && item.href === ""
-										? "bg-[#111111]"
-										: "bg-[#303030]"
-										} h-[40px] w-[40px] aspect-square`} >
-									<NavBtnR href={item.href} Icon={item.Icon} />
-									{item.href === "" && clickedIndex ? (
-										<NotificationPanel />
-									) : null}
-								</div>
-							</div>
-						</div>
-					);
-				})}
+				<div className='hidden lg:block'>
+					<SocialPanel socialLinks={socialLinks} />
+				</div>
 				<ProfileIcon />
 			</div>
 		</div>

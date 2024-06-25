@@ -15,7 +15,7 @@ export function UserContainer({ player, index }: {
 		return null;
 	}
 	return (
-		<Link href={`/profile/${player.id}`}>
+		<Link href={`/profile/${player.username}`}>
 			<button
 				className={`mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3
 			${isMessage ? styles.highlight : "bg-[#373737]"}`}>

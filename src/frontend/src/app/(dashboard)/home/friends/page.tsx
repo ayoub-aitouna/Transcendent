@@ -15,7 +15,7 @@ export function FriendContainer({ name, href, number, id }: { name: string; href
 	return (
 		<div className='mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3'>
 			<Link
-				href={`/profile/${id}`}
+				href={`/profile/${name}`}
 				className='flex items-center justify-between'>
 				<Image
 					className='bg-white w-[53px] h-[53px] rounded-full'

@@ -8,6 +8,8 @@ import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { Logout } from "@/redux/slices/userslice";
 import { clearCookies } from "@/api/auth";
 import { ImageSrc } from "@/lib/ImageSrc";
+import { Links, SocialPanel } from "./NavBar";
+import { navLinks, socialLinks } from "@/constant/dashboard";
 
 export const ProfileIcon = () => {
 	const [isClicked, setIsClicked] = useState(false);
@@ -76,7 +78,7 @@ export const ProfileIcon = () => {
 					onClick={handleClick}>
 					{isClicked ? (
 						<svg
-							className='w-6 h-6 text-gray-800 dark:text-white'
+							className='w-4 h-4 text-gray-800 dark:text-white'
 							aria-hidden='true'
 							xmlns='http://www.w3.org/2000/svg'
 							fill='none'
@@ -85,13 +87,13 @@ export const ProfileIcon = () => {
 								stroke='currentColor'
 								strokeLinecap='round'
 								strokeLinejoin='round'
-								strokeWidth='2'
+								strokeWidth='1.52'
 								d='M13 7 7.674 1.3a.91.91 0 0 0-1.348 0L1 7'
 							/>
 						</svg>
 					) : (
 						<svg
-							className='w-5 h-5 text-gray-800 dark:text-white'
+							className='w-4 h-4 text-gray-800 dark:text-white'
 							aria-hidden='true'
 							xmlns='http://www.w3.org/2000/svg'
 							fill='none'
@@ -100,7 +102,7 @@ export const ProfileIcon = () => {
 								stroke='currentColor'
 								strokeLinecap='round'
 								strokeLinejoin='round'
-								strokeWidth='2'
+								strokeWidth='1.52'
 								d='m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1'
 							/>
 						</svg>
@@ -110,7 +112,7 @@ export const ProfileIcon = () => {
 			{isClicked && (
 				<div
 					id='profile-panel'
-					className='mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] h-[145px] p-4 rounded-md'>
+					className='mt-[3px] absolute right-0 top-full bg-[#242424] w-[200px] min-h-[145px] p-4 rounded-md'>
 					<div className='flex items-start'>
 						<div className='rounded-full flex items-start'>
 							<div className='rounded-full flex items-start w-[30px] h-[30px]'>
@@ -140,6 +142,12 @@ export const ProfileIcon = () => {
 					</div>
 
 					<div className=' w-[160px]   mt-2 border-t border-[#363636] pt-2'></div>
+					<div className='block lg:hidden'>
+						<Links navLinks={navLinks} />
+					</div>
+
+					<div className=' w-[160px]   mt-2 border-t border-[#363636] pt-2'></div>
+
 					<Link
 						href='/settings'
 						className='flex items-center justify-between  flex-row  w-[55px] h-[14px]'>
@@ -164,6 +172,10 @@ export const ProfileIcon = () => {
 							Sing out
 						</div>
 					</Link>
+					<div className=' w-[160px] mt-4 border-t border-[#363636] pt-2'></div>
+					<div className='block lg:hidden '>
+						<SocialPanel socialLinks={socialLinks} fullscreen={false} />
+					</div>
 				</div>
 			)}
 		</div>

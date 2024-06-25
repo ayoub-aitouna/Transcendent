@@ -1,6 +1,8 @@
 
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveDestroyAPIView, CreateAPIView
+
+from .tasks import start_scheduler
 from .serializers import (
     GameSerializer,
     MatchUpSerializer,
@@ -33,6 +35,14 @@ class listTournaments(ListCreateAPIView):
         combined_list = private_list | public_list
         return combined_list.order_by('is_public').reverse()
 
+    def perform_create(self, serializer):
+        start_date = self.request.data.get('start_date')
+        if start_date < datetime.datetime.now():
+            raise serializers.ValidationError(
+                "Start date must be in the future")
+        tournament_id = super().perform_create(serializer).data.get('id')
+        start_scheduler(tournament_id, start_date)
+
 
 class listAnnouncements(ListCreateAPIView):
     serializer_class = TournamentSerializer
@@ -43,7 +53,6 @@ class listAnnouncements(ListCreateAPIView):
 class RetrieveTournament(RetrieveDestroyAPIView):
     serializer_class = TournamentDetailsSerializer
     queryset = Tournament.objects.all()
-    
 
 
 class RegisterToTournament(CreateAPIView):

@@ -37,8 +37,6 @@ urlpatterns = [
          view=views.UnblockUser.as_view(), name='unblock-user'),
     path('logout-all-devices/', view=views.LogoutAllDevices.as_view(),
          name='logout-all-devices'),
-    path('test-appschudler/', view=views.TestAppScheduler.as_view(),
-         name='test-appscheduler'),
     path('<str:username>/', view=views.UsersDetailByUsername.as_view(),
          name='user-by-username'),
 ]

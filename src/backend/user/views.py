@@ -25,14 +25,7 @@ from django.utils import timezone
 from datetime import timedelta
 from api.serializers import NotificationSerializer
 from django.core.exceptions import ObjectDoesNotExist
-from transcendent.tasks import start_scheduler
 
-
-class TestAppScheduler(APIView):
-    def get(self, request):
-        launch_date = timezone.now() + timedelta(minutes=1)  # example launch date
-        start_scheduler(0, launch_date)
-        return Response({'message': f'task_id {0} started'})
 
 
 class BaseNotification():
