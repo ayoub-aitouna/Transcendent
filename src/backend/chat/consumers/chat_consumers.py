@@ -4,7 +4,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
-from chat.models import ChatRoom, ChatMessage
+from chat.models import ChatRoom, ChatMessage, RemovedRoom
 from django.core.files.base import ContentFile
 
 channel_layer = get_channel_layer()
@@ -93,6 +93,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender=self.user,
             message=message_text
         )
+        removed_room = RemovedRoom.objects.filter(
+            user=self.user, room=chat_room)
+        removed_room.delete()
+        for member in chat_room.members.all():
+            if member != self.user:
+                removed_room_receiver = RemovedRoom.objects.filter(user=member, room=chat_room)
+                if removed_room_receiver:
+                    removed_room_receiver.delete()
 
     @database_sync_to_async
     def save_image_message(self, image_data):
@@ -106,3 +114,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender=self.user,
             image_file=image_file
         )
+        removed_room = RemovedRoom.objects.filter(
+            user=self.user, room=chat_room)
+        removed_room.delete()
+        for member in chat_room.members.all():
+            if member != self.user:
+                removed_room_receiver = RemovedRoom.objects.filter(user=member, room=chat_room)
+                if removed_room_receiver:
+                    removed_room_receiver.delete()

@@ -22,24 +22,30 @@ class ChatRoomsListView(ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        query = self.request.query_params.get('q')
+        removed_rooms = RemovedRoom.objects.filter(
+            user=user).values_list('room_id', flat=True)
+        return ChatRoom.objects.filter(members=user).exclude(id__in=removed_rooms).exclude(messages_chat_room=None)
 
-        removed_rooms = RemovedRoom.objects.filter(user=user).values_list('room_id', flat=True)
-        queryset = ChatRoom.objects.filter(members=user).exclude(messages_chat_room=None)
-
+    def search_rooms(self, query):
+        user = self.request.user
+        removed_rooms = RemovedRoom.objects.filter(
+            user=user).values_list('room_id', flat=True)
+        queryset = ChatRoom.objects.filter(
+            members=user).exclude(messages_chat_room=None)
         for room in queryset:
-            if not  RemovedMessage.objects.filter(message__chatRoom=room, user=user).exists():
+            if not RemovedMessage.objects.filter(chatRoom=room, sender=user).exists():
                 queryset = queryset.exclude(id__in=removed_rooms)
-
         if query:
             room_name_filter = Q(name__icontains=query) & Q(type='group')
             member_name_filter = Q(members__first_name__icontains=query) | Q(
                 members__last_name__icontains=query) | Q(members__username__icontains=query)
             member_name_filter &= Q(type='private')
 
-            queryset = queryset.filter(room_name_filter | member_name_filter).distinct()
+            queryset = queryset.filter(
+                room_name_filter | member_name_filter).distinct()
 
         return queryset
+
 
 class RemoveUserRoomView(APIView):
     permission_classes = [IsAuthenticated]
@@ -80,8 +86,12 @@ class MessagesView(ListCreateAPIView):
         instance.save()
         return Response({'Details': 'Messages Updated!'})
 
-    def perform_create(self, serializer):
+    def create(self, serializer):
         instance = serializer.save()
+        user = self.request.user
+        room_id = instance.chatRoom_id
+        removed_room = RemovedRoom.objects.get(user=user, room_id=room_id)
+        removed_room.delete()
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             f"chat_{instance.chatRoom_id}",
@@ -112,7 +122,10 @@ class ChatRoomView(generics.RetrieveAPIView):
     def get_queryset(self):
         room_id = self.kwargs['pk']
         user = self.request.user
-        room = ChatRoom.objects.filter(id=room_id).exclude(messages_chat_room=None)
+        removed_rooms = RemovedRoom.objects.filter(
+            user=user).values_list('room_id', flat=True)
+        room = ChatRoom.objects.filter(id=room_id).exclude(
+            id__in=removed_rooms).exclude(messages_chat_room=None)
         unseen_messages = ChatMessage.objects.filter(
             chatRoom=room.first(), seen=False).exclude(sender=user)
         for message in unseen_messages:

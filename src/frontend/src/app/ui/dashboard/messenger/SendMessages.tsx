@@ -1,5 +1,4 @@
-import { MessageItem, roomItem } from "@/api/chat";
-import apiMock from "@/lib/axios-mock";
+import {GetChatMessages, MessageItem, roomItem } from "@/api/chat";
 import React, {
 	useRef,
 	useEffect,
@@ -10,127 +9,11 @@ import Upload from "../icons/messenger/Upload";
 import SendIcon from "../icons/messenger/send";
 import EmojiIcon from "../icons/messenger/emoji";
 import { ChatMessage } from "./chat-message";
-import ThreePointsIcon from "../icons/messenger/three-points";
-import Link from "next/link";
-import Image from "next/image";
 import { useAppSelector } from "@/redux/store";
 import moment from "moment";
-import { ImageSrc } from "@/lib/ImageSrc";
-import { Friend } from "@/type/auth/user";
 import { GetFriendsData } from "@/api/user";
-import { useRouter } from 'next/navigation'
-
-export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
-	const [clickedThreePoints, setClickedThreePoints] = useState(false);
-    const [clear, setClear] = useState(false);
-    const [close, setClose] = useState(false);
-    const [deleteChat, setDelete] = useState(false);
-    const [block, setBlock] = useState(false);
-    const router = useRouter();
-
-    const handleThreePoints = () => {
-        setClickedThreePoints(!clickedThreePoints);
-	};
-
-	const handleClose = () => {
-		setClose(true);
-    };
-	useEffect(() => {
-        if (close) {
-            router.push(` `);
-			 router.refresh()
-        }
-    }, [close, router]);
-
-    return (
-        <div>
-            <button className="w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden">
-                <Link href="/profile" className="flex items-center justify-between">
-                    <Image
-                        className="bg-white w-[53px] h-[53px] rounded-full"
-                        src={ImageSrc(selectedChat?.room_icon, selectedChat.room_name)}
-                        alt="Profile Image"
-                        width={53}
-                        height={53}
-                    />
-                    <div className="flex items-start flex-col max-w-[80px]">
-                        <div className="ml-[10px] text-white truncate text-[16px] font-bold">
-                            {selectedChat?.room_name}
-                        </div>
-                        <div className="ml-[10px] text-[#878787] text-[14px] truncate font-normal">
-                            {selectedChat.receiverUser && selectedChat?.receiverUser[0].status}
-                        </div>
-                    </div>
-                </Link>
-                <div className="relative flex flex-col items-center">
-                    <div className="relative flex flex-col items-center p-7" onClick={handleThreePoints}>
-                        <ThreePointsIcon />
-                    </div>
-                </div>
-                {clickedThreePoints && (
-                    <div className="z-50 absolute left-[76%] bottom-[75%] bg-[#161616] h-[175px] w-[200px] p-2 rounded-md">
-                        <div className="flex flex-col items-start justify-start text-[16px] text-[#878787]">
-                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => setClear(true)}>
-                                <div>Clear Chat</div>
-                            </button>
-                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={handleClose}>
-                                <div>Close Chat</div>
-                            </button>
-                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => setDelete(true)}>
-                                <div>Delete Chat</div>
-                            </button>
-                            <button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => setBlock(true)}>
-                                <div>Block</div>
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </button>
-        </div>
-    );
-}
-export function SendImage({ onImageUpload }: { onImageUpload: (image: File | null) => void }) {
-	const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-	const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files && e.target.files[0];
-		if (file) {
-			setSelectedImage(URL.createObjectURL(file));
-			onImageUpload(file);
-		}
-	};
-
-	const removeImage = () => {
-		setSelectedImage(null);
-		onImageUpload(null);
-	};
-
-	return (
-		<div>
-			{selectedImage ? (
-				<div className='p-2 pr-8' onClick={removeImage}>
-					<div className='p-2'>
-						<Upload color=' #3342ff ' />
-					</div>
-					<div className='text-[10px] text-[#3342ff]'>Uploaded</div>
-				</div>
-			) : (
-				<label className='p-2 pr-8'>
-					<div className='p-1'>
-						<Upload color='#878787' />
-					</div>
-					<div className='text-[10px] text-[#878787]'>Upload</div>
-					<input
-						type='file'
-						className='hidden'
-						onChange={handleImageUpload}
-						accept='image/*'
-					/>
-				</label>
-			)}
-		</div>
-	);
-};
+import ChatPanel from "./chat-panel";
+import SendImage from "./send-image";
 
 
 const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
@@ -160,8 +43,8 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 	useEffect(() => {
 		const fetchMessages = async () => {
 			try {
-				const response = await apiMock.get(`/chat/room/${selectedChat?.id}/`);
-				setMessages(response.data.results);
+				const response = await GetChatMessages(selectedChat?.id);
+				setMessages(response);
 			} catch (error) {
 				console.error("Error fetching messages:", error);
 			}
@@ -232,7 +115,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 				image_file: imageFile ? URL.createObjectURL(imageFile) : "",
 				seen: false,
 				created_at: String(moment()),
-				id:  selectedChat.id ,
+				id: selectedChat.id,
 				sender_username: username,
 			}]);
 			setMessageContent("");
@@ -278,7 +161,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 				</div>
 			</div>
 			<div className='absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
-				{isFriend ?
+				{isFriend && selectedChat.type  === 'private' ?
 					<div className='flex flex-row items-center justify-center h-full'>
 						<div className='p-2'>
 							<div className='pt-2'>
