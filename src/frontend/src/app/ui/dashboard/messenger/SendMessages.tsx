@@ -1,121 +1,19 @@
-import { MessageItem, roomItem } from "@/api/chat";
-import apiMock from "@/lib/axios-mock";
+import {GetChatMessages, MessageItem, roomItem } from "@/api/chat";
 import React, {
 	useRef,
 	useEffect,
 	useState,
-	ChangeEvent,
 	useCallback,
 } from "react";
 import Upload from "../icons/messenger/Upload";
 import SendIcon from "../icons/messenger/send";
 import EmojiIcon from "../icons/messenger/emoji";
 import { ChatMessage } from "./chat-message";
-import ThreePointsIcon from "../icons/messenger/three-points";
-import Link from "next/link";
-import Image from "next/image";
 import { useAppSelector } from "@/redux/store";
 import moment from "moment";
-import { ImageSrc } from "@/lib/ImageSrc";
-import { Friend } from "@/type/auth/user";
 import { GetFriendsData } from "@/api/user";
-
-export function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
-	const [clickedThreePoints, setClickedThreePoints] = useState(false);
-	const handleThreePoints = () => {
-		console.log("Three points clicked");
-		setClickedThreePoints(!clickedThreePoints);
-	};
-	return (
-		<div>
-			<button
-				className={`w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden`}>
-				<Link href={"/profile"} className='flex items-center justify-between '>
-					{/* <div><LeftArrow/></div>  */}
-					{/* handle left arrow when the screen is small */}
-					<Image
-						className='bg-white  w-[53px] h-[53px] rounded-full'
-						src={ImageSrc(selectedChat?.room_icon, selectedChat.room_name)}
-						alt='Profile Image'
-						width={53}
-						height={53}
-					/>
-					<div />
-					<div className='flex items-start flex-col max-w-[80px]'>
-						<div className='ml-[10px]  text-white truncate text-[16px] font-bold'>
-							{selectedChat?.room_name}
-						</div>
-						<div
-							className={`ml-[10px]  text-[#878787] text-[14px] truncate font-normal`}>
-							{selectedChat.receiverUser &&
-								selectedChat?.receiverUser[0].status}
-						</div>
-					</div>
-				</Link>
-				<div className='relative flex flex-col items-center'>
-					<div
-						className='relative flex flex-col items-center p-7'
-						onClick={handleThreePoints}>
-						<ThreePointsIcon />
-					</div>
-				</div>
-				{clickedThreePoints && (
-					<div className='z-50 absolute left-[76%] bottom-[82%] bg-[#161616] h-[150px] w-[200px] p-4 rounded-md'>
-						<div className='flex flex-col  items-start justify-start  text-[16px] text-[#878787] gap-2'>
-							<button className=''> clear chat </button>
-							<button className=''> close char </button>
-							<button className=''> Delete Chat </button>
-							<button className=''> Block </button>
-						</div>
-					</div>
-				)}
-			</button>
-		</div>
-	);
-}
-
-export function SendImage({ onImageUpload }: { onImageUpload: (image: File | null) => void }) {
-	const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-	const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files && e.target.files[0];
-		if (file) {
-			setSelectedImage(URL.createObjectURL(file));
-			onImageUpload(file);
-		}
-	};
-
-	const removeImage = () => {
-		setSelectedImage(null);
-		onImageUpload(null);
-	};
-
-	return (
-		<div>
-			{selectedImage ? (
-				<div className='p-2 pr-8' onClick={removeImage}>
-					<div className='p-2'>
-						<Upload color=' #3342ff ' />
-					</div>
-					<div className='text-[10px] text-[#3342ff]'>Uploaded</div>
-				</div>
-			) : (
-				<label className='p-2 pr-8'>
-					<div className='p-1'>
-						<Upload color='#878787' />
-					</div>
-					<div className='text-[10px] text-[#878787]'>Upload</div>
-					<input
-						type='file'
-						className='hidden'
-						onChange={handleImageUpload}
-						accept='image/*'
-					/>
-				</label>
-			)}
-		</div>
-	);
-};
+import ChatPanel from "./chat-panel";
+import SendImage from "./send-image";
 
 
 const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
@@ -145,8 +43,8 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 	useEffect(() => {
 		const fetchMessages = async () => {
 			try {
-				const response = await apiMock.get(`/chat/room/${selectedChat?.id}/`);
-				setMessages(response.data.results);
+				const response = await GetChatMessages(selectedChat?.id);
+				setMessages(response);
 			} catch (error) {
 				console.error("Error fetching messages:", error);
 			}
@@ -160,14 +58,8 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 		}
 
 		if (socket.current) {
-			socket.current.onopen = () => {
-				console.log("WebSocket connection opened: ", socket.current);
-			};
 			socket.current.onerror = (err) => {
 				console.log("WebSocket closed by an error: ", err);
-			};
-			socket.current.onclose = (event) => {
-				console.log("WebSocket connection closed: ", event);
 			};
 			socket.current.onmessage = (event) => {
 				const receivedMessage = JSON.parse(event.data);
@@ -176,7 +68,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 					image_file: receivedMessage.message.type === 'image' ? receivedMessage.message.image_file : null,
 					seen: false,
 					created_at: String(moment(receivedMessage.created_at)),
-					id: selectedChat.id,
+					id: receivedMessage.message.id ? receivedMessage.message.id : 0,
 					sender_username: receivedMessage.message.sender_username,
 				};
 				setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -210,6 +102,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 		}
 		try {
 			const payload = {
+				id: selectedChat.id,
 				message: content,
 				type: imageFile ? 'image' : 'text',
 				room_id: selectedChat.id,
@@ -256,6 +149,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 			});
 		}
 	}, [messages]);
+
 	return (
 		<div className='h-full'>
 			<ChatPanel selectedChat={selectedChat} />
@@ -267,7 +161,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 				</div>
 			</div>
 			<div className='absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
-				{isFriend ?
+				{isFriend && selectedChat.type  === 'private' ?
 					<div className='flex flex-row items-center justify-center h-full'>
 						<div className='p-2'>
 							<div className='pt-2'>

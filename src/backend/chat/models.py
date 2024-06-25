@@ -44,3 +44,13 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return self.message
+    
+class RemovedRoom(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+class RemovedMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.ForeignKey(ChatMessage, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'message')

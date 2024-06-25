@@ -1,11 +1,17 @@
 from django.urls import path
-from chat.views import ChatRoomView, CheckPrivateChatRoomView, MessagesView, ChatRoomsListView
+from . import views
 
 urlpatterns = [
-    path('rooms/', ChatRoomsListView.as_view(), name='chatRoom'),
-    path('rooms/<int:pk>/', ChatRoomView.as_view(), name='RoomList'),
-    path('room/<int:id>/', MessagesView.as_view(), name='messageList'),
-    path('get-chat-room/<int:id>/', CheckPrivateChatRoomView.as_view(),
+    path('rooms/', views.ChatRoomsListView.as_view(), name='chatRoom'),
+    path('rooms/<int:pk>/', views.ChatRoomView.as_view(), name='RoomList'),
+    path('room/<int:id>/', views.MessagesView.as_view(), name='messageList'),
+    path('get-chat-room/<int:id>/', views.CheckPrivateChatRoomView.as_view(),
          name='check-private-chat-room'),
-
+    path('download-image/<int:message_id>/',
+         views.DownloadMessageImageView.as_view(), name='download-image'),
+    path('filter-rooms/', views.UnseenRoomsMessagesView.as_view(), name='filter-rooms'),
+    path('clear-chat/<int:room_id>/',
+         views.RemoveUserMessagesView.as_view(), name='Delete-messages'),
+    path('Delete-chat/<int:room_id>/',
+         views.RemoveUserRoomView.as_view(), name='Delete-room'),
 ]

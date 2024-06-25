@@ -10,7 +10,7 @@ function get_last_message({ lastMessage }: { lastMessage: MessageItem }) {
 	if (lastMessage === null)
 		return ""
 	if (lastMessage.image_file) {
-		return lastMessage.sender_username + " " + "send a photo";
+		return "Photo";
 	}
 	else
 		return lastMessage.message;
@@ -60,7 +60,11 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 			setViewsMessages(false);
 		}
 	};
-
+	useEffect(() => {
+		if (isSelected) {
+			setViewsMessages(messagesNbr !== 0);
+		}
+	}, [isSelected, messagesNbr, lastMassage]);
 	return (
 		<div
 			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded-lg 

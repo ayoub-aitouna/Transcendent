@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import ChatRoom, ChatMessage
 from user.serializers import BaseUserSerializer
 from user.models import User
+from chat.models import RemovedMessage
 from django.utils import timezone
 
 
@@ -38,7 +39,8 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
     def get_last_message(self, obj):
         last_message = ChatMessage.objects.filter(
             chatRoom=obj).order_by('-created_at').first()
-        if last_message:
+
+        if last_message and not RemovedMessage.objects.filter(message_id=last_message.id).exists():
             return {
                 'id': last_message.id,
                 'message': last_message.message,
@@ -80,8 +82,8 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
         member = obj.members.exclude(id=user.id).first()
         if member is None:
             return None
-        if member.first_name + member.last_name != '':
-            return member.first_name + ' ' + member.last_name
+        # if member.first_name + member.last_name != '':
+        #     return member.first_name + ' ' + member.last_name
         return member.username
 
     def get_unseen_messages_count(self, obj):
@@ -188,7 +190,7 @@ class ChatRoomSerializer(ChatRoomsListSerializer):
     receiverUser = serializers.SerializerMethodField()
 
     class Meta(ChatRoomsListSerializer.Meta):
-        fields = ['id', 'room_name', 'room_icon', 'unseen_messages_count',
+        fields = ['id', 'room_name', 'room_icon','type', 'unseen_messages_count',
                   'last_message', 'receiverUser', 'members']
 
     def get_receiverUser(self, obj):
