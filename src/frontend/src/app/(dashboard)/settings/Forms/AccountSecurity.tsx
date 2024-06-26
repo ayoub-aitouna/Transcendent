@@ -10,6 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import ToggleOption from "@/app/ui/dashboard/component/toggle-option";
 import OptionLink from "@/app/ui/dashboard/component/option-link";
+import NotificationToggler from "../components/notification-toggler";
 
 const email_schema = yup
 	.object()
@@ -86,15 +87,7 @@ const AccountSecurityFrom = () => {
 					title='2-Step verification'
 					desc='Add an additional Layer of security to your account during login'
 				/>
-
-				<ToggleOption
-					onCheck={() => {
-						Notification.requestPermission();
-					}}
-					checked={Notification.permission === "granted"}
-					title='Desktop Notification'
-					desc='Receive desktop notifications for critical events.'
-				/>
+				<NotificationToggler />
 				<OptionLink
 					title='Blocklist'
 					href='/settings/block-list'

@@ -7,7 +7,7 @@ import SearchBar from '@/app/ui/dashboard/home/content_area/SearchBar';
 import Error from "@/app/ui/dashboard/component/Error";
 
 
-export const GetRecommendedAndPendingUsers = async (q: string | null) => {
+const GetRecommendedAndPendingUsers = async (q: string | null) => {
 	let pendingRes = null;
 	let recommendedRes = null;
 	if (!q || q === '') {

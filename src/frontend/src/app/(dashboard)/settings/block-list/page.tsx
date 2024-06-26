@@ -8,7 +8,7 @@ import { FriendRequest } from '@/type/auth/user';
 import { PaginationApiResponse } from '@/type';
 
 
-export const GetData = async (q: string | null) => {
+const GetData = async (q: string | null) => {
 	let response = null;
 	if (!q || q === '') {
 		response = await apiMock.get(`/users/blocked-list/`);

@@ -29,7 +29,7 @@ const setAccessTokens = async (access: string) => {
 
 export const apiMock = axios.create({
     baseURL: BACKEND_API_URL,
-    headers: {	
+    headers: {
         'Content-Type': 'application/json',
     },
     withCredentials: false,
@@ -52,6 +52,7 @@ apiMock.interceptors.response.use(
     },
     async function (error) {
         const originalRequest = error.config;
+
         const { refresh } = await getAccessTokens()
         if (error.response.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
@@ -62,10 +63,11 @@ apiMock.interceptors.response.use(
                     originalRequest.headers['Authorization'] = `Bearer ${res.data.access}`;
                     setAccessTokens(res.data.access)
                     return apiMock(originalRequest);
-                } else {
-                    destroyCookie(null, 'access')
-                    destroyCookie(null, 'refresh')
                 }
+            }).catch(err => {
+                destroyCookie(null, 'access')
+                destroyCookie(null, 'refresh')
+                window.location.href = '/auth'
             })
         }
         return Promise.reject(error);
