@@ -1,30 +1,27 @@
 "use client";
 
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import Image from "next/image";
-import ToggleSwitch from "@/app/ui/dashboard/component/Toggle-switch";
 import apiMock from "@/lib/axios-mock";
 import { useRouter } from "next/navigation";
 import { UploadIcon } from "@/app/ui/dashboard/icons/content_area/UploadIcon";
 import RightArrow from "@/app/ui/dashboard/icons/content_area/right-arrow";
 import Link from "next/link";
-import { Player } from "@/type/dashboard/players";
-import { GroupsContainer } from "@/app/ui/dashboard/messenger/Group-container";
-
+import  GroupsContainer  from "@/app/ui/dashboard/messenger/Group-container";
+import { UserContext } from "@/app/ui/dashboard/messenger/context/UserContext";
 
 const Page = () => {
-	const router = useRouter()
+	const router = useRouter();
+	const { users } = useContext(UserContext);
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
 	const [src, setSrc] = useState<string | null>(null);
 	const [name, setName] = useState('');
-
+	console.log(" users : -- > ", users);
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-		if (!e.target.files)
-			return
-		const file = e.target.files[0]
-		console.log(file)
+		if (!e.target.files) return;
+		const file = e.target.files[0];
 		setSelectedImage(file);
 		const reader = new FileReader();
 		reader.onload = () => {
@@ -40,25 +37,22 @@ const Page = () => {
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		console.log('uploading')
 		const formData = new FormData();
-
 		formData.append('Name', name);
 		formData.append('Type', 'Group');
-		formData.append('Input members', '1,2,3');
-		if (selectedImage)
-			formData.append('icon', selectedImage ? selectedImage : '');
+		formData.append('Input members', users.map(user => user.id).join(','));
+		if (selectedImage) formData.append('icon', selectedImage);
 
 		try {
-			const res = await apiMock.post('/chat/rooms/', formData, {
+			await apiMock.post('/chat/rooms/', formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}
 			});
-			router.push('/messenger')
+			router.push('/messenger');
 		} catch (error) {
 			console.error('Error:', error);
-			alert('An error occurred while creating the tournament.');
+			alert('An error occurred while creating the group chat.');
 		}
 	};
 
@@ -71,17 +65,11 @@ const Page = () => {
 				<div className='pl-1 font-light text-[14px] text-[#94969C] pb-4'>
 					Create a new chat group and invite your friends to join.
 				</div>
-
 				<form className='bg-[#000000] h-full rounded-lg p-5' onSubmit={handleSubmit}>
 					<div className='flex w-full h-[100px] justify-center items-center'>
 						{src ? (
 							<div className='relative w-[73px] h-[73px] p-6'>
-								<Image
-									src={src}
-									alt='Selected'
-									height={73}
-									width={73}
-								/>
+								<Image src={src} alt='Selected' height={73} width={73} />
 								<div
 									className='absolute top-[-10%] right-[-10%] h-4 w-4 rounded-full bg-secondary-100 grid place-content-center cursor-pointer'
 									onClick={removeImage}
@@ -147,23 +135,19 @@ const Page = () => {
 								</div>
 							</div>
 							<div className='flex items-center justify-end'>
-								<RightArrow/>
+								<RightArrow />
 							</div>
 						</Link>
 						<div className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
-							<GroupsContainer name={"khadija"} href={"/assets/images/girl.jpg"} number={0} id={0}  />
+							{users.map(user => (
+								<GroupsContainer key={user.id} {...user} />
+							))}
 						</div>
 						<div className='flex flex-row justify-end items-end space-x-2 ml-auto mt-12'>
-							<button
-								className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]'
-								type='button'
-							>
+							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]' type='button'>
 								Cancel
 							</button>
-							<button
-								className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px]`}
-								type='submit'
-							>
+							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px]`} type='submit'>
 								Create
 							</button>
 						</div>
