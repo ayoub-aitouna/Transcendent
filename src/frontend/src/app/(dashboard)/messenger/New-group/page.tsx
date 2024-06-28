@@ -1,3 +1,4 @@
+// app/messenger/New-group/new-group.tsx
 "use client";
 
 import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
@@ -8,8 +9,9 @@ import { useRouter } from "next/navigation";
 import { UploadIcon } from "@/app/ui/dashboard/icons/content_area/UploadIcon";
 import RightArrow from "@/app/ui/dashboard/icons/content_area/right-arrow";
 import Link from "next/link";
-import  GroupsContainer  from "@/app/ui/dashboard/messenger/Group-container";
-import { UserContext } from "@/app/ui/dashboard/messenger/context/UserContext";
+import GroupsContainer from "@/app/ui/dashboard/messenger/Group-container";
+import { UserContext } from "./context/UserContext";
+
 
 const Page = () => {
 	const router = useRouter();
