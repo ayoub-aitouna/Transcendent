@@ -5,6 +5,8 @@ up:
 
 down:
 	docker-compose -f ./src/docker-compose.yml down
+db:
+	docker exec backend python3 manage.py loaddata user/seed/seed.json
 
 fclean: down
 	docker rmi $$(docker images -a -q) &2>/dev/null
