@@ -1,13 +1,16 @@
 'use client'
-import { ClearChat, DeleteChat,roomItem } from "@/api/chat";
-import React, {useEffect,useState,} from "react";
+import { ClearChat, DeleteChat, roomItem } from "@/api/chat";
+import React, { useEffect, useState, } from "react";
 import ThreePointsIcon from "../icons/messenger/three-points";
 import Link from "next/link";
 import Image from "next/image";
 import { ImageSrc } from "@/lib/ImageSrc";
 import { useRouter } from 'next/navigation'
-
-export default function ChatPanel({ selectedChat }: { selectedChat: roomItem }) {
+export default function ChatPanel({ selectedChat, handleGroup }:
+	{
+		selectedChat: roomItem;
+		handleGroup: () => void;
+	}) {
 	const [clickedThreePoints, setClickedThreePoints] = useState(false);
 	const [clear, setClear] = useState(false);
 	const [close, setClose] = useState(false);
@@ -70,7 +73,7 @@ export default function ChatPanel({ selectedChat }: { selectedChat: roomItem }) 
 							{selectedChat?.room_name}
 						</div>
 						<div className="ml-[10px] text-[#878787] text-[14px] truncate font-normal">
-							{selectedChat.receiverUser && selectedChat?.receiverUser[0].status}
+							{selectedChat.type === 'private' ? selectedChat.receiverUser && selectedChat?.receiverUser[0].status : selectedChat.members && selectedChat.members.length > 0 ? selectedChat.members.map((member) => member.username).join(', ') : 'No members'}
 						</div>
 					</div>
 				</Link>
@@ -79,8 +82,8 @@ export default function ChatPanel({ selectedChat }: { selectedChat: roomItem }) 
 						<ThreePointsIcon />
 					</div>
 				</div>
-				{clickedThreePoints && (
-					<div className="z-50 absolute left-[76%] bottom-[75%] bg-[#161616] h-[175px] w-[200px] p-2 rounded-md">
+				{clickedThreePoints && selectedChat.type === "private" ? (
+					<div className="z-50 absolute right-7 top-16 bg-[#161616] h-[175px] w-[200px] p-2 rounded-md">
 						<div className="flex flex-col items-start justify-start text-[16px] text-[#878787]">
 							<button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => setClear(true)}>
 								<div>Clear Chat</div>
@@ -96,7 +99,18 @@ export default function ChatPanel({ selectedChat }: { selectedChat: roomItem }) 
 							</button>
 						</div>
 					</div>
-				)}
+				) : clickedThreePoints && selectedChat.type === "group" &&
+				<div className="z-50 absolute right-7 top-16 bg-[#161616] h-[80px] w-[130px] p-2 rounded-md">
+					<div className="flex flex-col items-start justify-start text-[16px] text-[#878787] gap-3">
+						<button className="hover:bg-[#262626]  rounded-md" onClick={handleGroup}>
+							<div>Group info</div>
+						</button>
+						<button className="hover:bg-[#262626] rounded-md" >
+							<div>Exit Group</div>
+						</button>
+					</div>
+				</div>
+				}
 			</button>
 		</div>
 	);

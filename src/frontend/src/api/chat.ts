@@ -21,6 +21,7 @@ export type roomItem = {
 	last_message: MessageItem;
 	receiverUser?: { id: string, status:string }[];
 	members: user[];
+	admin: user;
 }
 
 export type roomPrivateItem = {

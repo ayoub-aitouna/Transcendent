@@ -12,6 +12,7 @@ from asgiref.sync import async_to_sync
 from .consumers.chat_consumers import get_channel_layer
 from user.models import User
 from django.db.models import Q
+from django.db.models import Max
 from django.contrib.auth import get_user_model
 
 
@@ -24,7 +25,20 @@ class ChatRoomsListView(ListCreateAPIView):
         user = self.request.user
         removed_rooms = RemovedRoom.objects.filter(
             user=user).values_list('room_id', flat=True)
-        return ChatRoom.objects.filter(members=user).exclude(id__in=removed_rooms).exclude(messages_chat_room=None)
+
+        queryset = ChatRoom.objects.filter(
+            members=user
+        ).exclude(
+            id__in=removed_rooms
+        ).annotate(
+            last_message_time=Max('messages_chat_room__created_at')
+        ).exclude(
+            last_message_time__isnull=True 
+        ).order_by(
+            '-last_message_time'
+        )
+
+        return queryset
 
     def search_rooms(self, query):
         user = self.request.user
@@ -125,7 +139,7 @@ class ChatRoomView(generics.RetrieveAPIView):
         removed_rooms = RemovedRoom.objects.filter(
             user=user).values_list('room_id', flat=True)
         room = ChatRoom.objects.filter(id=room_id).exclude(
-            id__in=removed_rooms).exclude(messages_chat_room=None)
+            id__in=removed_rooms)
         unseen_messages = ChatMessage.objects.filter(
             chatRoom=room.first(), seen=False).exclude(sender=user)
         for message in unseen_messages:

@@ -51,7 +51,7 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 	onClick: () => void;
 }) {
 	const lastMassage = get_last_message({ lastMessage: LastMessage });
-	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage.id !== 0);
+	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage && LastMessage.id !== null);
 	const handleClick = () => {
 		onClick();
 		if (isSelected) {

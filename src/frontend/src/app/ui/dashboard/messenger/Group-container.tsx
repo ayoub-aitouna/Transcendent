@@ -29,7 +29,6 @@ const GroupsContainer: React.FC<GroupsContainerProps> = ({ id, username, image_u
 		}
 		setIsAdded(!isAdded);
 	};
-	console.log(" users : -- > ", users, "ISadd: ", isAdded, "id", id);
 	return (
 		<div className='mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3'>
 			<Link href={`/profile/${id}`} className='flex items-center'>
