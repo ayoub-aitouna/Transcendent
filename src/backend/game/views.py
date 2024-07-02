@@ -35,13 +35,14 @@ class listTournaments(ListCreateAPIView):
         combined_list = private_list | public_list
         return combined_list.order_by('is_public').reverse()
 
-    def perform_create(self, serializer):
-        start_date = self.request.data.get('start_date')
-        if start_date < datetime.datetime.now():
-            raise serializers.ValidationError(
-                "Start date must be in the future")
-        tournament_id = super().perform_create(serializer).data.get('id')
-        start_scheduler(tournament_id, start_date)
+    # def perform_create(self, serializer):
+        # start_date_str = self.request.data.get('start_date')
+        # start_date = datetime.strptime(start_date_str, '%Y-%m-%dT%H:%M:%S')  # Adjust the format as needed
+        # if start_date < datetime.now():
+        #     raise serializers.ValidationError(
+        #         "Start date must be in the future")
+        # tournament_id = super().perform_create(serializer).data.get('id')
+        # start_scheduler(tournament_id, start_date)
 
 
 class listAnnouncements(ListCreateAPIView):

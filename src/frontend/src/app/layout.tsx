@@ -7,6 +7,7 @@ import BootstrapProvider from "@/app/provider/bootstrap";
 import { ToastProvider } from "@/app/provider/ToastProvider";
 import WithAuth from "@/app/provider/with-auth";
 import { TournamentProvider } from "@/app/provider/TournamentProvider";
+import { ModalProvider } from "@/app/provider/modal-provider";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -24,9 +25,11 @@ export default function RootLayout({
 				<StoreProvider>
 					<WithAuth>
 						<BootstrapProvider>
-							<ToastProvider>
-								<TournamentProvider>{children}</TournamentProvider>
-							</ToastProvider>
+							<ModalProvider>
+								<ToastProvider>
+									<TournamentProvider>{children}</TournamentProvider>
+								</ToastProvider>
+							</ModalProvider>
 						</BootstrapProvider>
 					</WithAuth>
 				</StoreProvider>
