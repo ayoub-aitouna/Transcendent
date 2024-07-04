@@ -12,6 +12,7 @@ import { useAppSelector } from "@/redux/store";
 import { Tournament } from "@/type/dashboard/tournament";
 import { parseCookies } from "nookies";
 import { WS_BASE_URL } from "@/constant/api";
+import AuthWebSocket from "@/lib/AuthWebSocket";
 
 type TournamentContextType = {
 	useSetTournament: (tournament: any) => void;
@@ -41,7 +42,7 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({
 		(tournament: Tournament) => {
 			if (!ws.current || ConnectedTournamentUuid.current !== tournament.uuid) {
 				ConnectedTournamentUuid.current = tournament.uuid;
-				ws.current = new WebSocket(
+				ws.current = new AuthWebSocket(
 					`${WS_BASE_URL}/game/tournament/${tournament.uuid}/`
 				);
 				ws.current.onopen = () => {
@@ -77,9 +78,8 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({
 							addToast({
 								id: tournament.id || 0,
 								title: "Tournament status",
-								message: `${data.status} ${
-									(data.winner && "winner is " + data.winner) || data.reason
-								}`,
+								message: `${data.status} ${(data.winner && "winner is " + data.winner) || data.reason
+									}`,
 								icon: "https://placehold.co/400x400.png",
 								backgroundColor: "bg-primary",
 							});
@@ -99,7 +99,7 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (!nookies.access || !nookies.refresh) return;
 		if (!ws.current) {
 			console.log("connecting to ws");
-			ws.current = new WebSocket(`${WS_BASE_URL}/game/tournament/`);
+			ws.current = new AuthWebSocket(`${WS_BASE_URL}/game/tournament/`);
 		}
 	}, []);
 

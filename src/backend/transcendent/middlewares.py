@@ -3,6 +3,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from channels.security.websocket import WebsocketDenier
 from user.models import User
 from asgiref.sync import sync_to_async
+from urllib.parse import parse_qs
 
 
 class JWTAuthMiddlewareStack():
@@ -37,9 +38,6 @@ class JWTAuthMiddlewareStack():
         if not cookies:
             print('cookies are not available\n')
             return scope
-        # if not cookies or len(cookies) == 0 or len(cookies[0]) < 2:
-        #     return scope
-        # cookies = cookies[0][1]
         cookies_arr = cookies.split(b'; ')
         cookies_dict = {}
         for item in cookies_arr:
@@ -50,9 +48,10 @@ class JWTAuthMiddlewareStack():
         return scope
 
     def get_token(self, scope):
-        cookies = scope.get('cookies', {})
-        access = cookies.get('access', {})
-        return access
+        qs = scope['query_string'].decode()
+        query_params = parse_qs(qs)
+        print(query_params.get('token', [None])[0])
+        return query_params.get('token', [None])[0]
 
     def get_from_headers(self, scope, key):
         headers = scope.get('headers')

@@ -1,12 +1,15 @@
 // GroupsContainer.tsx
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ImageSrc } from '@/lib/ImageSrc';
 import { useAppSelector } from '@/redux/store';
-import { roomItem } from '@/api/chat';
+import {  RemoveGroupMember, roomItem } from '@/api/chat';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
+import Confirm from '../../modal/confirm';
+import { useModal } from '@/app/provider/modal-provider';
+import apiMock from '@/lib/axios-mock';
 
 
 
@@ -20,13 +23,40 @@ interface GroupsContainerProps {
 
 const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, level, selectedChat }) => {
 	const { username } = useAppSelector((state) => state.user.user);
-	const isMeAdmin = selectedChat.admin && selectedChat.admin.username  == username;
+	const isMeAdmin = selectedChat.admin && selectedChat.admin.username == username;
 	const isAdmin = selectedChat.admin && selectedChat.admin.username === name
-	
-	console.log("is admin : ", selectedChat.admin)
+	const [RemoveMember, setRemoveMember] = useState<boolean>(false);
+	const { OpenModal, CancelModal } = useModal();
 
-	const handleAddRemove = () => {
-	};
+	useEffect(() => {
+		const getFriendsList = async () => {
+			if (RemoveMember) {
+				try {
+					const formData = new FormData();
+					formData.append('user_id', id.toString());
+					await apiMock.post(`/chat/remove-member/${selectedChat.id}/`, formData);
+				} catch (error) {
+					console.error("Error fetching friends:", error);
+				}
+			}
+		};
+		getFriendsList();
+	}, [RemoveMember])
+
+	const confirmRemoveUser = () => {
+		OpenModal(
+			<Confirm
+				title='Are you sure you want remove this user?'
+				body='The user well no long part of that Group Chat.'
+				onConfirm={() => {
+					setRemoveMember(true);
+					console.log("remove member", id)
+					CancelModal();
+				}}
+				onCancel={() => CancelModal()}
+			/>
+		);
+	}
 	return (
 		<div className={`mt-2 w-full h-[69px] flex items-center justify-between rounded ${name === username ? styles.highlight : "bg-[#292929]"}  p-4`}>
 			<Link href={`/profile/${id}`} className='flex items-center'>
@@ -47,9 +77,9 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 				</div>
 			</Link>
 			{
-				isMeAdmin&& name !== username?
+				isMeAdmin && name !== username ?
 					<div className='flex items-center'>
-						<button onClick={handleAddRemove} className='text-white text-[16px] font-medium'>
+						<button onClick={confirmRemoveUser} className='text-white text-[16px] font-medium'>
 							<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M5.5 13.4043V11.4043H19.5V13.4043H5.5Z" fill="#ffffff" />
 							</svg>
@@ -57,7 +87,7 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 					</div>
 					: isAdmin &&
 					<div className='flex items-center'>
-						<div  className='bg-[#242424] rounded py-1 px-2'>
+						<div className='bg-[#242424] rounded py-1 px-2'>
 							<div className='text-white text-[13px] font-light' > Admin</div>
 						</div>
 					</div>
@@ -67,3 +97,5 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 };
 
 export default GroupsMembers;
+
+

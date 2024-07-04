@@ -1,4 +1,4 @@
-import {GetChatMessages, MessageItem, roomItem } from "@/api/chat";
+import { GetChatMessages, MessageItem, roomItem } from "@/api/chat";
 import React, {
 	useRef,
 	useEffect,
@@ -15,13 +15,16 @@ import { GetFriendsData } from "@/api/user";
 import ChatPanel from "./chat-panel";
 import SendImage from "./send-image";
 import { WS_BASE_URL } from "@/constant/api";
+import AuthWebSocket from "@/lib/AuthWebSocket";
 
 
-const SendMessages = ({ selectedChat, clickedGroup}
-	: 
-	{ 
+const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
+	:
+	{
 		selectedChat: roomItem;
 		clickedGroup: () => void;
+		handleIconClick: (index: number) => void;
+
 	}) => {
 
 	const [messages, setMessages] = useState<MessageItem[]>([]);
@@ -59,8 +62,10 @@ const SendMessages = ({ selectedChat, clickedGroup}
 	}, [selectedChat]);
 
 	useEffect(() => {
-		if (selectedChat.id && !socket.current) {
-			socket.current = new WebSocket(`${WS_BASE_URL}/chat/${selectedChat.id}/`);
+		console.log("Selected chat changed:", selectedChat.id);
+		if (selectedChat.id) {
+			console.log("Creating new WebSocket connection", selectedChat.id);
+			socket.current = new AuthWebSocket(`${WS_BASE_URL}/chat/${selectedChat.id}/`);
 		}
 
 		if (socket.current) {
@@ -158,16 +163,16 @@ const SendMessages = ({ selectedChat, clickedGroup}
 
 	return (
 		<div className='h-full'>
-			<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} />
+			<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} handleIconClick={handleIconClick} />
 			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
-						<ChatMessage key={index} messages={item} type={selectedChat.type}/>
+						<ChatMessage key={index} messages={item} type={selectedChat.type} />
 					))}
 				</div>
 			</div>
 			<div className='absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
-				{isFriend || selectedChat.type  !== 'private'  ?
+				{isFriend || selectedChat.type !== 'private' ?
 					<div className='flex flex-row items-center justify-center h-full'>
 						<div className='p-2'>
 							<div className='pt-2'>
@@ -195,7 +200,7 @@ const SendMessages = ({ selectedChat, clickedGroup}
 							<SendIcon />
 						</button>
 					</div>
-					: selectedChat.type  === 'private' &&
+					: selectedChat.type === 'private' &&
 					<div className='flex flex-row items-center justify-center h-full'>
 						You can't send a message to a user that you are not friends with
 					</div>

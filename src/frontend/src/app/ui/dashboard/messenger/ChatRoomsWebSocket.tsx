@@ -2,6 +2,7 @@
 
 import { GetChatRoomsData, roomItem } from "@/api/chat";
 import { WS_BASE_URL } from "@/constant/api";
+import AuthWebSocket from "@/lib/AuthWebSocket";
 import { useEffect, useState } from "react";
 
 
@@ -19,7 +20,7 @@ const ChatRoomsWebSocket = (q: string | null) => {
 		};
 		fetchRooms();
 
-		const socket = new WebSocket(`${WS_BASE_URL}/rooms/`);
+		const socket = new AuthWebSocket(`${WS_BASE_URL}/rooms/`);
 
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);

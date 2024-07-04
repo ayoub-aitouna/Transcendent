@@ -26,14 +26,14 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
     room_name = serializers.SerializerMethodField()
     room_icon = serializers.SerializerMethodField()
     admin = UserSerializer(read_only=True)
-    # icon = serializers.ImageField(write_only=True, required=False)
+    icon = serializers.ImageField(write_only=True, required=False)
     last_message = serializers.SerializerMethodField()
     unseen_messages_count = serializers.SerializerMethodField()
     all_messages_count = serializers.SerializerMethodField()
 
     class Meta:
         model = ChatRoom
-        fields = ['id', 'all_messages_count', 'room_icon', 'unseen_messages_count', 'last_message', 'name',
+        fields = ['id', 'all_messages_count', 'room_icon', 'unseen_messages_count', 'last_message', 'name', 'icon',
                   'type', 'room_name', 'admin', 'members',  'input_members']
 
     def get_last_message(self, obj):
@@ -67,11 +67,11 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
         return chat_room
 
     def get_room_icon(self, obj):
-        # if obj.type == 'group':
-        #     if obj.icon and  self.context['request'].build_absolute_uri(obj.icon.url):
-        #         return obj.icon.url
-        #     else:
-        #         return None 
+        if obj.type == 'group':
+            if obj.icon and self.context['request'].build_absolute_uri(obj.icon.url):
+                return self.context['request'].build_absolute_uri(obj.icon.url)
+            else:
+                return None
         user = self.context['request'].user
         member = obj.members.exclude(id=user.id).first()
         if member is None:
@@ -214,3 +214,59 @@ class GetChatRoomSerializer(ChatRoomSerializer):
         user = self.context['request'].user
         receiverUser = obj.members.exclude(id=user.id)
         return UserSerializer(receiverUser, many=True, context=self.context).data
+
+
+class AddMemberSerializer(serializers.ModelSerializer):
+    members = UserSerializer(many=True, read_only=True)
+    admin = UserSerializer(read_only=True)
+    new_member = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = ChatRoom
+        fields = ['id', 'admin', 'members',  'new_member']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        room_id = self.context['request'].parser_context['kwargs']['room_id']
+        chatRoom = ChatRoom.objects.get(id=room_id)
+        new_member = User.objects.get(id=validated_data['new_member'])
+        chatRoom.members.add(new_member)
+        return chatRoom
+
+
+class RemoveMemberSerializer(serializers.ModelSerializer):
+    members = UserSerializer(many=True, read_only=True)
+    admin = UserSerializer(read_only=True)
+    user_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = ChatRoom
+        fields = ['id', 'admin', 'members', 'user_id']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        room_id = self.context['request'].parser_context['kwargs']['room_id']
+        chatRoom = ChatRoom.objects.get(id=room_id)
+        user_id = validated_data['user_id']
+        user = User.objects.get(id=user_id)
+        chatRoom.members.remove(user)
+        return chatRoom
+
+
+class ChangeNameIconSerializer(ChatRoomsListSerializer):
+    new_name = serializers.CharField(write_only=True, required=False)
+    new_icon = serializers.ImageField(write_only=True, required=False)
+
+    class Meta(ChatRoomsListSerializer.Meta):
+        model = ChatRoom
+        fields = ['room_name', 'room_icon', 'new_name', 'new_icon']
+
+    def create(self, validated_data):
+        room_id = self.context['request'].parser_context['kwargs']['room_id']
+        chatRoom = ChatRoom.objects.get(id=room_id)
+        if 'new_name' in validated_data:
+            chatRoom.name = validated_data['new_name']
+        if 'new_icon' in validated_data:
+            chatRoom.icon = validated_data['new_icon']
+        chatRoom.save()
+        return chatRoom

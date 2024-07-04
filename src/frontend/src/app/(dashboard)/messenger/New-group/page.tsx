@@ -12,6 +12,7 @@ import Link from "next/link";
 import GroupsContainer from "@/app/ui/dashboard/messenger/Group-container";
 import { UserContext } from "./context/UserContext";
 import { useAppSelector } from "@/redux/store";
+import { join } from "path";
 
 
 const Page = () => {
@@ -41,14 +42,11 @@ const Page = () => {
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const formData = new FormData();
-		formData.append("Name", name);
-		formData.append("Type", "group");
-		const userIDs = users.map(user => user.id).join(', ') + `, ${id}`;
-		formData.append("input_members", userIDs);
-		console.log('uploading:', userIDs);
-		
+		formData.append("name", name);
 		if (selectedImage) formData.append('icon', selectedImage);
-
+		formData.append("type", "group");
+		const userIDs = users.map(user => user.id);
+		formData.append("input_members", userIDs);
 		try {
 			await apiMock.post('/chat/rooms/', formData, {
 				headers: {
@@ -145,7 +143,7 @@ const Page = () => {
 							</div>
 						</Link>
 						<div className='w-[592px] flex  flex-col items-center justify-between rounded-lg mb-[10px]'>
-							{users.map(user => (
+							{users.filter(user => user.id !== id).map(user => (
 								<GroupsContainer key={user.id} {...user} />
 							)).slice(0, 3)}
 						</div>
@@ -153,7 +151,7 @@ const Page = () => {
 							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]' type='button'>
 								Cancel
 							</button>
-							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px]`} type='submit'>
+							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px]`} type='submit' >
 								Create
 							</button>
 						</div>

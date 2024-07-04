@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import serializers, generics, status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import ListAPIView
-from .serializers import ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer, GetChatRoomSerializer
+from .serializers import AddMemberSerializer, ChangeNameIconSerializer, ChatRoomsListSerializer, ChatMessageSerializer, ChatRoomSerializer, GetChatRoomSerializer, RemoveMemberSerializer
 from .models import ChatRoom, ChatMessage, RemovedMessage, RemovedRoom
 from rest_framework.permissions import IsAuthenticated
 from asgiref.sync import async_to_sync
@@ -25,38 +25,19 @@ class ChatRoomsListView(ListCreateAPIView):
         user = self.request.user
         removed_rooms = RemovedRoom.objects.filter(
             user=user).values_list('room_id', flat=True)
-
+        query = self.request.query_params.get('q', '')
         queryset = ChatRoom.objects.filter(
             members=user
-        ).exclude(
+        ).filter(Q(name__icontains=query) | (Q(members__username__icontains=query, type='private')))\
+            .exclude(
             id__in=removed_rooms
         ).annotate(
             last_message_time=Max('messages_chat_room__created_at')
         ).exclude(
-            last_message_time__isnull=True 
+            last_message_time__isnull=True
         ).order_by(
             '-last_message_time'
         )
-
-        return queryset
-
-    def search_rooms(self, query):
-        user = self.request.user
-        removed_rooms = RemovedRoom.objects.filter(
-            user=user).values_list('room_id', flat=True)
-        queryset = ChatRoom.objects.filter(
-            members=user).exclude(messages_chat_room=None)
-        for room in queryset:
-            if not RemovedMessage.objects.filter(chatRoom=room, sender=user).exists():
-                queryset = queryset.exclude(id__in=removed_rooms)
-        if query:
-            room_name_filter = Q(name__icontains=query) & Q(type='group')
-            member_name_filter = Q(members__first_name__icontains=query) | Q(
-                members__last_name__icontains=query) | Q(members__username__icontains=query)
-            member_name_filter &= Q(type='private')
-
-            queryset = queryset.filter(
-                room_name_filter | member_name_filter).distinct()
 
         return queryset
 
@@ -198,3 +179,29 @@ class UnseenRoomsMessagesView(ListAPIView):
         ).exclude(sender=user).values_list('chatRoom', flat=True).distinct()
 
         return ChatRoom.objects.filter(id__in=unseen_messages_rooms)
+
+
+class AddMembersToRoomView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AddMemberSerializer
+
+    def get_queryset(self):
+        room_id = self.kwargs['room_id']
+        return ChatRoom.objects.filter(id=room_id)
+
+class RemoveMembersToRoomView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RemoveMemberSerializer
+
+    def get_queryset(self):
+        room_id = self.kwargs['room_id']
+        return ChatRoom.objects.filter(id=room_id)
+    
+class ChangeChatRoomNameView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangeNameIconSerializer
+
+    def get_queryset(self):
+        room_id = self.kwargs['room_id']
+        return ChatRoom.objects.filter(id=room_id)
+

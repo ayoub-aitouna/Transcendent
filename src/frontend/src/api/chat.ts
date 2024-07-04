@@ -37,12 +37,12 @@ export type roomPrivateItem = {
 
 export const GetChatRoomsData = async (q: string | null) => {
 	let response = null;
-	// if (!q || q === '') {
+	if (!q || q === '') {
 		response = await apiMock.get(`/chat/rooms/`);
-	// } 
-	// else {
-	// 	response = await apiMock.get(`/chat/rooms/?q=${q}`);
-	// }
+	} 
+	else {
+		response = await apiMock.get(`/chat/rooms/?q=${q}`);
+	}
 	return response?.data.results  as roomItem[];
 };
 
@@ -65,3 +65,10 @@ export const ClearChat = async (id: number) => {
 export const DeleteChat = async (id: number) => {
 	await apiMock.post(`/chat/Delete-chat/${id}/`);
 };
+
+export const  RemoveGroupMember = async ({ selectedChat_id, User_id }: { selectedChat_id: number; User_id: number; }) => {
+	const formData = new FormData();
+
+	formData.append('user_id', User_id.toString());
+	await apiMock.post(`/chat/remove-user/${selectedChat_id}/`);
+}
