@@ -62,6 +62,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 						unseen_messages_count: chat_room.unseen_messages_count,
 						type: chat_room.type,
 						members: chat_room.members,
+						admin: chat_room.admin,
 					}];
 				}
 			});

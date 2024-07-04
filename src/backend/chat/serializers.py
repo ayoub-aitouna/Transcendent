@@ -26,14 +26,14 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
     room_name = serializers.SerializerMethodField()
     room_icon = serializers.SerializerMethodField()
     admin = UserSerializer(read_only=True)
-    icon = serializers.ImageField(write_only=True, required=False)
+    # icon = serializers.ImageField(write_only=True, required=False)
     last_message = serializers.SerializerMethodField()
     unseen_messages_count = serializers.SerializerMethodField()
     all_messages_count = serializers.SerializerMethodField()
 
     class Meta:
         model = ChatRoom
-        fields = ['id', 'all_messages_count', 'room_icon', 'unseen_messages_count', 'last_message', 'name', 'icon',
+        fields = ['id', 'all_messages_count', 'room_icon', 'unseen_messages_count', 'last_message', 'name',
                   'type', 'room_name', 'admin', 'members',  'input_members']
 
     def get_last_message(self, obj):
@@ -67,8 +67,11 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
         return chat_room
 
     def get_room_icon(self, obj):
-        if obj.type == 'group':
-            return self.context['request'].build_absolute_uri(obj.icon.url)
+        # if obj.type == 'group':
+        #     if obj.icon and  self.context['request'].build_absolute_uri(obj.icon.url):
+        #         return obj.icon.url
+        #     else:
+        #         return None 
         user = self.context['request'].user
         member = obj.members.exclude(id=user.id).first()
         if member is None:
@@ -82,8 +85,6 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
         member = obj.members.exclude(id=user.id).first()
         if member is None:
             return None
-        # if member.first_name + member.last_name != '':
-        #     return member.first_name + ' ' + member.last_name
         return member.username
 
     def get_unseen_messages_count(self, obj):
@@ -126,7 +127,10 @@ class WsChatRoomSerializer(serializers.ModelSerializer):
 
     def get_room_icon(self, obj):
         if obj.type == 'group':
-            return obj.icon.url
+            if obj.icon and hasattr(obj.icon, 'url'):
+                return obj.icon.url
+            else:
+                return None  # Or return a default icon URL/path
         user = self.context['request'].user
         member = obj.members.exclude(id=user.id).first()
         if member is None:
@@ -190,8 +194,8 @@ class ChatRoomSerializer(ChatRoomsListSerializer):
     receiverUser = serializers.SerializerMethodField()
 
     class Meta(ChatRoomsListSerializer.Meta):
-        fields = ['id', 'room_name', 'room_icon','type', 'unseen_messages_count',
-                  'last_message', 'receiverUser', 'members']
+        fields = ['id', 'room_name', 'room_icon', 'type', 'unseen_messages_count',
+                  'last_message', 'admin', 'receiverUser', 'members']
 
     def get_receiverUser(self, obj):
         user = self.context['request'].user

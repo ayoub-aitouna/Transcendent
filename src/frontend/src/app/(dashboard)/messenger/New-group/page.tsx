@@ -11,15 +11,16 @@ import RightArrow from "@/app/ui/dashboard/icons/content_area/right-arrow";
 import Link from "next/link";
 import GroupsContainer from "@/app/ui/dashboard/messenger/Group-container";
 import { UserContext } from "./context/UserContext";
+import { useAppSelector } from "@/redux/store";
 
 
 const Page = () => {
+	const { id } = useAppSelector((state) => state.user.user);
 	const router = useRouter();
 	const { users } = useContext(UserContext);
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
 	const [src, setSrc] = useState<string | null>(null);
 	const [name, setName] = useState('');
-	console.log(" users : -- > ", users);
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
 		if (!e.target.files) return;
@@ -40,9 +41,12 @@ const Page = () => {
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const formData = new FormData();
-		formData.append('Name', name);
-		formData.append('Type', 'Group');
-		formData.append('Input members', users.map(user => user.id).join(','));
+		formData.append("Name", name);
+		formData.append("Type", "group");
+		const userIDs = users.map(user => user.id).join(', ') + `, ${id}`;
+		formData.append("input_members", userIDs);
+		console.log('uploading:', userIDs);
+		
 		if (selectedImage) formData.append('icon', selectedImage);
 
 		try {
@@ -140,12 +144,12 @@ const Page = () => {
 								<RightArrow />
 							</div>
 						</Link>
-						<div className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
+						<div className='w-[592px] flex  flex-col items-center justify-between rounded-lg mb-[10px]'>
 							{users.map(user => (
 								<GroupsContainer key={user.id} {...user} />
-							))}
+							)).slice(0, 3)}
 						</div>
-						<div className='flex flex-row justify-end items-end space-x-2 ml-auto mt-12'>
+						<div className='flex flex-row justify-end items-end space-x-2 ml-auto mt-6'>
 							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]' type='button'>
 								Cancel
 							</button>

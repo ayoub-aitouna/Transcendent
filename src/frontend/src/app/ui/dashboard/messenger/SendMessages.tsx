@@ -16,7 +16,12 @@ import ChatPanel from "./chat-panel";
 import SendImage from "./send-image";
 
 
-const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
+const SendMessages = ({ selectedChat, clickedGroup}
+	: 
+	{ 
+		selectedChat: roomItem;
+		clickedGroup: () => void;
+	}) => {
 
 	const [messages, setMessages] = useState<MessageItem[]>([]);
 	const [messageContent, setMessageContent] = useState<string>("");
@@ -152,16 +157,16 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 
 	return (
 		<div className='h-full'>
-			<ChatPanel selectedChat={selectedChat} />
+			<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} />
 			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
-						<ChatMessage key={index} messages={item} />
+						<ChatMessage key={index} messages={item} type={selectedChat.type}/>
 					))}
 				</div>
 			</div>
 			<div className='absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
-				{isFriend && selectedChat.type  === 'private' ?
+				{isFriend || selectedChat.type  !== 'private'  ?
 					<div className='flex flex-row items-center justify-center h-full'>
 						<div className='p-2'>
 							<div className='pt-2'>
@@ -189,7 +194,7 @@ const SendMessages = ({ selectedChat }: { selectedChat: roomItem }) => {
 							<SendIcon />
 						</button>
 					</div>
-					:
+					: selectedChat.type  === 'private' &&
 					<div className='flex flex-row items-center justify-center h-full'>
 						You can't send a message to a user that you are not friends with
 					</div>
