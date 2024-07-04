@@ -30,10 +30,12 @@ class JWTAuthMiddlewareStack():
         return await self.app(scope, receive, send)
 
     def get_cookies(self, scope):
+        print('trying to get cookies\n')
         # headers = scope.get('headers')
         # cookies = [x for x in headers if x[0] == b'cookie']
         cookies = self.get_from_headers(scope, b'cookie')
         if not cookies:
+            print('cookies are not available\n')
             return scope
         # if not cookies or len(cookies) == 0 or len(cookies[0]) < 2:
         #     return scope

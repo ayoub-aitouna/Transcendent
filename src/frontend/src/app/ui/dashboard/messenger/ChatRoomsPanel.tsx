@@ -3,6 +3,7 @@ import { GetChatRoomsData, GetFiltersRooms, roomItem } from "@/api/chat";
 import { ChatSearchBar } from "@/app/ui/dashboard/messenger/ChatsearchBar";
 import { useEffect, useState } from "react";
 import ChatRoomsWebSocket from "./ChatRoomsWebSocket";
+import { WS_BASE_URL } from "@/constant/api";
 
 
 interface ChatRooms {
@@ -36,7 +37,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 		};
 		fetchRooms();
 
-		const socket = new WebSocket(`wss://localhost/ws/rooms/`);
+		const socket = new WebSocket(`${WS_BASE_URL}/ws/rooms/`);
 
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
@@ -57,7 +58,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 					return [...prevRooms, {
 						id: roomId,
 						room_name: chat_room.room_name,
-						room_icon: "https://localhost:8000" + chat_room.room_icon,
+						room_icon: "http://localhost:8000" + chat_room.room_icon,
 						last_message: chat_room.last_message,
 						unseen_messages_count: chat_room.unseen_messages_count,
 						type: chat_room.type,

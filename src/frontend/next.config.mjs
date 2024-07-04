@@ -15,9 +15,8 @@ const nextConfig = {
                 port: '8000',
             },
             {
-                protocol: 'https',
-                hostname: '127.0.0.1',
-                port: '8000',
+                protocol: 'http',
+                hostname: process.env.NEXT_PUBLIC_BACKEND_HOST,
             },
             {
                 protocol: 'https',

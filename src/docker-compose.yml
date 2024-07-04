@@ -1,18 +1,18 @@
 version: "3"
 services:
-  nginx:
-    restart: always
-    container_name: nginx
-    build:
-      context: ./nginx
-    networks:
-      - mynetwork
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - frontend
-      - backend
+  # nginx:
+  #   restart: always
+  #   container_name: nginx
+  #   build:
+  #     context: ./nginx
+  #   networks:
+  #     - mynetwork
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   depends_on:
+  #     - frontend
+  #     - backend
 
   frontend:
     restart: always
@@ -21,6 +21,8 @@ services:
       context: ./frontend/build-tools
     networks:
       - mynetwork
+    ports:
+      - "3000:3000"
     volumes:
       - frontend_volume:/var/app
     depends_on:
@@ -36,6 +38,8 @@ services:
     command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
     networks:
       - mynetwork
+    ports:
+      - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
     volumes:

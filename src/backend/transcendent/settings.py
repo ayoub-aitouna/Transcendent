@@ -175,16 +175,21 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 30
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://localhost",
-    "http://localhost",
-]
-CSRF_TRUSTED_ORIGINS = [
-    "https://localhost",
-    "http://localhost",
+    "http://localhost:8000",
+    "http://192.168.122.1:3000",
+    # Add other origins as needed
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+    "http://localhost:8000",
+    "http://192.168.122.1:3000",
+    # Add other origins as needed
+]
 CORS_URLS_REGEX = r"^/api/.*$"
 
 MEDIA_URL = '/media/'
@@ -231,4 +236,4 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

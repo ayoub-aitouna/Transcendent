@@ -14,6 +14,7 @@ import moment from "moment";
 import { GetFriendsData } from "@/api/user";
 import ChatPanel from "./chat-panel";
 import SendImage from "./send-image";
+import { WS_BASE_URL } from "@/constant/api";
 
 
 const SendMessages = ({ selectedChat, clickedGroup}
@@ -59,7 +60,7 @@ const SendMessages = ({ selectedChat, clickedGroup}
 
 	useEffect(() => {
 		if (selectedChat.id && !socket.current) {
-			socket.current = new WebSocket(`wss://localhost/ws/chat/${selectedChat.id}/`);
+			socket.current = new WebSocket(`${WS_BASE_URL}/chat/${selectedChat.id}/`);
 		}
 
 		if (socket.current) {

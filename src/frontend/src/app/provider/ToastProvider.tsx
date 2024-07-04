@@ -11,6 +11,7 @@ import React, {
 import ToastContainer from "@/app/ui/dashboard/Toast/toast-container";
 import { Toast } from "@/type/dashboard/index";
 import { parseCookies } from "nookies";
+import { WS_BASE_URL } from "@/constant/api";
 
 type ToastContextType = {
 	toasts: Toast[];
@@ -61,7 +62,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (!nookies.access || !nookies.refresh) return;
 		if (!ws.current) {
 			console.log("connecting to ws");
-			ws.current = new WebSocket("ws://localhost:8000/ws/user/connect/");
+			ws.current = new WebSocket(`${WS_BASE_URL}/user/connect/`);
 			ws.current.onopen = () => {
 				console.log("connected to ws");
 			};

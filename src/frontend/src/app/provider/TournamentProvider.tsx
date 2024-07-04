@@ -11,6 +11,7 @@ import { useToast } from "./ToastProvider";
 import { useAppSelector } from "@/redux/store";
 import { Tournament } from "@/type/dashboard/tournament";
 import { parseCookies } from "nookies";
+import { WS_BASE_URL } from "@/constant/api";
 
 type TournamentContextType = {
 	useSetTournament: (tournament: any) => void;
@@ -41,7 +42,7 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({
 			if (!ws.current || ConnectedTournamentUuid.current !== tournament.uuid) {
 				ConnectedTournamentUuid.current = tournament.uuid;
 				ws.current = new WebSocket(
-					`ws://localhost:8000/ws/game/tournament/${tournament.uuid}/`
+					`${WS_BASE_URL}/game/tournament/${tournament.uuid}/`
 				);
 				ws.current.onopen = () => {
 					console.log("connected to ws");
@@ -98,7 +99,7 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (!nookies.access || !nookies.refresh) return;
 		if (!ws.current) {
 			console.log("connecting to ws");
-			ws.current = new WebSocket("ws://localhost:8000/ws/game/tournament/");
+			ws.current = new WebSocket(`${WS_BASE_URL}/game/tournament/`);
 		}
 	}, []);
 
