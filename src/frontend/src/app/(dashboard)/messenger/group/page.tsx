@@ -1,7 +1,7 @@
-// app/messenger/New-group/new-group.tsx
+// app/messenger/group/group.tsx
 "use client";
 
-import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
+import React, { ChangeEvent, FormEvent, use, useContext, useEffect, useState } from "react";
 import styles from "@/app/ui/dashboard/nav/nav.module.css";
 import Image from "next/image";
 import apiMock from "@/lib/axios-mock";
@@ -10,43 +10,56 @@ import { UploadIcon } from "@/app/ui/dashboard/icons/content_area/UploadIcon";
 import RightArrow from "@/app/ui/dashboard/icons/content_area/right-arrow";
 import Link from "next/link";
 import GroupsContainer from "@/app/ui/dashboard/messenger/Group-container";
-import { UserContext } from "./context/UserContext";
+import { UserContext } from "../context/UserContext";
 import { useAppSelector } from "@/redux/store";
-import { join } from "path";
 
 
 const Page = () => {
 	const { id } = useAppSelector((state) => state.user.user);
 	const router = useRouter();
-	const { users } = useContext(UserContext);
-	const [selectedImage, setSelectedImage] = useState<File | null>(null);
+	const { users, addRemoveImage, addRemoveName, removeUser, group_name, icon , isCreating} = useContext(UserContext);
 	const [src, setSrc] = useState<string | null>(null);
-	const [name, setName] = useState('');
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
 		if (!e.target.files) return;
-		const file = e.target.files[0];
-		setSelectedImage(file);
-		const reader = new FileReader();
-		reader.onload = () => {
-			const dataURL = reader.result;
-			setSrc(dataURL as string);
-		};
-		reader.readAsDataURL(file);
+		addRemoveImage(e.target.files[0]);
 	};
+	if (!isCreating && users.length > 0) {
+		users.forEach((user) => {	
+			removeUser(user.id);
+		}
+		)
+	}
+	useEffect(() => {
+		if (icon) {
+			const reader = new FileReader();
+			reader.onload = () => {
+				const dataURL = reader.result;
+				setSrc(dataURL as string);
+			};
+			reader.readAsDataURL(icon);
+		}
+	}, [icon]);
 
 	const removeImage = () => {
 		setSrc(null);
+		addRemoveImage(null);
 	};
-
+	const handleCancel = () => {
+		users.forEach((user) => {
+			removeUser(user.id);
+		})
+		router.back();
+	}
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const formData = new FormData();
-		formData.append("name", name);
-		if (selectedImage) formData.append('icon', selectedImage);
+		formData.append("name", group_name?.toString() || '');
+		if (icon) formData.append('icon', icon);
 		formData.append("type", "group");
-		const userIDs = users.map(user => user.id);
-		formData.append("input_members", userIDs);
+		users.forEach((user) => {
+			formData.append("input_members", user.id.toString());
+		})
 		try {
 			await apiMock.post('/chat/rooms/', formData, {
 				headers: {
@@ -120,14 +133,15 @@ const Page = () => {
 						<input
 							className='rounded overflow-hidden bg-[#373737] h-[47px] w-[592px] text-[#878787] font-light text-[12px] pl-3 outline-none'
 							type='text'
+							value={group_name || ''}
 							placeholder='Chat Group Name'
-							onChange={(e) => setName(e.target.value)}
+							onChange={(e) => addRemoveName(e.target.value)}
 							required
 						/>
 					</div>
 
 					<div className='flex flex-col justify-start items-start pt-8'>
-						<Link href={'/messenger/New-group/choice-members'} className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
+						<Link href={'/messenger/group/choice-members'} className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
 							<div className='flex items-center justify-between'>
 								<div className='flex items-start flex-col'>
 									<div className='text-white truncate font-semibold'>
@@ -148,10 +162,10 @@ const Page = () => {
 							)).slice(0, 3)}
 						</div>
 						<div className='flex flex-row justify-end items-end space-x-2 ml-auto mt-6'>
-							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]' type='button'>
+							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]' type='button' onClick={handleCancel}>
 								Cancel
 							</button>
-							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px]`} type='submit' >
+							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px]`} type='submit'>
 								Create
 							</button>
 						</div>

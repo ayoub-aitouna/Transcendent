@@ -217,21 +217,23 @@ class GetChatRoomSerializer(ChatRoomSerializer):
 
 
 class AddMemberSerializer(serializers.ModelSerializer):
-    members = UserSerializer(many=True, read_only=True)
-    admin = UserSerializer(read_only=True)
-    new_member = serializers.IntegerField(write_only=True)
+	members = UserSerializer(many=True, read_only=True)
+	admin = UserSerializer(read_only=True)
+	new_members = serializers.ListField(
+		child=serializers.IntegerField(), write_only=False, required=False)
 
-    class Meta:
-        model = ChatRoom
-        fields = ['id', 'admin', 'members',  'new_member']
+	class Meta:
+		model = ChatRoom
+		fields = ['id', 'admin', 'members',  'new_members']
 
-    def create(self, validated_data):
-        user = self.context['request'].user
-        room_id = self.context['request'].parser_context['kwargs']['room_id']
-        chatRoom = ChatRoom.objects.get(id=room_id)
-        new_member = User.objects.get(id=validated_data['new_member'])
-        chatRoom.members.add(new_member)
-        return chatRoom
+	def create(self, validated_data):
+		user = self.context['request'].user
+		room_id = self.context['request'].parser_context['kwargs']['room_id']
+		chatRoom = ChatRoom.objects.get(id=room_id)
+		new_member_ids = validated_data['new_members']
+		new_members = User.objects.filter(id__in=new_member_ids)
+		chatRoom.members.add(*new_members)
+		return chatRoom
 
 
 class RemoveMemberSerializer(serializers.ModelSerializer):

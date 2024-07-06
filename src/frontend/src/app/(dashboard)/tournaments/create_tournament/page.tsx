@@ -181,8 +181,6 @@ const CreateTournamentPage = () => {
 								margin: '0'
 							}}
 						/>
-
-
 					</div>
 
 					<div className='py-2 flex flex-col justify-start items-start'>

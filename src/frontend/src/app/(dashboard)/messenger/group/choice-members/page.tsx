@@ -1,7 +1,7 @@
-// app/messenger/New-group/choice-members.tsx
+// app/messenger/group/choice-members.tsx
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Empty from '@/app/ui/dashboard/component/Empty';
 import SearchBar from '@/app/ui/dashboard/home/content_area/SearchBar';
 import { Key } from 'react';
@@ -9,15 +9,27 @@ import { GetFriendsData } from '@/api/user';
 import Error from "@/app/ui/dashboard/component/Error";
 import GroupsContainer from '@/app/ui/dashboard/messenger/Group-container';
 import { useRouter } from 'next/navigation';
-import { useUserContext } from '../context/UserContext';
+import { useUserContext } from '../../context/UserContext';
+import { useAppSelector } from '@/redux/store';
+import Link from 'next/link';
+import styles from "@/app/ui/dashboard/nav/nav.module.css";
+
 
 const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) => {
 	const [filteredFriends, setFilteredFriends] = useState([]);
-	const { users } = useUserContext();
+	const { users, removeUser } = useUserContext();
+	const { id } = useAppSelector((state) => state.user.user);
 	const router = useRouter();
+
+	const isExist = users.some(user => user.id === id)
 	const q = searchParams?.q || null;
 
-	console.log(" users : -- > ", users);
+	const handleCancel = () => {
+		users.forEach((user) => {
+			removeUser(user.id);
+		})
+		router.back();
+	}
 	useEffect(() => {
 		const fetchFriends = async () => {
 			try {
@@ -30,13 +42,6 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) 
 		fetchFriends();
 	}, [q]);
 
-	const handleDoneClick = () => {
-		if (users.length >= 2) {
-			router.back();
-		} else {
-			alert('Please select at least 2 friends.');
-		}
-	};
 
 	if (filteredFriends.length === 0) {
 		return (
@@ -49,9 +54,6 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) 
 
 	return (
 		<div className="flex items-center justify-center w-full">
-			<button onClick={handleDoneClick}>
-				Done
-			</button>
 			<div className="p-10 w-[894px] h-[890px]">
 				<div className="pb-1">
 					<SearchBar />
@@ -62,7 +64,9 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) 
 					</div>
 				) : (
 					<div className="h-[750px] overflow-y-scroll hide-scrollbar">
-						<div className='font-bold text-[18px] pb-2'>Choose at least 2 friends</div>
+						<div className='font-bold text-[18px] pb-2'>
+							Choose friends too add to the your group
+						</div>
 						{filteredFriends.map((friend: { username: string; image_url: string; level: number; id: number; }, index: Key | null | undefined) => (
 							<GroupsContainer
 								key={index}
@@ -72,38 +76,17 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) 
 								id={friend.id}
 							/>
 						))}
-						<div className='mt-4'>
-							<h3 className='font-bold text-[16px]'>Selected Users:</h3>
-							<ul>
-								{users.map(user => (
-									<li key={user.id}>{user.username}</li>
-								))}
-							</ul>
+						<div className='flex flex-row justify-end items-end space-x-2 ml-auto mt-6'>
+							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]' onClick={handleCancel}>
+								Cancel
+							</button>
+							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px] font-semibold `} onClick={()=>{router.back()}
+							}>
+								Select
+							</button>
 						</div>
 					</div>
 				)}
-				<div className='flex justify-end mt-4'>
-					<button
-						onClick={handleDoneClick}
-						className='bg-gray-800 text-white px-4 py-2 rounded-md shadow-md hover:bg-gray-700'
-					>
-						<span className='mr-2'>Done</span>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="h-6 w-6"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M5 13l4 4L19 7"
-							/>
-						</svg>
-					</button>
-				</div>
 			</div>
 		</div>
 	);

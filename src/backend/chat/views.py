@@ -34,11 +34,12 @@ class ChatRoomsListView(ListCreateAPIView):
         ).annotate(
             last_message_time=Max('messages_chat_room__created_at')
         ).exclude(
-            last_message_time__isnull=True
+            last_message_time__isnull=True,
+            type='private'
         ).order_by(
             '-last_message_time'
         )
-
+        
         return queryset
 
 
@@ -189,6 +190,7 @@ class AddMembersToRoomView(ListCreateAPIView):
         room_id = self.kwargs['room_id']
         return ChatRoom.objects.filter(id=room_id)
 
+
 class RemoveMembersToRoomView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = RemoveMemberSerializer
@@ -196,7 +198,8 @@ class RemoveMembersToRoomView(ListCreateAPIView):
     def get_queryset(self):
         room_id = self.kwargs['room_id']
         return ChatRoom.objects.filter(id=room_id)
-    
+
+
 class ChangeChatRoomNameView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ChangeNameIconSerializer
@@ -204,4 +207,3 @@ class ChangeChatRoomNameView(ListCreateAPIView):
     def get_queryset(self):
         room_id = self.kwargs['room_id']
         return ChatRoom.objects.filter(id=room_id)
-

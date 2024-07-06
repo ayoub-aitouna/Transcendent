@@ -1,6 +1,6 @@
 "use client"
 
-import React, { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, ReactNode, use, useContext, useEffect, useRef, useState } from "react";
 import apiMock from "@/lib/axios-mock";
 import { roomItem } from "@/api/chat";
 import SendMessages from "@/app/ui/dashboard/messenger/SendMessages";
@@ -9,7 +9,9 @@ import ChatRoomsPanel from "../../ui/dashboard/messenger/ChatRoomsPanel";
 import Image from "next/image";
 import GroupsContainer from "@/app/ui/dashboard/messenger/Group-container";
 import GroupsMembers from "@/app/ui/dashboard/messenger/group-members";
-import { GroupInfo } from "./New-group/group-info";
+import { GroupInfo } from "./group/group-info";
+import { user, UserContext, useUserContext } from "./context/UserContext";
+import { set } from "react-hook-form";
 
 
 const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string } }) => {
@@ -19,6 +21,7 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 	const chatroom = searchParams?.chatroom || '';
 	const q = searchParams?.q || '';
 	const router = useRouter();
+	const { users, addUser, removeUser , setIsCreating} = useUserContext();
 
 	useEffect(() => {
 		const fetchMessages = async () => {
@@ -46,19 +49,32 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 		fetchMessages();
 	}, [clickedIndex, chatroom]);
 
-
 	const handleIconClick = (index: number) => {
 		setClickedIndex(index);
 	};
 
-	const handleClickGroup = () => {
-		setClickedGroup(!clickedGroup);
+	const handleClickGroup = async (index: boolean) => {
+		setClickedGroup(index);
+		if (selectedChat && users.length === 0 && clickedIndex !== 0 && index) {
+			setIsCreating(false);
+			selectedChat.members.forEach((member: user) => {
+				addUser(member);
+			});
+		}
+		else if (selectedChat && users.length > 0 && index === false) {
+			users.forEach((user) => {
+				removeUser(user.id);
+			});
+		}
+
 	};
+	console.log("selectedChat members", selectedChat?.members)
+
 
 	return (
 		<div className="h-full overflow-hidden rounded-xl">
 			<div className="h-full flex-1 flex flex-col gap-4">
-				<div className="h-full flex flex-row flex-wrap gap-5">
+				<div className="h-full flex f lex-row flex-wrap gap-5">
 					<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
 					<div className="flex-1 h-full bg-secondary-400  rounded-xl relative overflow-hidden">
 						{selectedChat ? (
@@ -76,8 +92,8 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 						)
 						}
 					</div>
-					{clickedGroup && 
-						<GroupInfo selectedChat={selectedChat} />
+					{clickedGroup &&
+						<GroupInfo selectedChat={selectedChat} setClickedGroup={handleClickGroup} />
 					}
 				</div>
 			</div>

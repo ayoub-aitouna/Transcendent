@@ -11,7 +11,7 @@ import Confirm from "../../modal/confirm";
 export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 	{
 		selectedChat: roomItem;
-		handleGroup: () => void;
+		handleGroup: (index: boolean) => void;
 		handleIconClick: (index: number) => void;
 	}) {
 	const { OpenModal, CancelModal } = useModal();
@@ -26,6 +26,20 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 	const handleThreePoints = () => {
 		setClickedThreePoints(!clickedThreePoints);
 	};
+
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			const target = event.target as HTMLElement;
+			const panel = document.getElementById("Group-info");
+			if (panel && !panel.contains(target) ) {
+				setClickedThreePoints(false);
+			}
+		};
+		document.addEventListener("mousedown", handleOutsideClick);
+		return () => {
+			document.removeEventListener("mousedown", handleOutsideClick);
+		};
+	}, []);
 
 	useEffect(() => {
 		const handleDelete = async () => {
@@ -54,8 +68,6 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 		};
 		handleClear()
 	}, [clear]);
-
-
 
 	const confirmClear = () => {
 		OpenModal(
@@ -88,7 +100,6 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 			/>
 		);
 	}
-
 
 	const confirmExitGroup = () => {
 		OpenModal(
@@ -139,7 +150,7 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 						</div>
 					</div>
 				</Link>
-				<div className="relative flex flex-col items-center">
+				<div  className="relative flex flex-col items-center">
 					<div className="relative flex flex-col items-center p-7" onClick={handleThreePoints}>
 						<ThreePointsIcon />
 					</div>
@@ -166,8 +177,8 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 					</div>
 				) : clickedThreePoints && selectedChat.type === "group" &&
 				<div className="z-50 absolute right-7 top-16 bg-[#161616] h-[80px] w-[130px] p-2 rounded-md">
-					<div className="flex flex-col items-start justify-start text-[16px] text-[#878787] gap-3">
-						<button className="hover:bg-[#262626]  rounded-md" onClick={handleGroup}>
+					<div id='Group-info' className="flex flex-col items-start justify-start text-[16px] text-[#878787] gap-3">
+						<button  className="hover:bg-[#262626]  rounded-md" onClick={() => handleGroup(true)}>
 							<div>Group info</div>
 						</button>
 						<button className="hover:bg-[#262626] rounded-md" onClick={confirmExitGroup}>

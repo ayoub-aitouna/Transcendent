@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ImageSrc } from '@/lib/ImageSrc';
-import { useUserContext } from '@/app/(dashboard)/messenger/New-group/context/UserContext';
+import { useUserContext } from '@/app/(dashboard)/messenger/context/UserContext';
 import { useAppSelector } from '@/redux/store';
 
 interface GroupsContainerProps {
@@ -15,23 +15,19 @@ interface GroupsContainerProps {
 }
 
 const GroupsContainer: React.FC<GroupsContainerProps> = ({ id, username, image_url, level }) => {
-	const { users, addUser, removeUser } = useUserContext();
+	const { users, addUser, removeUser, setIsCreating } = useUserContext();
 	const [isAdded, setIsAdded] = useState(users.some(user => user.id === id));
-	const { id: userId, username: userName, image_url: imageUrl, level: userLevel } = useAppSelector((state) => state.user.user);
 
 	useEffect(() => {
 		setIsAdded(users.some(user => user.id === id));
 	}, [users, id]);
 
 	const handleAddRemove = () => {
-		if (users.some(user => user.id !== userId)) {
-			console.log(userId, userName, imageUrl, userLevel);
-			addUser({ id: userId, username: userName, image_url: imageUrl, level: userLevel });
-		}
 		if (isAdded) {
 			removeUser(id);
 		} else {
 			addUser({ id, username, image_url, level });
+			setIsCreating(true);
 		}
 		setIsAdded(!isAdded);
 	};
@@ -43,6 +39,7 @@ const GroupsContainer: React.FC<GroupsContainerProps> = ({ id, username, image_u
 					src={ImageSrc(image_url, username)}
 					alt='Profile Image'
 					width={53}
+					quality={100}
 					height={53}
 				/>
 				<div className='flex items-start flex-col max-w-[80px] ml-4'>

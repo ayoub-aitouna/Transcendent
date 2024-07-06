@@ -84,7 +84,7 @@ transcendent/
 │   │       │   │   │   ├── all-players
 │   │       │   │   │   └── friends
 │   │       │   │   ├── messenger
-│   │       │   │   │   └── New-group
+│   │       │   │   │   └── group
 │   │       │   │   │       ├── choice-members
 │   │       │   │   │       └── context
 │   │       │   │   ├── notifications

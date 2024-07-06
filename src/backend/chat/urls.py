@@ -14,7 +14,7 @@ urlpatterns = [
          views.RemoveUserMessagesView.as_view(), name='Delete-messages'),
     path('Delete-chat/<int:room_id>/',
          views.RemoveUserRoomView.as_view(), name='Delete-room'),
-    path('Add-member/<int:room_id>/',views.AddMembersToRoomView.as_view(), name='Add-member'),
+    path('Add-members/<int:room_id>/',views.AddMembersToRoomView.as_view(), name='Add-members'),
     path('remove-member/<int:room_id>/',views.RemoveMembersToRoomView.as_view(), name='remove-member'),
     path('Group-customize/<int:room_id>/',views.ChangeChatRoomNameView.as_view(), name='change_name'),
 ]

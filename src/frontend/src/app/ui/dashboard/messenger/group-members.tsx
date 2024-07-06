@@ -29,7 +29,7 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 	const { OpenModal, CancelModal } = useModal();
 
 	useEffect(() => {
-		const getFriendsList = async () => {
+		const RemoveMemberFromGroup = async () => {
 			if (RemoveMember) {
 				try {
 					const formData = new FormData();
@@ -40,7 +40,7 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 				}
 			}
 		};
-		getFriendsList();
+		RemoveMemberFromGroup();
 	}, [RemoveMember])
 
 	const confirmRemoveUser = () => {

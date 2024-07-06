@@ -16,13 +16,14 @@ import ChatPanel from "./chat-panel";
 import SendImage from "./send-image";
 import { WS_BASE_URL } from "@/constant/api";
 import AuthWebSocket from "@/lib/AuthWebSocket";
+import { BlobOptions } from "buffer";
 
 
 const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
 	:
 	{
 		selectedChat: roomItem;
-		clickedGroup: () => void;
+		clickedGroup: (index: boolean) => void;
 		handleIconClick: (index: number) => void;
 
 	}) => {
