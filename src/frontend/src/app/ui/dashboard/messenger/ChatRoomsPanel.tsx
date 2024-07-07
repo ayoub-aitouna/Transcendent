@@ -1,10 +1,11 @@
 import { MessengerContainer } from "@/app/ui/dashboard/messenger/messenger-container";
-import { GetChatRoomsData, GetFiltersRooms, roomItem } from "@/api/chat";
+import { GetChatRoomsData, roomItem } from "@/api/chat";
 import { ChatSearchBar } from "@/app/ui/dashboard/messenger/ChatsearchBar";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ChatRoomsWebSocket from "./ChatRoomsWebSocket";
 import { WS_BASE_URL } from "@/constant/api";
 import AuthWebSocket from "@/lib/AuthWebSocket";
+import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
 
 
 interface ChatRooms {
@@ -16,6 +17,9 @@ interface ChatRooms {
 const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q }) => {
 	const [filter, setFilter] = useState<boolean>(false);
 	const [rooms, setRooms] = useState<roomItem[]>([]);
+	const { users, room_icon, room_name } = useContext(UserContext);
+
+
 
 	const handleFilterClick = () => {
 		setFilter(!filter);
@@ -25,13 +29,8 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 		const fetchRooms = async () => {
 
 			try {
-				if (filter) {
-					const res = await GetFiltersRooms();
-					setRooms(res);
-				} else {
-					const room = await GetChatRoomsData(q);
-					setRooms(room);
-				}
+				const room = await GetChatRoomsData(q, filter);
+				setRooms(room);
 			} catch (e) {
 				console.log("ERROR in fetching rooms data: ", e);
 			}
@@ -51,6 +50,8 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 					const updatedRooms = [...prevRooms];
 					updatedRooms[roomIndex] = {
 						...updatedRooms[roomIndex],
+						room_icon: room_icon || chat_room.room_icon,
+						room_name: room_name || chat_room.room_name,
 						last_message: chat_room.last_message,
 						unseen_messages_count: chat_room.unseen_messages_count,
 					};
@@ -69,9 +70,9 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 				}
 			});
 		};
-socket.onopen = ()=>{
-	console.log('Rooms Socket is opened')
-}
+		socket.onopen = () => {
+			console.log('Rooms Socket is opened')
+		}
 		socket.onerror = (error) => {
 			console.error('WebSocket error', error);
 		};

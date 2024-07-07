@@ -5,12 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ImageSrc } from '@/lib/ImageSrc';
 import { useAppSelector } from '@/redux/store';
-import {  RemoveGroupMember, roomItem } from '@/api/chat';
+import { RemoveGroupMember, RemoveMemberFromGroup, roomItem } from '@/api/chat';
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import Confirm from '../../modal/confirm';
 import { useModal } from '@/app/provider/modal-provider';
 import apiMock from '@/lib/axios-mock';
-
+import { useUserContext } from '@/app/(dashboard)/messenger/context/UserContext';
 
 
 interface GroupsContainerProps {
@@ -23,35 +23,25 @@ interface GroupsContainerProps {
 
 const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, level, selectedChat }) => {
 	const { username } = useAppSelector((state) => state.user.user);
+	const { OpenModal, CancelModal } = useModal();
+	const {removeUser} = useUserContext();
+
 	const isMeAdmin = selectedChat.admin && selectedChat.admin.username == username;
 	const isAdmin = selectedChat.admin && selectedChat.admin.username === name
-	const [RemoveMember, setRemoveMember] = useState<boolean>(false);
-	const { OpenModal, CancelModal } = useModal();
 
-	useEffect(() => {
-		const RemoveMemberFromGroup = async () => {
-			if (RemoveMember) {
-				try {
-					const formData = new FormData();
-					formData.append('user_id', id.toString());
-					console.log("remove member", id)
-					await apiMock.post(`/chat/remove-member/${selectedChat.id}/`, formData);
-				} catch (error) {
-					console.error("Error fetching friends:", error);
-				}
-			}
-		};
-		RemoveMemberFromGroup();
-	}, [RemoveMember])
-
-	const confirmRemoveUser = () => {
+	const confirmRemoveUser = async () => {
 		OpenModal(
 			<Confirm
 				title='Are you sure you want remove this user?'
 				body='The user well no long part of that Group Chat.'
-				onConfirm={() => {
-					setRemoveMember(true);
-					CancelModal();
+				onConfirm =  {async () => {
+					try {
+						await RemoveMemberFromGroup(id, selectedChat.id);
+						removeUser(id)
+						CancelModal();
+					} catch (error) {
+						console.error("Error fetching friends:", error);
+					}
 				}}
 				onCancel={() => CancelModal()}
 			/>
@@ -79,7 +69,7 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 			{
 				isMeAdmin && name !== username ?
 					<div className='flex items-center'>
-						<button onClick={confirmRemoveUser} className='text-white text-[16px] font-medium'>
+						<button onClick={() => confirmRemoveUser()} className='text-white text-[16px] font-medium'>
 							<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M5.5 13.4043V11.4043H19.5V13.4043H5.5Z" fill="#ffffff" />
 							</svg>

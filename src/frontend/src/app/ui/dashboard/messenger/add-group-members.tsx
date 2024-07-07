@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ImageSrc } from '@/lib/ImageSrc';
 import { useUserContext } from '@/app/(dashboard)/messenger/context/UserContext';
-import { useAppSelector } from '@/redux/store';
 
 interface AddGroupMembersProps {
 	id: number;
@@ -18,13 +17,20 @@ interface AddGroupMembersProps {
 
 const AddGroupMembers: React.FC<AddGroupMembersProps> = ({ id, username, image_url, level,handleOnClick }) => {
 	const [isAdded, setIsAdded] = useState(false);
+	const { users, addUser, removeUser} = useUserContext();
 
 	const handleAddRemove = () => {
 		setIsAdded(!isAdded);
-		if (!isAdded)
+		if (!isAdded){
 			handleOnClick(id);
-		else
+			console.log("id", id, "username", username, "image_url", image_url, "level", level);
+			addUser({ id, username, image_url, level });
+			console.log("users: ", users, "isAdded: ", isAdded);
+		}
+		else{
+			removeUser(id);
 			handleOnClick(0);
+		}
 	};
 	return (
 		<div className='mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4'>

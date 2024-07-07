@@ -13,33 +13,38 @@ interface UserContextType {
 	users: user[];
 	group_name: string | null;
 	icon: File | null;
-	isCreating: boolean;
+	room_name: string | undefined;
+	room_icon: string | undefined;
+	setRoomIcon: (icon: string) => void;
+	setRoomName: (name: string) => void;
 	addUser: (user: user) => void;
 	removeUser: (userId: number) => void;
 	addRemoveName: (name: string) => void;
 	addRemoveImage: (icon: File | null) => void;
-	setIsCreating: (isCreating: boolean) => void;
 }
 
 const initialState: UserContextType = {
 	users: [],
 	group_name: "",
 	icon: null,
-	isCreating: false,
+	room_name: "",
+	room_icon: "",
 	addUser: () => { },
-	removeUser: () => { },
 	addRemoveName: () => { },
 	addRemoveImage: () => { },
-	setIsCreating: () => { },
+	removeUser: () => { },
+	setRoomIcon: () => { },
+	setRoomName: () => { },
 };
 
 export const UserContext = createContext<UserContextType>(initialState);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
 	const [users, setUsers] = useState<user[]>([]);
-	const [group_name, setName] = useState<string | ''>('');
+	const [group_name, setName] = useState<string>('');
 	const [icon, setIcon] = useState<File | null>(null);
-	const [isCreating, setIsCreating] = useState<boolean>(false);
+	const [room_icon, setRoomIcon] = useState<string | undefined>('');
+	const [room_name, setRoomName] = useState<string | undefined>('');
 
 	const addUser = (user: user) => {
 		setUsers(prevUsers => [...prevUsers, user]);
@@ -58,7 +63,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 
 	return (
-		<UserContext.Provider value={{ users, group_name, icon, isCreating, addUser, addRemoveName, addRemoveImage, removeUser ,setIsCreating}}>
+		<UserContext.Provider value={{
+			users,
+			group_name,
+			icon,
+			room_name,
+			room_icon,
+			addUser,
+			addRemoveName,
+			addRemoveImage,
+			removeUser,
+			setRoomIcon,
+			setRoomName
+		}}>
 			{children}
 		</UserContext.Provider>
 	);

@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import apiMock from "@/lib/axios-mock";
-import { roomItem } from "@/api/chat";
+import { GetChatRoom, roomItem } from "@/api/chat";
 import SendMessages from "@/app/ui/dashboard/messenger/SendMessages";
 import { useRouter } from 'next/navigation'
 import ChatRoomsPanel from "../../ui/dashboard/messenger/ChatRoomsPanel";
 import { GroupInfo } from "./group/group-info";
 import { user, UserContext, useUserContext } from "./context/UserContext";
+import { set } from "react-hook-form";
 
 
 const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string } }) => {
@@ -17,31 +18,38 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 	const chatroom = searchParams?.chatroom || '';
 	const q = searchParams?.q || '';
 	const router = useRouter();
-	const { users, addUser, removeUser, setIsCreating } = useUserContext();
+	const { users, addUser, removeUser, setRoomIcon, setRoomName } = useUserContext();
 
 	useEffect(() => {
 		const fetchMessages = async () => {
-			if (clickedIndex !== 0) {
-				try {
-					const response = await apiMock.get(`/chat/rooms/${clickedIndex}/`);
-					setSelectedChat(response.data);
-				} catch (error) {
-					console.error('Error fetching chat messages by clickedIndex', error);
-				}
-			} else if (chatroom) {
-				try {
-					const response = await apiMock.get(`/chat/get-chat-room/${chatroom}/`);
-					setSelectedChat(response.data.results[0]);
-				} catch (error) {
-					console.error('Error fetching chat messages by chatroom', error);
-				}
+			try {
+				const response = await GetChatRoom(clickedIndex, chatroom);
+				setSelectedChat(response);
+				if(chatroom)
+					router.push(`/messenger`);
+			} catch (error) {
+				console.error('Error fetching chat messages by chatroom', error);
 			}
-			else
-				setSelectedChat(null)
 		};
-
 		fetchMessages();
-	}, [clickedIndex, chatroom]);
+	}, [clickedIndex, chatroom, users]);
+
+	useEffect(() =>{
+		if (selectedChat?.type === 'group' && users.length === 0 && clickedIndex) {
+			selectedChat.members.forEach((member: user) => {
+				addUser(member);
+			});
+		}
+		else if (clickedIndex === 0 && users.length > 0) {
+			users.forEach((user) => {
+				removeUser(user.id);
+			});
+		}
+		if (selectedChat?.room_icon)
+			setRoomIcon(selectedChat?.room_icon);
+		if (selectedChat?.room_name)
+			setRoomName(selectedChat?.room_name);
+	},[selectedChat])
 
 	const handleIconClick = (index: number) => {
 		setClickedIndex(index);
@@ -49,25 +57,8 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 
 	const handleClickGroup = async (index: boolean) => {
 		setClickedGroup(index);
-		if (selectedChat && users.length === 0 && clickedIndex !== 0 && index) {
-			setIsCreating(false);
-			selectedChat.members.forEach((member: user) => {
-				addUser(member);
-			});
-		}
-		else if (selectedChat && users.length > 0 && index === false) {
-			users.forEach((user) => {
-				removeUser(user.id);
-			});
-		}
 
 	};
-	// useEffect(() => {
-	// 	if (selectedChat && clickedIndex) {
-	// 		router.push("/messenger/?chatroom=" + clickedIndex);
-	// 	}
-	// }, [clickedIndex])
-
 
 	return (
 		<div className="h-full overflow-hidden rounded-xl">

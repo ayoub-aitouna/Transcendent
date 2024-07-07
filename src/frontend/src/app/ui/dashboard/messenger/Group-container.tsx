@@ -15,7 +15,7 @@ interface GroupsContainerProps {
 }
 
 const GroupsContainer: React.FC<GroupsContainerProps> = ({ id, username, image_url, level }) => {
-	const { users, addUser, removeUser, setIsCreating } = useUserContext();
+	const { users, addUser, removeUser, room_icon, room_name } = useUserContext();
 	const [isAdded, setIsAdded] = useState(users.some(user => user.id === id));
 
 	useEffect(() => {
@@ -27,7 +27,6 @@ const GroupsContainer: React.FC<GroupsContainerProps> = ({ id, username, image_u
 			removeUser(id);
 		} else {
 			addUser({ id, username, image_url, level });
-			setIsCreating(true);
 		}
 		setIsAdded(!isAdded);
 	};

@@ -54,7 +54,6 @@ const CreateTournamentPage = () => {
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		console.log('uploading')
 		const formData = new FormData();
 
 		formData.append('name', name);

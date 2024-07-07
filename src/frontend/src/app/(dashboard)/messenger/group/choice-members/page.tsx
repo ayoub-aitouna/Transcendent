@@ -40,8 +40,6 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string}}) =>
 		fetchFriends();
 	}, [q]);
 
-	const isExist = filteredFriends.some(friend => users.some(user => user.id === friend.id));
-	console.log("is exist : ", isExist, "id : ", id);
 	if (filteredFriends.length === 0) {
 		return (
 			<Empty text="you don't have any friends you are so only person hahahahaha" />

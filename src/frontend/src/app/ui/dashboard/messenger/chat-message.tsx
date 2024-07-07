@@ -11,29 +11,30 @@ export function ChatMessage({ messages, type }: {
 }) {
 	const { username } = useAppSelector((state) => state.user.user);
 	const isSent = username === messages.sender_username;
-	const [downloadedImageUrl, setDownloadedImageUrl] = useState<string | null>(null);
+	// const [downloadedImageUrl, setDownloadedImageUrl] = useState<string | null>(null);
 
 
-	const downloadImage = async () => {
-		try {
-			if (!messages.id) return;
-			if (downloadedImageUrl) {
-				const response = await apiMock.get(`/chat/download-image/${messages.id}/`, {
-					responseType: 'blob'
-				});
-				const blob = new Blob([response.data], { type: response.headers['content-type'] });
-				const imageUrl = URL.createObjectURL(blob);
-				setDownloadedImageUrl(imageUrl);
-			}
-		}
-		catch (error) {
-			console.error('There was a problem downloading the image:', error);
-		};
-	};
-	useEffect(() => {
-		downloadImage();
-	}, [messages.id]);
-
+	// const downloadImage = async () => {
+	// 	try {
+	// 		if (!messages.id) return;
+	// 		if (downloadedImageUrl) {
+	// 			const response = await apiMock.get(`/chat/download-image/${messages.id}/`, {
+	// 				responseType: 'blob'
+	// 			});
+	// 			const blob = new Blob([response.data], { type: response.headers['content-type'] });
+	// 			const imageUrl = URL.createObjectURL(blob);
+	// 			setDownloadedImageUrl(imageUrl);
+	// 		}
+	// 	}
+	// 	catch (error) {
+	// 		console.error('There was a problem downloading the image:', error);
+	// 	};
+	// };
+	// useEffect(() => {
+	// 	downloadImage();
+	// }, [messages.id]);
+	
+	console.log('ChatMessage', messages);
 
 	return (
 		<div className="flex">
@@ -63,15 +64,13 @@ export function ChatMessage({ messages, type }: {
 						/>
 					</div>
 				</div>
-			) : (
+			) 
+			: (
 				<div className={`w-full flex ${isSent ? 'justify-end items-end' : 'justify-start items-start'} px-7 py-2`}>
 					<div className={` bg-black h-[200px] w-full flex flex-row py-2 px-4 p-4 ${isSent ? ' text-white rounded-tl-md rounded-tr-none rounded-bl-md rounded-br-md ml-auto' : ' rounded-e-md rounded-es-md mr-auto'} relative`} style={{ maxWidth: '20%' }}>
-						<button onClick={downloadImage} className="text-[12px] font-medium pr-8 inline-block cursor-pointer" style={{ maxWidth: '100%', overflowWrap: 'break-word' }}>
+						<button  className="text-[12px] font-medium pr-8 inline-block cursor-pointer" style={{ maxWidth: '100%', overflowWrap: 'break-word' }}>
 							Download Image
 						</button>
-						{downloadedImageUrl && (
-							<img src={downloadedImageUrl} alt="Downloaded Image" style={{ maxWidth: '100%', maxHeight: '100%' }} />
-						)}
 					</div>
 				</div>
 			)}

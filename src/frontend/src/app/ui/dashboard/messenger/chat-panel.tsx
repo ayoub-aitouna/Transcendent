@@ -1,6 +1,6 @@
 'use client'
 import { ClearChat, DeleteChat, roomItem } from "@/api/chat";
-import React, { useEffect, useState, } from "react";
+import React, { useContext, useEffect, useState, } from "react";
 import ThreePointsIcon from "../icons/messenger/three-points";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { ImageSrc } from "@/lib/ImageSrc";
 import { useRouter } from 'next/navigation'
 import { useModal } from "@/app/provider/modal-provider";
 import Confirm from "../../modal/confirm";
+import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
 export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 	{
 		selectedChat: roomItem;
@@ -21,6 +22,7 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 	const [deleteChat, setDelete] = useState(false);
 	const [block, setBlock] = useState(false);
 	const [exit, setExit] = useState(false);
+	const { users, room_icon, room_name } = useContext(UserContext);
 	const router = useRouter();
 
 	const handleThreePoints = () => {
@@ -135,7 +137,7 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 				<Link href="/profile" className="flex items-center justify-between p-4">
 					<Image
 						className="bg-white w-[53px] h-[53px] rounded-full"
-						src={ImageSrc(selectedChat?.room_icon, selectedChat.room_name)}
+						src={ImageSrc(room_icon, room_name)}
 						alt="Profile Image"
 						width={53}
 						height={53}
@@ -143,10 +145,10 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick}:
 					/>
 					<div className="flex items-start flex-col max-w-[80px]">
 						<div className="ml-[10px] text-white truncate text-[16px] font-bold">
-							{selectedChat?.room_name}
+							{room_name}
 						</div>
 						<div className="ml-[10px] text-[#878787] text-[14px] truncate font-normal">
-							{selectedChat.type === 'private' ? selectedChat.receiverUser && selectedChat?.receiverUser[0].status : selectedChat.members && selectedChat.members.length > 0 ? selectedChat.members.map((member) => member.username).join(', ') : 'No members'}
+							{selectedChat.type === 'private' ? selectedChat.receiverUser && selectedChat?.receiverUser[0].status : users && users.length > 0 ? users.map((member) => member.username).join(', ') : 'No members'}
 						</div>
 					</div>
 				</Link>

@@ -2,14 +2,15 @@
 
 import { useAppSelector } from "@/redux/store";
 import GroupsMembers from "../../../ui/dashboard/messenger/group-members";
-import { roomItem } from "@/api/chat";
+import { GroupCustomize, roomItem } from "@/api/chat";
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, SetStateAction, useContext, useEffect, useState } from "react";
 import { useModal } from "@/app/provider/modal-provider";
-import { UserContext } from "../context/UserContext";
+import { UserContext, useUserContext } from "../context/UserContext";
 import GroupMembers from "@/app/ui/modal/group-members";
 import { Friend } from "@/type/auth/user";
 import { GetFriendsData } from "@/api/user";
+import { set } from "react-hook-form";
 
 
 
@@ -22,9 +23,46 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 	const [AddMember, setAddMember] = useState<boolean>(false);
 	const { username } = useAppSelector((state) => state.user.user);
 	const { OpenModal, CancelModal } = useModal();
-	const { users } = useContext(UserContext);
+	const { users, setRoomIcon, setRoomName, room_icon, room_name } = useUserContext();
 	const [Friends, setFilteredFriends] = useState<Friend[]>([]);
-	
+	const [isEditing, setIsEditing] = useState(false);
+	const [newName, setNewName] = useState(room_name || "");
+
+	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+		if (!e.target.files)
+			return
+		const file = e.target.files[0]
+		const reader = new FileReader();
+		reader.onload = () => {
+			const dataURL = reader.result;
+			setRoomIcon(dataURL as string);
+		};
+		reader.readAsDataURL(file);
+		console.log("change image :: ==> ", file)
+		try {
+			GroupCustomize(room_name || "", selectedChat?.id || 0, file);
+		}
+		catch (error) {
+			console.log("can't customize group ", error)
+		}
+
+	};
+
+
+	const handleBlur = () => {
+		if (!newName)
+			return
+		setRoomName(newName);
+
+		setIsEditing(false);
+		try {
+			GroupCustomize(newName || "", selectedChat?.id || 0, null);
+		}
+		catch (error) {
+			console.log("can't customize group ", error)
+		}
+	};
+
 	const isAdmin = selectedChat?.admin && selectedChat?.admin.username === username
 	useEffect(() => {
 		const fetchFriends = async () => {
@@ -38,7 +76,6 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 		fetchFriends();
 	}, [AddMember]);
 
-	const filteredFriends = Friends.filter((friend) => !users.some((user) => user.id === friend.id));
 
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
@@ -60,7 +97,7 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 		OpenModal(
 			<GroupMembers
 				onCancel={() => CancelModal()}
-				friends={filteredFriends}
+				friends={Friends.filter((friend) => !users.some((user) => user.id === friend.id))}
 				selectedChat={selectedChat}
 			/>
 		);
@@ -70,23 +107,57 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 	return (
 		<div id="Group-infoPanel" className="flex-1 flex flex-col h-full lg:max-w-[440px] bg-secondary-400 rounded-xl relative overflow-hidden py-2">
 			<div className="flex justify-center flex-col  rounded-md m-3 h-[330px] items-center bg-[#161616]">
-				<Image className="bg-white rounded-full border-white border-[2px] h-[200px] w-[200px]" src={selectedChat?.room_icon || "/assets/images/lol.png"} width={200} height={200} quality={100} alt="Coming soon" />
+				<label >
+					<Image className="bg-white rounded-full border-white border-[2px] h-[200px] w-[200px]" src={room_icon || "/assets/images/lol.png"} width={200} height={200} quality={100} alt="Coming soon" />
+					<input
+						type='file'
+						name="icon"
+						className='hidden'
+						onChange={handleImageUpload}
+						accept='image/*'
+					/>
+				</label>
 				<div className="flex font-bold text-[18px] flex-row m-4">
-					{selectedChat?.room_name}
-					<button className="ml-2 bg-primary-400 text-white rounded-md px-1 py-1" >
-						{
-							isAdmin &&
-							<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M2.25 15.75V12.5625L12.15 2.68125C12.3 2.54375 12.4657 2.4375 12.6473 2.3625C12.8287 2.2875 13.0192 2.25 13.2187 2.25C13.4182 2.25 13.612 2.2875 13.8 2.3625C13.988 2.4375 14.1505 2.55 14.2875 2.7L15.3187 3.75C15.4687 3.8875 15.5782 4.05 15.6472 4.2375C15.7162 4.425 15.7505 4.6125 15.75 4.8C15.75 5 15.7157 5.19075 15.6472 5.37225C15.5787 5.55375 15.4692 5.71925 15.3187 5.86875L5.4375 15.75H2.25ZM13.2 5.85L14.25 4.8L13.2 3.75L12.15 4.8L13.2 5.85Z" fill="#878787" />
+					{isEditing ? (
+						<input
+							type="text"
+							value={newName}
+							max={20}
+							onChange={(e) => {
+								setNewName(e.target.value)
+							}}
+							onBlur={handleBlur}
+							className="focus:outline-none bg-transparent border-b border-white  h-9 w-[200px]"
+							autoFocus
+						/>
+					) : (
+						room_name
+					)}
+					{isAdmin && (
+						<button
+							className="ml-2 bg-primary-400 text-white rounded-md px-1 py-1"
+							onClick={() => setIsEditing(true)}
+						>
+							<svg
+								width="18"
+								height="18"
+								viewBox="0 0 18 18"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									d="M2.25 15.75V12.5625L12.15 2.68125C12.3 2.54375 12.4657 2.4375 12.6473 2.3625C12.8287 2.2875 13.0192 2.25 13.2187 2.25C13.4182 2.25 13.612 2.2875 13.8 2.3625C13.988 2.4375 14.1505 2.55 14.2875 2.7L15.3187 3.75C15.4687 3.8875 15.5782 4.05 15.6472 4.2375C15.7162 4.425 15.7505 4.6125 15.75 4.8C15.75 5 15.7157 5.19075 15.6472 5.37225C15.5787 5.55375 15.4692 5.71925 15.3187 5.86875L5.4375 15.75H2.25ZM13.2 5.85L14.25 4.8L13.2 3.75L12.15 4.8L13.2 5.85Z"
+									fill="#878787"
+								/>
 							</svg>
-						}
-					</button>
+						</button>
+					)}
 				</div>
-			</div>
+			</div >
 			<div className="flex h-full flex-col flex-1 rounded-md m-3  overflow-y-scroll hide-scrollbar  bg-[#161616]">
 				<div className="flex flex-row py-3 px-5">
 					<div className="flex font-normal text-[16px] items-start justify-start w-full">
-						{selectedChat?.members.length} members
+						{users.length} members
 					</div>
 					<div className="items-end justify-end" onClick={confirmAddUser}>
 						{
@@ -102,13 +173,13 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 						selectedChat && selectedChat?.members && selectedChat?.admin &&
 						[...selectedChat.members]
 							.sort((a, b) => a.username === selectedChat?.admin.username ? -1 : b.username === selectedChat?.admin.username ? 1 : 0)
-							.map((user, index) => (
+							.map((user) => (
 								<GroupsMembers name={user.username} key={user.id} {...user} selectedChat={selectedChat} />
 							))
 					}
 				</div>
 			</div>
-		</div>
+		</div >
 	)
 }
 

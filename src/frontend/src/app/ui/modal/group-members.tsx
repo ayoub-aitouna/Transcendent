@@ -1,9 +1,8 @@
-import { Friend, user } from '@/type/auth/user';
+"use client"
+import { Friend } from '@/type/auth/user';
 import React, { useEffect, useState } from 'react'
 import AddGroupMembers from '../dashboard/messenger/add-group-members';
-import apiMock from '@/lib/axios-mock';
-import { roomItem } from '@/api/chat';
-import { Item } from 'react-bootstrap/lib/Breadcrumb';
+import { AddMemberFromGroup, roomItem } from '@/api/chat';
 
 const GroupMembers = ({
 	onCancel,
@@ -16,23 +15,8 @@ const GroupMembers = ({
 
 }) => {
 	const [Members, setMembers] = useState<Number[]>([]);
-	const [ClickAdd, setClickAdd] = useState<boolean>(false);
-	useEffect(() => {
-		const AddMemberFromGroup = async () => {
-			if (Members && ClickAdd) {
-				try {
-					const formData = new FormData();
-					Members.forEach((user: { toString: () => string | Blob; }) => {
-						formData.append("input_members", user.toString());
-					})
-					await apiMock.post(`/chat/Add-members/${selectedChat?.id}/`, formData);
-				} catch (error) {
-					console.error("Error fetching friends:", error);
-				}
-			}
-		};
-		AddMemberFromGroup();
-	}, [ClickAdd])
+
+
 	const handleClickAdd = (id: number) => {
 		if (id) {
 			if (Members.includes(id)) {
@@ -42,10 +26,15 @@ const GroupMembers = ({
 			}
 		}
 	}
-	const handleAdd = () => {
-		setClickAdd(true);
-		console.log("Members in confirm", Members);
-		onCancel();
+	const handleAdd = async () => {
+		try {
+			await AddMemberFromGroup(Members, selectedChat?.id || 0);
+			console.log("Members in confirm", Members);
+			onCancel();
+		} catch (error) {
+			console.error("Error fetching friends:", error);
+		}
+
 
 	}
 	return (
@@ -65,7 +54,7 @@ const GroupMembers = ({
 			<div className='mt-5 sm:mt-4 sm:flex sm:flex-row-reverse'>
 				<button
 					type='button'
-					onClick={handleAdd}
+					onClick={() => handleAdd()}
 					data-behavior='commit'
 					className='inline-flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primbg-primary focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm'>
 					Add

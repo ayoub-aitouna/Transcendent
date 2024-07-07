@@ -17,14 +17,14 @@ import { useAppSelector } from "@/redux/store";
 const Page = () => {
 	const { id } = useAppSelector((state) => state.user.user);
 	const router = useRouter();
-	const { users, addRemoveImage, addRemoveName, removeUser, group_name, icon , isCreating} = useContext(UserContext);
+	const { users, addRemoveImage, addRemoveName, removeUser, group_name, icon } = useContext(UserContext);
 	const [src, setSrc] = useState<string | null>(null);
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
 		if (!e.target.files) return;
 		addRemoveImage(e.target.files[0]);
 	};
-	if (!isCreating && users.length > 0) {
+	if (users.length > 0) {
 		users.forEach((user) => {	
 			removeUser(user.id);
 		}

@@ -17,6 +17,7 @@ import SendImage from "./send-image";
 import { WS_BASE_URL } from "@/constant/api";
 import AuthWebSocket from "@/lib/AuthWebSocket";
 import { BlobOptions } from "buffer";
+import { m } from "framer-motion";
 
 
 const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
@@ -124,14 +125,13 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
 			socket.current?.send(JSON.stringify(payload));
 			setMessages(prevMessages => [...prevMessages, {
 				message: content,
-				image_file: imageFile ? URL.createObjectURL(imageFile) : "",
+				image_file: payload.image ? payload.image : null,
 				seen: false,
 				created_at: String(moment()),
 				id: selectedChat.id,
 				sender_username: username,
 			}]);
 			setMessageContent("");
-			setSelectedImage(null);
 		} catch (error) {
 			console.error("Error sending message:", error);
 		}
@@ -168,7 +168,7 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
 			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
-						<ChatMessage key={index} messages={item} type={selectedChat.type} />
+						<ChatMessage key={index} messages={item}  type={selectedChat.type} />
 					))}
 				</div>
 			</div>
