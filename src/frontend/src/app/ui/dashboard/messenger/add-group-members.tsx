@@ -1,4 +1,4 @@
-// GroupsContainer.tsx
+// AddGroupMembers.tsx
 'use client'
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -7,32 +7,27 @@ import { ImageSrc } from '@/lib/ImageSrc';
 import { useUserContext } from '@/app/(dashboard)/messenger/context/UserContext';
 import { useAppSelector } from '@/redux/store';
 
-interface GroupsContainerProps {
+interface AddGroupMembersProps {
 	id: number;
 	username: string;
 	image_url: string;
 	level: number;
+	handleOnClick: (id : number) => void;
+
 }
 
-const GroupsContainer: React.FC<GroupsContainerProps> = ({ id, username, image_url, level }) => {
-	const { users, addUser, removeUser, setIsCreating } = useUserContext();
-	const [isAdded, setIsAdded] = useState(users.some(user => user.id === id));
-
-	useEffect(() => {
-		setIsAdded(users.some(user => user.id === id));
-	}, [users, id]);
+const AddGroupMembers: React.FC<AddGroupMembersProps> = ({ id, username, image_url, level,handleOnClick }) => {
+	const [isAdded, setIsAdded] = useState(false);
 
 	const handleAddRemove = () => {
-		if (isAdded) {
-			removeUser(id);
-		} else {
-			addUser({ id, username, image_url, level });
-			setIsCreating(true);
-		}
 		setIsAdded(!isAdded);
+		if (!isAdded)
+			handleOnClick(id);
+		else
+			handleOnClick(0);
 	};
 	return (
-		<div className='mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4 mb-3'>
+		<div className='mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#373737] p-4'>
 			<Link href={`/profile/${id}`} className='flex items-center'>
 				<Image
 					className='bg-white w-[53px] h-[53px] rounded-full'
@@ -67,4 +62,4 @@ const GroupsContainer: React.FC<GroupsContainerProps> = ({ id, username, image_u
 	);
 };
 
-export default GroupsContainer;
+export default AddGroupMembers;

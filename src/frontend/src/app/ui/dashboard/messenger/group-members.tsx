@@ -34,6 +34,7 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 				try {
 					const formData = new FormData();
 					formData.append('user_id', id.toString());
+					console.log("remove member", id)
 					await apiMock.post(`/chat/remove-member/${selectedChat.id}/`, formData);
 				} catch (error) {
 					console.error("Error fetching friends:", error);
@@ -50,7 +51,6 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 				body='The user well no long part of that Group Chat.'
 				onConfirm={() => {
 					setRemoveMember(true);
-					console.log("remove member", id)
 					CancelModal();
 				}}
 				onCancel={() => CancelModal()}

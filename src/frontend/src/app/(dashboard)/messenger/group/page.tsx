@@ -141,7 +141,7 @@ const Page = () => {
 					</div>
 
 					<div className='flex flex-col justify-start items-start pt-8'>
-						<Link href={'/messenger/group/choice-members'} className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
+						<Link href={`/messenger/group/choice-members`} className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
 							<div className='flex items-center justify-between'>
 								<div className='flex items-start flex-col'>
 									<div className='text-white truncate font-semibold'>

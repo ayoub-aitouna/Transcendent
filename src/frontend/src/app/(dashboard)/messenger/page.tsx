@@ -1,17 +1,13 @@
 "use client"
 
-import React, { ChangeEvent, ReactNode, use, useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import apiMock from "@/lib/axios-mock";
 import { roomItem } from "@/api/chat";
 import SendMessages from "@/app/ui/dashboard/messenger/SendMessages";
 import { useRouter } from 'next/navigation'
 import ChatRoomsPanel from "../../ui/dashboard/messenger/ChatRoomsPanel";
-import Image from "next/image";
-import GroupsContainer from "@/app/ui/dashboard/messenger/Group-container";
-import GroupsMembers from "@/app/ui/dashboard/messenger/group-members";
 import { GroupInfo } from "./group/group-info";
 import { user, UserContext, useUserContext } from "./context/UserContext";
-import { set } from "react-hook-form";
 
 
 const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string } }) => {
@@ -21,7 +17,7 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 	const chatroom = searchParams?.chatroom || '';
 	const q = searchParams?.q || '';
 	const router = useRouter();
-	const { users, addUser, removeUser , setIsCreating} = useUserContext();
+	const { users, addUser, removeUser, setIsCreating } = useUserContext();
 
 	useEffect(() => {
 		const fetchMessages = async () => {
@@ -36,8 +32,6 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 				try {
 					const response = await apiMock.get(`/chat/get-chat-room/${chatroom}/`);
 					setSelectedChat(response.data.results[0]);
-					setClickedIndex(response.data.id);
-					router.push(`/messenger`);
 				} catch (error) {
 					console.error('Error fetching chat messages by chatroom', error);
 				}
@@ -68,7 +62,11 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 		}
 
 	};
-	console.log("selectedChat members", selectedChat?.members)
+	// useEffect(() => {
+	// 	if (selectedChat && clickedIndex) {
+	// 		router.push("/messenger/?chatroom=" + clickedIndex);
+	// 	}
+	// }, [clickedIndex])
 
 
 	return (

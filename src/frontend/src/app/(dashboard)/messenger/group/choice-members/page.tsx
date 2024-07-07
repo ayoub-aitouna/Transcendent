@@ -11,19 +11,17 @@ import GroupsContainer from '@/app/ui/dashboard/messenger/Group-container';
 import { useRouter } from 'next/navigation';
 import { useUserContext } from '../../context/UserContext';
 import { useAppSelector } from '@/redux/store';
-import Link from 'next/link';
-import styles from "@/app/ui/dashboard/nav/nav.module.css";
+import styles from "@/app/ui/dashboard/nav/nav.module.css";;
+import { Friend } from '@/type/auth/user';
 
 
-const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) => {
-	const [filteredFriends, setFilteredFriends] = useState([]);
+const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string}}) => {
+	const [filteredFriends, setFilteredFriends] = useState<Friend[]>([]);
 	const { users, removeUser } = useUserContext();
 	const { id } = useAppSelector((state) => state.user.user);
 	const router = useRouter();
 
-	const isExist = users.some(user => user.id === id)
-	const q = searchParams?.q || null;
-
+	const q = searchParams?.q || null;;
 	const handleCancel = () => {
 		users.forEach((user) => {
 			removeUser(user.id);
@@ -42,13 +40,11 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) 
 		fetchFriends();
 	}, [q]);
 
-
+	const isExist = filteredFriends.some(friend => users.some(user => user.id === friend.id));
+	console.log("is exist : ", isExist, "id : ", id);
 	if (filteredFriends.length === 0) {
 		return (
-			<Error
-				title='Friend not found'
-				desc='The Friend you are looking for does not exist.'
-			/>
+			<Empty text="you don't have any friends you are so only person hahahahaha" />
 		);
 	}
 
@@ -80,7 +76,7 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string } }) 
 							<button className='bg-[#363636] w-[100px] h-[37px] rounded-[5px]' onClick={handleCancel}>
 								Cancel
 							</button>
-							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px] font-semibold `} onClick={()=>{router.back()}
+							<button className={`${styles.play_now_button} bg-[#363636] w-[140px] h-[37px] rounded-[5px] font-semibold `} onClick={() => { router.back() }
 							}>
 								Select
 							</button>
