@@ -34,7 +34,7 @@ export function ChatMessage({ messages, type }: {
 	// 	downloadImage();
 	// }, [messages.id]);
 	
-	console.log('ChatMessage', messages);
+	// console.log('ChatMessage', messages);
 
 	return (
 		<div className="flex">

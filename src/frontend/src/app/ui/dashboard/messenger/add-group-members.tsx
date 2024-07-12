@@ -1,35 +1,32 @@
 // AddGroupMembers.tsx
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ImageSrc } from '@/lib/ImageSrc';
-import { useUserContext } from '@/app/(dashboard)/messenger/context/UserContext';
+import { UserContext, useUserContext, user } from '@/app/(dashboard)/messenger/context/UserContext';
+
 
 interface AddGroupMembersProps {
 	id: number;
 	username: string;
 	image_url: string;
 	level: number;
-	handleOnClick: (id : number) => void;
+	handleOnClick: (id : number, user: user) => void;
 
 }
 
 const AddGroupMembers: React.FC<AddGroupMembersProps> = ({ id, username, image_url, level,handleOnClick }) => {
 	const [isAdded, setIsAdded] = useState(false);
-	const { users, addUser, removeUser} = useUserContext();
+	const { addUser, removeUser } = useContext(UserContext);
 
 	const handleAddRemove = () => {
 		setIsAdded(!isAdded);
 		if (!isAdded){
-			handleOnClick(id);
-			console.log("id", id, "username", username, "image_url", image_url, "level", level);
-			addUser({ id, username, image_url, level });
-			console.log("users: ", users, "isAdded: ", isAdded);
+			handleOnClick(id, { id, username, image_url, level });
 		}
 		else{
-			removeUser(id);
-			handleOnClick(0);
+			handleOnClick(0,{id, username, image_url, level});
 		}
 	};
 	return (

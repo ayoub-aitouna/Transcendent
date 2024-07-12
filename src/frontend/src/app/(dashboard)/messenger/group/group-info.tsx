@@ -6,7 +6,7 @@ import { GroupCustomize, roomItem } from "@/api/chat";
 import Image from "next/image";
 import { ChangeEvent, SetStateAction, useContext, useEffect, useState } from "react";
 import { useModal } from "@/app/provider/modal-provider";
-import { UserContext, useUserContext } from "../context/UserContext";
+import {  useUserContext } from "../context/UserContext";
 import GroupMembers from "@/app/ui/modal/group-members";
 import { Friend } from "@/type/auth/user";
 import { GetFriendsData } from "@/api/user";
@@ -23,7 +23,7 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 	const [AddMember, setAddMember] = useState<boolean>(false);
 	const { username } = useAppSelector((state) => state.user.user);
 	const { OpenModal, CancelModal } = useModal();
-	const { users, setRoomIcon, setRoomName, room_icon, room_name } = useUserContext();
+	const { users, setRoomIcon, setRoomName,setIsChanged,setRoomId, addUser, room_icon, room_name } = useUserContext();
 	const [Friends, setFilteredFriends] = useState<Friend[]>([]);
 	const [isEditing, setIsEditing] = useState(false);
 	const [newName, setNewName] = useState(room_name || "");
@@ -36,9 +36,11 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 		reader.onload = () => {
 			const dataURL = reader.result;
 			setRoomIcon(dataURL as string);
+			setIsChanged(true);
+			setRoomId(selectedChat?.id || 0);
+
 		};
 		reader.readAsDataURL(file);
-		console.log("change image :: ==> ", file)
 		try {
 			GroupCustomize(room_name || "", selectedChat?.id || 0, file);
 		}
@@ -53,8 +55,9 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 		if (!newName)
 			return
 		setRoomName(newName);
-
+		setIsChanged(true);
 		setIsEditing(false);
+		setRoomId(selectedChat?.id || 0);
 		try {
 			GroupCustomize(newName || "", selectedChat?.id || 0, null);
 		}
@@ -98,6 +101,7 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 			<GroupMembers
 				onCancel={() => CancelModal()}
 				friends={Friends.filter((friend) => !users.some((user) => user.id === friend.id))}
+				addUser={addUser}
 				selectedChat={selectedChat}
 			/>
 		);

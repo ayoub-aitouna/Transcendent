@@ -10,6 +10,7 @@ import Image from "next/image";
 import RightArrow from "../../icons/content_area/right-arrow";
 import { FriendRequest } from "@/type/auth/user";
 import { ImageSrc } from "@/lib/ImageSrc";
+import { UnblockUser } from "@/api/user";
 
 export function RecommendedContainer({
 	user,
@@ -165,9 +166,15 @@ export function PendingContainer({ user }: { user: FriendRequest }) {
 export function BlocksContainer({ user }: { user: FriendRequest }) {
 	const [clicked, setClicked] = useState(false);
 
-	const handleClicked = () => {
-		setClicked(!clicked);
-	};
+	const handleClicked = async () => {
+		
+		try {
+			await UnblockUser(user.id);
+			setClicked(!clicked);
+		} catch (error) {
+			console.error("Error unblocking user:", error);
+		}
+	}
 	return (
 		<button
 			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#292929] p-4 mb-5`}>

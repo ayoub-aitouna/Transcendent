@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { MessageItem } from '@/api/chat';
 import apiMock from '@/lib/axios-mock';
 import { ImageSrc } from '@/lib/ImageSrc';
+import { useUserContext } from '@/app/(dashboard)/messenger/context/UserContext';
+import { set } from 'react-hook-form';
 
 function get_last_message({ lastMessage }: { lastMessage: MessageItem }) {
 	if (lastMessage === null)
@@ -42,15 +44,17 @@ function formatTime(timestamp: string): string {
 }
 
 
-export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSelected, onClick }: {
+export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSelected, onClick, id }: {
 	name: string;
 	href: string;
 	LastMessage: MessageItem;
 	messagesNbr: number;
 	isSelected: boolean;
+	id: number;
 	onClick: () => void;
 }) {
 	const lastMassage = get_last_message({ lastMessage: LastMessage });
+	const { room_icon, room_name, isChanged , room_id, setIsChanged, setRoomId} = useUserContext();
 	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage && LastMessage.id !== null);
 	const handleClick = () => {
 		onClick();
@@ -65,6 +69,7 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 			setViewsMessages(messagesNbr !== 0);
 		}
 	}, [isSelected, messagesNbr, lastMassage]);
+
 	return (
 		<div
 			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded-lg 

@@ -1,35 +1,43 @@
 "use client"
 import { Friend } from '@/type/auth/user';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AddGroupMembers from '../dashboard/messenger/add-group-members';
 import { AddMemberFromGroup, roomItem } from '@/api/chat';
+import { user } from '@/app/(dashboard)/messenger/context/UserContext';
 
 const GroupMembers = ({
 	onCancel,
+	addUser,
 	friends,
 	selectedChat,
 }: {
 	onCancel: () => void;
+	addUser: (user: user) => void;
 	friends: Friend[];
 	selectedChat: roomItem | null;
 
 }) => {
 	const [Members, setMembers] = useState<Number[]>([]);
-
-
-	const handleClickAdd = (id: number) => {
+	const [users, setUsers] = useState<user[]>([]);
+	const handleClickAdd = (id: number, user: user) => {
 		if (id) {
 			if (Members.includes(id)) {
 				setMembers(Members.filter((member) => member !== id));
+				setUsers(users.filter((User) => User !== user));
 			} else {
+				setUsers([...users, user]);
 				setMembers([...Members, id]);
 			}
 		}
+
 	}
 	const handleAdd = async () => {
 		try {
 			await AddMemberFromGroup(Members, selectedChat?.id || 0);
-			console.log("Members in confirm", Members);
+			users.forEach((user) => {
+				addUser(user);
+			}
+			);
 			onCancel();
 		} catch (error) {
 			console.error("Error fetching friends:", error);

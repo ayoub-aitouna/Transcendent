@@ -14,6 +14,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         self.room_id = self.scope['url_route']['kwargs']['room_id']
+        if not await self.is_member(self.user, self.room_id):
+            await self.send(text_data=json.dumps({
+                'error': 'Forbidden access'
+            }))
+            await self.close(code=1000)  # Use a valid close code
+            return
         self.room_group_name = 'chat_%s' % self.room_id
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -26,6 +32,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name)
 
     async def receive(self, text_data):
+        if not await self.is_member(self.user, self.room_id):
+            await self.send(text_data=json.dumps({
+                'error': 'Forbidden access'
+            }))
+            await self.close(code=1000)  # Use a valid close code
+            return
         data_json = json.loads(text_data)
         message_type = data_json.get('type')
 
@@ -47,6 +59,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     async def chat_message(self, event):
+        if not await self.is_member(self.user, self.room_id):
+            await self.send(text_data=json.dumps({
+                'error': 'Forbidden access'
+            }))
+            await self.close(code=1000)  # Use a valid close code
+            return
         message = event['message']
         sender = message.get('sender')
         if self.user.id == sender:
@@ -98,7 +116,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         removed_room.delete()
         for member in chat_room.members.all():
             if member != self.user:
-                removed_room_receiver = RemovedRoom.objects.filter(user=member, room=chat_room)
+                removed_room_receiver = RemovedRoom.objects.filter(
+                    user=member, room=chat_room)
                 if removed_room_receiver:
                     removed_room_receiver.delete()
 
@@ -119,6 +138,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         removed_room.delete()
         for member in chat_room.members.all():
             if member != self.user:
-                removed_room_receiver = RemovedRoom.objects.filter(user=member, room=chat_room)
+                removed_room_receiver = RemovedRoom.objects.filter(
+                    user=member, room=chat_room)
                 if removed_room_receiver:
                     removed_room_receiver.delete()
+
+    @database_sync_to_async
+    def is_member(self, user, room_id):
+        return ChatRoom.objects.filter(id=room_id, members=user).exists()

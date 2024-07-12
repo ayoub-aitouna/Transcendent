@@ -272,7 +272,6 @@ const Header = ({ data: inputData }: { data: user }) => {
   const UnfriendCurrentUser = async () => {
     try {
       await RemoveFriend(inputData.id);
-      console.log("UnfriendCurrentUser -> inputData", inputData);
       router.replace(`/profile/${data.username}`);
     } catch (err) {
       addToast({

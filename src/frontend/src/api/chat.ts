@@ -76,9 +76,7 @@ export const RemoveGroupMember = async ({ selectedChat_id, User_id }: { selected
 
 export const GetChatRoom = async (clickedIndex: number, userId: string) => {
 	let ChatRoom = null
-	console.log("index: ", clickedIndex, "chatRoom : ", userId)
 	if (clickedIndex !== 0) {
-		console.log("by index : ", clickedIndex)
 		const res = await apiMock.get(`/chat/rooms/${clickedIndex}/`);
 		ChatRoom = res.data
 	}
@@ -93,7 +91,6 @@ export const RemoveMemberFromGroup = async (id: Number, room_id: number) => {
 	try {
 		const formData = new FormData();
 		formData.append('user_id', id.toString());
-		console.log("remove member", id)
 		await apiMock.post(`/chat/remove-member/${room_id}/`, formData);
 	} catch (error) {
 		console.error("Error fetching friends:", error);

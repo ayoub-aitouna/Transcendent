@@ -15,12 +15,16 @@ interface UserContextType {
 	icon: File | null;
 	room_name: string | undefined;
 	room_icon: string | undefined;
+	isChanged: boolean;
+	room_id: number;
 	setRoomIcon: (icon: string) => void;
 	setRoomName: (name: string) => void;
 	addUser: (user: user) => void;
 	removeUser: (userId: number) => void;
 	addRemoveName: (name: string) => void;
 	addRemoveImage: (icon: File | null) => void;
+	setIsChanged: (isChanged: boolean) => void;
+	setRoomId: (id: number) => void;
 }
 
 const initialState: UserContextType = {
@@ -29,12 +33,16 @@ const initialState: UserContextType = {
 	icon: null,
 	room_name: "",
 	room_icon: "",
+	isChanged: false,
+	room_id: 0,
 	addUser: () => { },
 	addRemoveName: () => { },
 	addRemoveImage: () => { },
 	removeUser: () => { },
 	setRoomIcon: () => { },
 	setRoomName: () => { },
+	setIsChanged: () => { },
+	setRoomId: () => { },
 };
 
 export const UserContext = createContext<UserContextType>(initialState);
@@ -45,6 +53,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 	const [icon, setIcon] = useState<File | null>(null);
 	const [room_icon, setRoomIcon] = useState<string | undefined>('');
 	const [room_name, setRoomName] = useState<string | undefined>('');
+	const [isChanged, setIsChanged] = useState<boolean>(false);
+	const [room_id, setRoomId] = useState<number>(0);
 
 	const addUser = (user: user) => {
 		setUsers(prevUsers => [...prevUsers, user]);
@@ -69,12 +79,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 			icon,
 			room_name,
 			room_icon,
+			isChanged,
+			room_id,
 			addUser,
 			addRemoveName,
 			addRemoveImage,
 			removeUser,
 			setRoomIcon,
-			setRoomName
+			setRoomName,
+			setIsChanged,
+			setRoomId,
 		}}>
 			{children}
 		</UserContext.Provider>

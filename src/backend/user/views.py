@@ -27,7 +27,6 @@ from api.serializers import NotificationSerializer
 from django.core.exceptions import ObjectDoesNotExist
 
 
-
 class BaseNotification():
     def _create_notification(self, addressee, title, description, type, action):
         notification = Notification(
@@ -375,12 +374,13 @@ class FriendList(generics.ListAPIView):
 
 
 class UnblockUser(generics.DestroyAPIView):
-    queryset = BlockList.objects.all()
+    queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
         pk = self.kwargs.get("pk")
         blocked_user = get_object_or_404(User, pk=pk)
+        print('blocked user', blocked_user)
         BlockList.objects.filter(
             user=self.request.user, blocked_user=blocked_user).delete()
         return

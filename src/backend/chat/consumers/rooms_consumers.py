@@ -11,7 +11,6 @@ from asgiref.sync import sync_to_async
 from django.core.files.base import ContentFile
 
 
-
 class ConsumerRequest():
     def __init__(self, user):
         self.user = user
@@ -76,12 +75,14 @@ class RoomsConsumer(AsyncWebsocketConsumer):
         room = ChatRoom.objects.get(id=room_id)
         ChatMessage.objects.create(
             chatRoom=room, sender=self.user, message=message)
+
     @database_sync_to_async
     def save_image_message(self, room_id, image_data):
         room = ChatRoom.objects.get(id=room_id)
         format, imgstr = image_data.split(';base64,')
         ext = format.split('/')[-1]
-        image_file = ContentFile(base64.b64decode(imgstr), name=f'{self.user.id}_{room_id}.{ext}')
+        image_file = ContentFile(base64.b64decode(
+            imgstr), name=f'{self.user.id}_{room_id}.{ext}')
         ChatMessage.objects.create(
             chatRoom=room,
             sender=self.user,

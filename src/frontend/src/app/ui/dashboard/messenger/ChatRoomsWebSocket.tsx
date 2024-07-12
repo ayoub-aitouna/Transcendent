@@ -12,7 +12,7 @@ const ChatRoomsWebSocket = (q: string | null) => {
 	useEffect(() => {
 		const fetchRooms = async () => {
 			try {
-				const room = await GetChatRoomsData(q);
+				const room = await GetChatRoomsData(q, false);
 				setRooms(room);
 			} catch (e) {
 				console.log("ERROR in fetching rooms data: ", e);

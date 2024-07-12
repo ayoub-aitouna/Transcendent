@@ -20,12 +20,13 @@ import { BlobOptions } from "buffer";
 import { m } from "framer-motion";
 
 
-const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
+const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex }
 	:
 	{
 		selectedChat: roomItem;
 		clickedGroup: (index: boolean) => void;
 		handleIconClick: (index: number) => void;
+		clickedIndex: (index: number) => void;
 
 	}) => {
 
@@ -64,7 +65,6 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
 	}, [selectedChat]);
 
 	useEffect(() => {
-		console.log("Selected chat changed:", selectedChat.id);
 		if (selectedChat.id) {
 			console.log("Creating new WebSocket connection", selectedChat.id);
 			socket.current = new AuthWebSocket(`${WS_BASE_URL}/chat/${selectedChat.id}/`);
@@ -73,6 +73,7 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick }
 		if (socket.current) {
 			socket.current.onerror = (err) => {
 				console.log("WebSocket closed by an error: ", err);
+				clickedIndex(0);
 			};
 			socket.current.onmessage = (event) => {
 				const receivedMessage = JSON.parse(event.data);

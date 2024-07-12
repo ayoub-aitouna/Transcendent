@@ -114,6 +114,10 @@ export const BlockUser = async (id: number) => {
     await apiMock.post(`/users/block-user/${id}/`);
 }
 
+export const UnblockUser = async (id: number) => {
+    await apiMock.delete(`/users/unblock-user/${id}/`);
+}
+
 export const RemoveFriend = async (id: number) => {
     await apiMock.delete(`/users/remove-friend/${id}/`);
 }
