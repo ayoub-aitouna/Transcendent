@@ -100,7 +100,7 @@ transcendent/
 │   │       │   │       ├── create_tournament
 │   │       │   │       └── [id]
 │   │       │   ├── (game)
-│   │       │   │   └── making-machine
+│   │       │   │   └── match-making
 │   │       │   ├── provider
 │   │       │   └── ui
 │   │       │      

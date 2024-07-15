@@ -1,20 +1,73 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import styles from '@/app/ui/dashboard/nav/nav.module.css'
 import Link from 'next/link'
 import PlayerCard from '../player-card'
 import { useSearchParams } from 'next/navigation'
-import { getUser } from '@/api/user'
+import { getUser, UserDetail } from '@/api/user'
+import { user } from '@/type/auth/user'
+import AuthWebSocket from "@/lib/AuthWebSocket";
+import { WS_BASE_URL } from '@/constant/api'
+import { useRouter } from 'next/navigation'
 
-const page = async ({ searchParams }: {
+
+const page = ({ searchParams }: {
 	searchParams?: {
 		player?: string;
 	};
 }) => {
-	const player = searchParams?.player || '';
-	const myInfo = await getUser('me')
-	const playerInfo = await getUser(player)
+	let player = searchParams?.player || '';
+	const [myInfo, setMyInfo] = useState<user>();
+	const [playerInfo, setPlayerInfo] = useState<user>();
+	const router = useRouter();
 
+	useEffect(() => {
+		const fetchInfo = async () => {
+			try {
+				const myInfo = await getUser('me')
+				setMyInfo(myInfo)
+			}
+			catch (e) {
+				console.log("ERROR in fetching user data: ", e);
+			}
+		}
+		fetchInfo();
+	},[]);
+	useEffect(() => {
+		const fetchPlayerInfo = async () => {
+			try {
+				const playerInfo = await getUser(player)
+				setPlayerInfo(playerInfo)
+			}
+			catch (e) {
+				console.log("ERROR in fetching user data: ", e);
+			}
+		}
+		fetchPlayerInfo();
+	},[player]);
+
+	let socket = useRef<any>(null)
+
+	useEffect(() => {
+		if (socket.current)
+			return
+		socket.current = new AuthWebSocket(`${WS_BASE_URL}/game/normal/looby/`);
+		socket.current.onmessage = (event: any) => {
+			const data = JSON.parse(event.data);
+			const  game_room  = data;
+			console.log('Game Room', event.data);
+			if (game_room)
+				router.replace(`/match-making?player=${game_room.player}`);
+		};
+		socket.current.onopen = () => {
+			console.log('game Socket is opened')
+		}
+		socket.current.onerror = (error: any) => {
+			console.error('WebSocket error', error);
+		};
+	}, []);
 	return (
 		<div className=''>
 			<div className="bg-image">
@@ -32,10 +85,10 @@ const page = async ({ searchParams }: {
 					</Link>
 					<div className="flex h-full items-center justify-center">
 						<div className="text-white p-32">
-							<PlayerCard href={myInfo.image_url || "/assets/images/Unknown.jpg"} name={myInfo.username} lvl={String(myInfo.level)} icon={myInfo.rank.icon} />
+							<PlayerCard href={myInfo?.image_url || "/assets/images/Unknown.jpg"} name={myInfo?.username || '----'} lvl={String(myInfo?.level)} icon={myInfo?.rank.icon || "/assets/icons/Gold_3_Rank.png"} />
 						</div>
 						<div className=' font-black text-[60px] text-[#A2A2A2] '>VS</div>
-						{playerInfo.username == null ?
+						{playerInfo?.username == null ?
 							<div className="scroll-parent p-32 max-h-[600px]">
 								<div className="scroll-element primary my-4">
 									<div className="text-white my-4">

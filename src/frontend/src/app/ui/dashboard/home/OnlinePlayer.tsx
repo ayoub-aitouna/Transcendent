@@ -39,7 +39,7 @@ export function PlayersContainer({ player }: {player: Player}) {
 			</Link>
 
 			<Link
-				href={`/making-machine?player=${player.username}`}
+				href={`/match-making?player=${player.username}`}
 				className={`flex-row items-center rounded-[4px]  bg-[#FF3D00] w-[87px] h-[27px]`}>
 				<div className='flex items-center justify-between ml-2 mx-auto text-white text-[16px] font-medium"'>
 					{" "}
