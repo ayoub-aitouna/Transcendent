@@ -174,7 +174,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Contributors
 
 This project would not have been possible without the vision and dedication of its founders. Their relentless pursuit of excellence and innovative spirit have been the driving force behind this platform's success:
-<table>
+<table>https://www.linkedin.com/in/oussama-sdx/
   <tbody>
     <tr>
       <td align="center" valign="top" width="33.33%">
@@ -192,7 +192,7 @@ This project would not have been possible without the vision and dedication of i
         Lead Developer
       </td>
       <td align="center" valign="top" width="33.33%">
-        <a href="https://github.com/placeholder">
+        <a href="https://github.com/OussamaDX">
           <img src="https://avatars.githubusercontent.com/u/98095867?v=4?s=100" width="100px;" alt="Oussama"/><br />
           <sub><b>Oussama SDx</b></sub>
         </a><br />
@@ -207,7 +207,7 @@ This project would not have been possible without the vision and dedication of i
 Feel free to reach out to us with any questions or concerns:
 - **LinkedIn:** [Ayoub Aitouna](https://www.linkedin.com/in/ayoub-aitouna/)
 - **LinkedIn:** [Khadija Mahdi](https://www.linkedin.com/in/khadija-mahdi/)
-- **LinkedIn:** [Oussama SDx](https://www.linkedin.com/in/oussama-sdx/)
+- **LinkedIn:** [Oussama SDx](https://www.linkedin.com/in/oussama-oussaada-031444207/)
 - **Website:** [My Portfolio](https://ayoub-aitouna.github.io/AyoubAitouna/)
 ---
 
