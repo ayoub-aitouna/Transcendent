@@ -24,12 +24,12 @@ const Page = () => {
 		if (!e.target.files) return;
 		addRemoveImage(e.target.files[0]);
 	};
-	if (users.length > 0) {
-		users.forEach((user) => {	
-			removeUser(user.id);
-		}
-		)
-	}
+	// if (users.length > 0) {
+	// 	users.forEach((user) => {	
+	// 		removeUser(user.id);
+	// 	}
+	// 	)
+	// }
 	useEffect(() => {
 		if (icon) {
 			const reader = new FileReader();
@@ -72,7 +72,7 @@ const Page = () => {
 			alert('An error occurred while creating the group chat.');
 		}
 	};
-
+	console.log(users);
 	return (
 		<div className='flex w-full justify-center items-center'>
 			<div className='w-[640px] justify-start items-start'>

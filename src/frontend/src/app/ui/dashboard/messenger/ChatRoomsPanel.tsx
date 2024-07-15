@@ -12,39 +12,14 @@ interface ChatRooms {
 	clickedIndex: number;
 	handleIconClick: (index: number) => void;
 	q: string;
-	selectedChat: roomItem | null;
 }
 
-const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q, selectedChat }) => {
+const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q }) => {
 	const [filter, setFilter] = useState<boolean>(false);
 	const [rooms, setRooms] = useState<roomItem[]>([]);
-	const [WRooms, setWRooms] = useState<any>([]);
-	const { users, room_icon, room_name, room_id, isChanged, setIsChanged, setRoomId } = useContext(UserContext);
+	const { users, room_icon, room_name } = useContext(UserContext);
 
-	useEffect(() => {
-		// Replace 'ws://localhost:8000/ws/get_rooms/' with your actual WebSocket URL
-		const webSocket = new WebSocket(`${WS_BASE_URL}/get_rooms/`);
-		setWRooms(webSocket);
 
-		webSocket.onopen = () => {
-			console.log('WebSocket Connected :', WRooms);
-			// You can send a message to the server if needed
-			// webSocket.send(JSON.stringify({ action: 'get_rooms' }));
-		};
-
-		webSocket.onmessage = (e) => {
-			const data = JSON.parse(e.data);
-			if (data.rooms) {
-				setWRooms(data.rooms);
-			}
-		};
-
-		webSocket.onclose = () => {
-			console.log('WebSocket Disconnected');
-			// Optionally reconnect or handle the close event
-		};
-
-	}, );
 
 	const handleFilterClick = () => {
 		setFilter(!filter);
@@ -62,24 +37,16 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q,
 		};
 		fetchRooms();
 
-
 		const socket = new AuthWebSocket(`${WS_BASE_URL}/rooms/`);
-
 
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			const { message, chat_room } = data;
 			const roomId = message.room_id.toString();
-			const chat_socket = new AuthWebSocket(`${WS_BASE_URL}/chat/${roomId}/`);
-			chat_socket.onerror = (event) => {
-				if (roomId) {
-					setRooms((prevRooms) => prevRooms.filter((room) => room.id.toString() !== roomId));
-				}
-				console.log(rooms)
-			}
 
 			setRooms((prevRooms) => {
 				const roomIndex = prevRooms.findIndex((room) => room.id.toString() === roomId);
+				console.log('New room added', chat_room.members);
 				if (roomIndex !== -1) {
 					const updatedRooms = [...prevRooms];
 					updatedRooms[roomIndex] = {
@@ -88,6 +55,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q,
 						room_name: room_name || chat_room.room_name,
 						last_message: chat_room.last_message,
 						unseen_messages_count: chat_room.unseen_messages_count,
+						members: chat_room.members,
 					};
 					return updatedRooms;
 				} else {
@@ -104,17 +72,11 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q,
 				}
 			});
 		};
-		socket.onopen = (event) => {
-			console.log('Rooms Socket is opened', event)
-
+		socket.onopen = () => {
+			console.log('Rooms Socket is opened')
 		}
 		socket.onerror = (error) => {
 			console.error('WebSocket error', error);
-			// const roomId = message.room_id.toString();
-			// if (roomId) {
-			// 	setRooms((prevRooms) => prevRooms.filter((room) => room.id.toString() !== roomId));
-			// }
-
 		};
 
 		return () => {
@@ -129,27 +91,17 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q,
 					<ChatSearchBar onFilterClick={handleFilterClick} filter={filter} />
 				</div>
 				<div className="relative">
-					{rooms.map((item) => {
-						if (isChanged && item.id === room_id) {
-							item.room_icon = room_icon ? room_icon : item.room_icon;
-							item.room_name = room_name ? room_name : item.room_name;
-							setIsChanged(false);
-						}
-
-						return (
-							<div key={item.id}>
-								<MessengerContainer
-									onClick={() => handleIconClick(item.id)}
-									name={item.room_name} // Use the possibly updated name
-									LastMessage={item.last_message}
-									href={item.room_icon} // Use the possibly updated href
-									messagesNbr={item.unseen_messages_count}
-									isSelected={clickedIndex === item.id}
-									id={item.id}
-								/>
-							</div>
-						);
-					})}
+					{rooms.map((item) => (
+						<div key={item.id}>
+							<MessengerContainer
+								onClick={() => handleIconClick(item.id)}
+								name={item.room_name}
+								LastMessage={item.last_message}
+								href={item.room_icon}
+								messagesNbr={item.unseen_messages_count}
+								isSelected={clickedIndex === item.id} id={0}							/>
+						</div>
+					))}
 				</div>
 			</div>
 		</div>

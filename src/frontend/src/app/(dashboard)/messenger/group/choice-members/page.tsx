@@ -45,7 +45,6 @@ const ChoiceMembersPage = ({ searchParams }: { searchParams?: { q?: string}}) =>
 			<Empty text="you don't have any friends you are so only person hahahahaha" />
 		);
 	}
-
 	return (
 		<div className="flex items-center justify-center w-full">
 			<div className="p-10 w-[894px] h-[890px]">

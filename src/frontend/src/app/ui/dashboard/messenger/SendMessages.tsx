@@ -4,6 +4,7 @@ import React, {
 	useEffect,
 	useState,
 	useCallback,
+	useContext,
 } from "react";
 import Upload from "../icons/messenger/Upload";
 import SendIcon from "../icons/messenger/send";
@@ -18,6 +19,7 @@ import { WS_BASE_URL } from "@/constant/api";
 import AuthWebSocket from "@/lib/AuthWebSocket";
 import { BlobOptions } from "buffer";
 import { m } from "framer-motion";
+import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
 
 
 const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex }
@@ -37,7 +39,8 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { username } = useAppSelector((state) => state.user.user);
 	const [friends, setFriends] = useState<{ username: string }[]>([]);
-
+	const { users, room_icon, room_name } = useContext(UserContext);
+	
 	useEffect(() => {
 		const getFriendsList = async () => {
 			try {
@@ -65,35 +68,44 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 	}, [selectedChat]);
 
 	useEffect(() => {
-		if (selectedChat.id) {
-			console.log("Creating new WebSocket connection", selectedChat.id);
-			socket.current = new AuthWebSocket(`${WS_BASE_URL}/chat/${selectedChat.id}/`);
-		}
+		try {
 
-		if (socket.current) {
-			socket.current.onerror = (err) => {
-				console.log("WebSocket closed by an error: ", err);
-				clickedIndex(0);
-			};
-			socket.current.onmessage = (event) => {
-				const receivedMessage = JSON.parse(event.data);
-				const newMessage: MessageItem = {
-					message: receivedMessage.message.message,
-					image_file: receivedMessage.message.type === 'image' ? receivedMessage.message.image_file : null,
-					seen: false,
-					created_at: String(moment(receivedMessage.created_at)),
-					id: receivedMessage.message.id ? receivedMessage.message.id : 0,
-					sender_username: receivedMessage.message.sender_username,
-				};
-				setMessages(prevMessages => [...prevMessages, newMessage]);
-			};
-
-		}
-		return () => {
-			if (socket.current) {
-				socket.current.onmessage = null;
+			if (selectedChat.id) {
+				console.log("Creating new WebSocket connection", selectedChat.id);
+				socket.current = new AuthWebSocket(`${WS_BASE_URL}/chat/${selectedChat.id}/`);
 			}
-		};
+
+			if (socket.current) {
+				socket.current.onerror = (err) => {
+					console.log("WebSocket closed by an error: ", err);
+					clickedIndex(0);
+				};
+				socket.current.onmessage = (event) => {
+					const receivedMessage = JSON.parse(event.data);
+					const newMessage: MessageItem = {
+						message: receivedMessage.message.message,
+						image_file: receivedMessage.message.type === 'image' ? receivedMessage.message.image_file : null,
+						seen: false,
+						created_at: String(moment(receivedMessage.created_at)),
+						id: receivedMessage.message.id ? receivedMessage.message.id : 0,
+						sender_username: receivedMessage.message.sender_username,
+					};
+					setMessages(prevMessages => [...prevMessages, newMessage]);
+				};
+
+			}
+			return () => {
+				if (socket.current) {
+					socket.current.onmessage = null;
+				}
+			};
+		} catch (error) {
+			console.error(users , "on error");
+			console.error("Error creating WebSocket connection:", error
+			);
+			window.location.reload();
+
+		}
 	}, [selectedChat.id]);
 
 	const sendMessage = useCallback(async (content: string, imageFile: File | null) => {
@@ -169,7 +181,7 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
-						<ChatMessage key={index} messages={item}  type={selectedChat.type} />
+						<ChatMessage key={index} messages={item} type={selectedChat.type} />
 					))}
 				</div>
 			</div>
