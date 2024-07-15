@@ -56,6 +56,7 @@ class GameLobby(AsyncWebsocketConsumer):
             "type": 'broadcast',
             'message': {
                 'type': 'game_started',
+                'player': matched_user.id if matched_user else None,
                 'game_uuid': game_uuid,
             }
         }
