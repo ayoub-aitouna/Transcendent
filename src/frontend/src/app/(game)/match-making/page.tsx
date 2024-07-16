@@ -10,7 +10,11 @@ import { getUser, UserDetail } from '@/api/user'
 import { user } from '@/type/auth/user'
 import AuthWebSocket from "@/lib/AuthWebSocket";
 import { WS_BASE_URL } from '@/constant/api'
+import GameCountdown  from "@/hooks/game-count-down";
 import { useRouter } from 'next/navigation'
+import LeftArrow from '@/app/ui/dashboard/icons/content_area/left-arrow'
+import { it } from 'node:test'
+import { serialize } from 'node:v8'
 
 
 const page = ({ searchParams }: {
@@ -22,6 +26,13 @@ const page = ({ searchParams }: {
 	const [myInfo, setMyInfo] = useState<user>();
 	const [playerInfo, setPlayerInfo] = useState<user>();
 	const router = useRouter();
+    const targetDateRef = useRef(new Date(new Date().getTime() + 1000 * 120));
+    const sec = useRef(new Date(new Date().getTime() + 1000 * 5));
+    const [minutes, seconds] = GameCountdown(targetDateRef.current);
+    const [minute, five_seconds] = GameCountdown(sec.current);
+	const [isMatched, setIsMatched] = useState(false);
+	const [isBack, setIsBack] = useState(false);
+	const [uid, setUuid] = useState<number>(0);
 
 	useEffect(() => {
 		const fetchInfo = async () => {
@@ -34,7 +45,7 @@ const page = ({ searchParams }: {
 			}
 		}
 		fetchInfo();
-	},[]);
+	}, []);
 	useEffect(() => {
 		const fetchPlayerInfo = async () => {
 			try {
@@ -46,9 +57,20 @@ const page = ({ searchParams }: {
 			}
 		}
 		fetchPlayerInfo();
-	},[player]);
+	}, [player]);
 
 	let socket = useRef<any>(null)
+	useEffect(() => {
+		if (minutes == 0 && seconds == 0 && !isMatched || isBack) {
+			if (socket.current) {
+				socket.current.close();
+			}
+			router.replace('/game')
+		}
+		if(isMatched && five_seconds == 0){
+			router.replace(`/ingame?uuid=${uid}`)
+		}
+	}, [minutes, seconds])
 
 	useEffect(() => {
 		if (socket.current)
@@ -56,10 +78,14 @@ const page = ({ searchParams }: {
 		socket.current = new AuthWebSocket(`${WS_BASE_URL}/game/normal/looby/`);
 		socket.current.onmessage = (event: any) => {
 			const data = JSON.parse(event.data);
-			const  game_room  = data;
+			const game_room = data;
 			console.log('Game Room', event.data);
-			if (game_room)
+			if (game_room){
+				setIsMatched(true);
+				setUuid(game_room.game_uuid);
 				router.replace(`/match-making?player=${game_room.player}`);
+			}
+			
 		};
 		socket.current.onopen = () => {
 			console.log('game Socket is opened')
@@ -67,6 +93,10 @@ const page = ({ searchParams }: {
 		socket.current.onerror = (error: any) => {
 			console.error('WebSocket error', error);
 		};
+		if (isBack) {
+			socket.current.close();
+			router.replace('/game')
+		}
 	}, []);
 	return (
 		<div className=''>
@@ -80,9 +110,17 @@ const page = ({ searchParams }: {
 				/>
 				<div
 					className="absolute  h-full w-full overflow-hidden bg-fixed p-16">
-					<Link href="/game">
-						<button className={`${styles.play_now_button} w-[140px] h-[37px] font-semibold text-[14px]`}> Go Back </button>
-					</Link>
+					<button className={`${styles.play_now_button} w-[140px] h-[44px] font-semibold text-[14px]`} onClick={() => setIsBack(true)}>
+						<span className='ml-1 lowercase flex flex-row items-start justify-start'>
+							<div className=' justify-start items-start' 
+							>
+								<LeftArrow />
+							</div>
+							<div className='px-1'>
+								{minutes}m:{seconds}s
+							</div>
+						</span>
+					</button>
 					<div className="flex h-full items-center justify-center">
 						<div className="text-white p-32">
 							<PlayerCard href={myInfo?.image_url || "/assets/images/Unknown.jpg"} name={myInfo?.username || '----'} lvl={String(myInfo?.level)} icon={myInfo?.rank.icon || "/assets/icons/Gold_3_Rank.png"} />
@@ -124,3 +162,5 @@ const page = ({ searchParams }: {
 }
 
 export default page
+
+

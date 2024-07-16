@@ -20,6 +20,7 @@ import AuthWebSocket from "@/lib/AuthWebSocket";
 import { BlobOptions } from "buffer";
 import { m } from "framer-motion";
 import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
+import Link from "next/link";
 
 
 const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex }
@@ -40,7 +41,7 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 	const { username } = useAppSelector((state) => state.user.user);
 	const [friends, setFriends] = useState<{ username: string }[]>([]);
 	const { users, room_icon, room_name } = useContext(UserContext);
-	
+
 	useEffect(() => {
 		const getFriendsList = async () => {
 			try {
@@ -100,7 +101,7 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 				}
 			};
 		} catch (error) {
-			console.error(users , "on error");
+			console.error(users, "on error");
 			console.error("Error creating WebSocket connection:", error
 			);
 			window.location.reload();
@@ -189,9 +190,10 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 				{isFriend || selectedChat.type !== 'private' ?
 					<div className='flex flex-row items-center justify-center h-full'>
 						<div className='p-2'>
-							<div className='pt-2'>
+							<Link
+								href={`/match-making?player=${selectedChat && selectedChat?.receiverUser&& selectedChat.receiverUser[0].username || 0}`} className='pt-2'>
 								<EmojiIcon />
-							</div>
+							</Link>
 							<div className='text-[10px] text-[#878787]'>Invite</div>
 						</div>
 						<div>

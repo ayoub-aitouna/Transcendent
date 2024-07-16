@@ -20,7 +20,7 @@ export type roomItem = {
 	unseen_messages_count: number;
 	type: string;
 	last_message: MessageItem;
-	receiverUser?: { id: string, status: string }[];
+	receiverUser?: { id: string, status: string, username: string, }[];
 	members: user[];
 	admin: user;
 }
