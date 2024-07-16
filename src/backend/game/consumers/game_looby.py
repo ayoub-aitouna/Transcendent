@@ -69,9 +69,9 @@ class GameLobby(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         try:
-            self.match_maker.remove_user(self.user)
-        except ValueError:
-            pass
+            await self.match_maker.remove_user(self.user)
+        except ValueError as e:
+            print(e)
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )

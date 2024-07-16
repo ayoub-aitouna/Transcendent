@@ -10,7 +10,7 @@ import { getUser, UserDetail } from '@/api/user'
 import { user } from '@/type/auth/user'
 import AuthWebSocket from "@/lib/AuthWebSocket";
 import { WS_BASE_URL } from '@/constant/api'
-import GameCountdown  from "@/hooks/game-count-down";
+import GameCountdown from "@/hooks/game-count-down";
 import { useRouter } from 'next/navigation'
 import LeftArrow from '@/app/ui/dashboard/icons/content_area/left-arrow'
 import { it } from 'node:test'
@@ -26,12 +26,11 @@ const page = ({ searchParams }: {
 	const [myInfo, setMyInfo] = useState<user>();
 	const [playerInfo, setPlayerInfo] = useState<user>();
 	const router = useRouter();
-    const targetDateRef = useRef(new Date(new Date().getTime() + 1000 * 120));
-    const sec = useRef(new Date(new Date().getTime() + 1000 * 5));
-    const [minutes, seconds] = GameCountdown(targetDateRef.current);
-    const [minute, five_seconds] = GameCountdown(sec.current);
+	const targetDateRef = useRef(new Date(new Date().getTime() + 1000 * 120));
+	const sec = useRef(new Date(new Date().getTime() + 1000 * 5));
+	const [minutes, seconds] = GameCountdown(targetDateRef.current);
+	const [minute, five_seconds] = GameCountdown(sec.current);
 	const [isMatched, setIsMatched] = useState(false);
-	const [isBack, setIsBack] = useState(false);
 	const [uid, setUuid] = useState<number>(0);
 
 	useEffect(() => {
@@ -61,14 +60,15 @@ const page = ({ searchParams }: {
 
 	let socket = useRef<any>(null)
 	useEffect(() => {
-		if (minutes == 0 && seconds == 0 && !isMatched || isBack) {
+		if (minutes == 0 && seconds == 0 && !isMatched) {
 			if (socket.current) {
 				socket.current.close();
 			}
 			router.replace('/game')
 		}
-		if(isMatched && five_seconds == 0){
+		if (isMatched && five_seconds == 0) {
 			router.replace(`/ingame?uuid=${uid}`)
+			socket.current.close()
 		}
 	}, [minutes, seconds])
 
@@ -80,12 +80,12 @@ const page = ({ searchParams }: {
 			const data = JSON.parse(event.data);
 			const game_room = data;
 			console.log('Game Room', event.data);
-			if (game_room){
+			if (game_room) {
 				setIsMatched(true);
 				setUuid(game_room.game_uuid);
 				router.replace(`/match-making?player=${game_room.player}`);
 			}
-			
+
 		};
 		socket.current.onopen = () => {
 			console.log('game Socket is opened')
@@ -93,10 +93,7 @@ const page = ({ searchParams }: {
 		socket.current.onerror = (error: any) => {
 			console.error('WebSocket error', error);
 		};
-		if (isBack) {
-			socket.current.close();
-			router.replace('/game')
-		}
+
 	}, []);
 	return (
 		<div className=''>
@@ -110,9 +107,12 @@ const page = ({ searchParams }: {
 				/>
 				<div
 					className="absolute  h-full w-full overflow-hidden bg-fixed p-16">
-					<button className={`${styles.play_now_button} w-[140px] h-[44px] font-semibold text-[14px]`} onClick={() => setIsBack(true)}>
+					<button className={`${styles.play_now_button} w-[140px] h-[44px] font-semibold text-[14px]`} onClick={() => {
+						socket.current.close();
+						router.replace('/game')
+					}}>
 						<span className='ml-1 lowercase flex flex-row items-start justify-start'>
-							<div className=' justify-start items-start' 
+							<div className=' justify-start items-start'
 							>
 								<LeftArrow />
 							</div>

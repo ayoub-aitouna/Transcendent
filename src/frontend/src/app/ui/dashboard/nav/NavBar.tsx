@@ -37,6 +37,7 @@ export interface Notifications {
 	image_url: string;
 	description: string;
 	created_at: string;
+	type: string;
 	id: number;
 	sender: user;
 	seen: boolean;
@@ -56,12 +57,20 @@ export function NotificationContent({
 		setClient(true);
 	}, []);
 	if (!client) return null;
+	let href = '';
+	console.log('href', href, 'type', notifications.type)
+	if (notifications.type === 'friend-request')
+		href = `/profile/${notifications.sender.username}`
+	else if (notifications.type === 'messenger')
+		href = `/messenger?chatroom=${notifications.sender.id}`
+	else if (notifications.type === 'invite')
+		href = `/match-making?player=${notifications.sender.username}`
 	return (
 		<div
 			className={`p-2 h-[50px] flex  flex-row items-center justify-between rounded-sm my-[3px] w-[260px] overflow-hidden ${
 				!notifications.seen ? "bg-[#474747]" : ""
 			}`}>
-			<div className='flex items-center rounded-sm'>
+			<Link href={href} className='flex items-center rounded-sm'>
 				<div className='rounded-ful flex items-start '>
 					<Image
 						className='bg-white  w-[35px] h-[35px] rounded-full'
@@ -83,7 +92,7 @@ export function NotificationContent({
 						{send_at}
 					</div>
 				</div>
-			</div>
+			</Link>
 			<div className=''>
 				<NotificationMenu id={notifications.id} />
 			</div>
@@ -140,7 +149,7 @@ function NotificationPanel() {
 						.slice(0, viewAllClicked ? notifications?.results.length ?? 0 : 5)
 						.map((item, index) => (
 							<div
-								key={index}
+								key={item.id}
 								className={`container flex flex-col justify-between items-center relative
 							${index === notificationClicked ? (item.seen = true) : ""}`}
 								onClick={() => handleNotificationClicked(index)}>

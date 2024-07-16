@@ -14,6 +14,10 @@ class NotificationView(generics.ListAPIView):
     queryset = Notification.objects.all().order_by('created_at').reverse()
     serializer_class = NotificationSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        return super().get_queryset().filter(recipient=user)
+
 
 class NotificationAction(generics.RetrieveUpdateDestroyAPIView):
     class NAS(serializers.Serializer):
@@ -21,7 +25,7 @@ class NotificationAction(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Notification.objects.all()
     serializer_class = NAS
-	
+
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.seen = True

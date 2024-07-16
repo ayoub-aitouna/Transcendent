@@ -14,8 +14,10 @@ class MatchMaker():
         return self.lock
 
     async def remove_user(self, user):
+        print('try to remove user ', user.username)
         self.lock = await self.get_lock()
         async with self.lock:
+            print(user.username, 'secssusefly removed')
             self.registered_users.remove(user)
 
     async def get_match_users(self, user):

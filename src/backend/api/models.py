@@ -3,7 +3,7 @@ from django.db import models
 
 class Notification(models.Model):
     NotificationTypes = [
-        ('messanger', 'Messanger',),
+        ('messenger', 'Messenger',),
         ('invite', 'Invite'),
         ('friend-request', 'FriendRequest'),
         ("info", 'Info')

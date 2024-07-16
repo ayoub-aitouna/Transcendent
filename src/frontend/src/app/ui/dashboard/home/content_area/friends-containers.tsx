@@ -33,7 +33,7 @@ export function RecommendedContainer({
 	return (
 		<div className='mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#292929] p-4 mb-3'>
 			<Link
-				href={`/profile/${user.id}`}
+				href={`/profile/${user.username}`}
 				className='flex items-center justify-between'>
 				<Image
 					className='bg-white w-[53px] h-[53px] rounded-full'
@@ -76,7 +76,7 @@ export function RecommendedContainer({
 					)
 				) : (
 					<Link
-						href={`/profile/${user.id}`}
+						href={`/profile/${user.username}`}
 						className='flex items-center justify-between mx-auto text-white text-[16px] font-medium'>
 						<RightArrow />
 					</Link>
@@ -109,7 +109,7 @@ export function PendingContainer({ user }: { user: FriendRequest }) {
 		<div
 			className={`mt-2 w-full h-[69px] flex items-center justify-between rounded bg-[#292929] p-4 mb-3`}>
 			<Link
-				href={`/profile/${user.id}`}
+				href={`/profile/${user.username}`}
 				className='flex items-center justify-between '>
 				<Image
 					className='bg-white  w-[53px] h-[53px] rounded-full'

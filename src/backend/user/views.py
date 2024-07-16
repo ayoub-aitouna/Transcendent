@@ -28,14 +28,14 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class BaseNotification():
-    def _create_notification(self, addressee, title, description, type, action):
+    def _create_notification(self, recipient, title, description, type, action):
         notification = Notification(
             title=title,
             description=description,
             sender=self.request.user,
             type=type,
             action=action,
-            recipient=addressee)
+            recipient=recipient)
         notification.save()
         send_notification(notification)
 

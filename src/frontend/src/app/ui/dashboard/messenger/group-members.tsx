@@ -49,7 +49,7 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 	}
 	return (
 		<div className={`mt-2 w-full h-[69px] flex items-center justify-between rounded ${name === username ? styles.highlight : "bg-[#292929]"}  p-4`}>
-			<Link href={`/profile/${id}`} className='flex items-center'>
+			<Link href={`/profile/${username}`} className='flex items-center'>
 				<Image
 					className='bg-white w-[53px] h-[53px] rounded-full'
 					src={ImageSrc(image_url, name)}

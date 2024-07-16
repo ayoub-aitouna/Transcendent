@@ -25,18 +25,15 @@ class JWTAuthMiddlewareStack():
             else:
                 raise ValueError('No token found')
         except Exception as e:
-            print(e)
             denier = WebsocketDenier()
             return await denier(scope, receive, send)
         return await self.app(scope, receive, send)
 
     def get_cookies(self, scope):
-        print('trying to get cookies\n')
         # headers = scope.get('headers')
         # cookies = [x for x in headers if x[0] == b'cookie']
         cookies = self.get_from_headers(scope, b'cookie')
         if not cookies:
-            print('cookies are not available\n')
             return scope
         cookies_arr = cookies.split(b'; ')
         cookies_dict = {}
@@ -50,7 +47,6 @@ class JWTAuthMiddlewareStack():
     def get_token(self, scope):
         qs = scope['query_string'].decode()
         query_params = parse_qs(qs)
-        print(query_params.get('token', [None])[0])
         return query_params.get('token', [None])[0]
 
     def get_from_headers(self, scope, key):
