@@ -23,6 +23,8 @@ class MatchMaker():
     async def get_match_users(self, user):
         self.lock = await self.get_lock()
         async with self.lock:
+            if user in self.registered_users:
+                return None
             if len(self.registered_users) == 0:
                 self.registered_users.append(user)
                 return None

@@ -94,6 +94,10 @@ export const AcceptFriendRequest = async (id: number): Promise<void> => {
     await apiMock.put(`/users/manage_friend_request/${id}/`)
 }
 
+
+export const DeclineFriendRequest = async (id: number): Promise<void> => {
+    await apiMock.put(`/users/manage_friend_request/${id}/`)
+}
 export const getRankLogs = async (): Promise<RankLogs[]> => {
     const res = await apiMock.get('/users/rank-logs/');
     return res.data as RankLogs[]
