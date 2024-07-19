@@ -15,6 +15,7 @@ import { user } from "@/type/auth/user";
 import NotificationMenu from "./notification-menu";
 import { ImageSrc } from "@/lib/ImageSrc";
 import { SocialItem, navItem } from "@/type/dashboard/navitem";
+import { removeNotification } from "@/api/user";
 
 const PlayNowIcon = () => {
 	const pathname = usePathname();
@@ -46,8 +47,10 @@ export interface Notifications {
 
 export function NotificationContent({
 	notifications,
+	removeSelectedNotification,
 }: {
 	notifications: Notifications;
+	removeSelectedNotification: (id: number) => void;
 }) {
 	const [client, setClient] = useState(false);
 	const truncatedNotification = notifications.description;
@@ -94,7 +97,7 @@ export function NotificationContent({
 				</div>
 			</Link>
 			<div className=''>
-				<NotificationMenu id={notifications.id} />
+				<NotificationMenu id={notifications.id} removeSelectedNotification={removeSelectedNotification}/>
 			</div>
 		</div>
 	);
@@ -107,6 +110,19 @@ function NotificationPanel() {
 	const [notificationClicked, setNotificationClicked] = useState<number | null>(
 		null
 	);
+
+	const removeSelectedNotification = async (id: number) => {
+		try {
+			await removeNotification(id);
+			if (notifications === undefined) return;
+			setNotifications({
+				...notifications,
+				results: notifications?.results.filter((item) => item.id !== id),
+			});
+		} catch (error) {
+			console.error("Error deleting notification:", error);
+		}
+	}
 
 	useEffect(() => {
 		const fetchNotifications = async () => {
@@ -153,7 +169,7 @@ function NotificationPanel() {
 								className={`container flex flex-col justify-between items-center relative
 							${index === notificationClicked ? (item.seen = true) : ""}`}
 								onClick={() => handleNotificationClicked(index)}>
-								<NotificationContent notifications={item} />
+								<NotificationContent notifications={item} removeSelectedNotification={removeSelectedNotification} />
 							</div>
 						))}
 				</div>

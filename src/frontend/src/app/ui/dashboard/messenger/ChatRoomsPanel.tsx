@@ -17,7 +17,7 @@ interface ChatRooms {
 const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q }) => {
 	const [filter, setFilter] = useState<boolean>(false);
 	const [rooms, setRooms] = useState<roomItem[]>([]);
-	const { users, room_icon, room_name } = useContext(UserContext);
+	const { isChanged, room_id, room_icon, room_name, setIsChanged } = useContext(UserContext);
 
 
 
@@ -91,17 +91,27 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 					<ChatSearchBar onFilterClick={handleFilterClick} filter={filter} />
 				</div>
 				<div className="relative">
-					{rooms.map((item) => (
-						<div key={item.id}>
-							<MessengerContainer
-								onClick={() => handleIconClick(item.id)}
-								name={item.room_name}
-								LastMessage={item.last_message}
-								href={item.room_icon}
-								messagesNbr={item.unseen_messages_count}
-								isSelected={clickedIndex === item.id} id={0}							/>
-						</div>
-					))}
+					{rooms.map((item) => {
+						if (isChanged && item.id === room_id) {
+							item.room_icon = room_icon ? room_icon : item.room_icon;
+							item.room_name = room_name ? room_name : item.room_name;
+							setIsChanged(false);
+						}
+
+						return (
+							<div key={item.id}>
+								<MessengerContainer
+									onClick={() => handleIconClick(item.id)}
+									name={item.room_name} // Use the possibly updated name
+									LastMessage={item.last_message}
+									href={item.room_icon} // Use the possibly updated href
+									messagesNbr={item.unseen_messages_count}
+									isSelected={clickedIndex === item.id}
+									id={item.id}
+								/>
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>

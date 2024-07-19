@@ -52,12 +52,12 @@ function SliderContent({ Tournament }: { Tournament: Tournament }) {
 
 			<div className="absolute top-[0px] right-[0px]  ">
 				<div className="relative  h-[844.63px] w-[500.08px]" >
-					<Image className=" blur-3xl" src={current_image} fill alt="Profile Image" />
+					<Image className=" blur-3xl" src={current_image} width={600} height={900} alt="Profile Image" />
 				</div>
 			</div>
 			<div className="absolute top-[-30px] right-[44px]  ">
 				<div className="relative  h-[544.63px] w-[363.08px]" >
-					<Image className="rotate-[12.13deg] " src={current_image} fill alt="Profile Image" />
+					<Image className="rotate-[12.13deg] " src={current_image} width={364} height={600} alt="Profile Image" />
 				</div>
 			</div>
 		</div>

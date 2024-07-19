@@ -4,7 +4,11 @@ import { removeNotification, seenNotification } from '@/api/user';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/app/provider/ToastProvider';
 
-function NotificationMenu({ id }: { id: number }) {
+function NotificationMenu({ id, removeSelectedNotification }:
+{
+		id: number;
+		removeSelectedNotification: (id: number) => void
+}) {
 	const [clickedThreePoints, setClickedThreePoints] = useState(false);
 	const [deleteSuccess, setDeleteSuccess] = useState(false)
 	const router = useRouter();
@@ -15,7 +19,7 @@ function NotificationMenu({ id }: { id: number }) {
 	const { addToast } = useToast()
 	const deleteNotification = async () => {
 		try {
-			await removeNotification(id)
+			removeSelectedNotification(id)
 			setDeleteSuccess(true)
 		} catch (error) {
 			addToast({

@@ -11,11 +11,12 @@ import { RankLogs } from '@/type/auth/user';
 import { getRankLogs } from '@/api/user';
 import { useEffect, useState } from 'react';
 import Empty from '../component/Empty';
+import { ImageSrc } from "@/lib/ImageSrc";
 
 
 
 function TeamLeader() {
-	const { fullname, image_url, current_xp, rank, coins } = useAppSelector((state) => state.user.user);
+	const { fullname,username, image_url, current_xp, rank, coins } = useAppSelector((state) => state.user.user);
 	const [charData, setChartData] = useState<RankLogs[]>([])
 	const getPlayerProgress = async () => {
 		try {
@@ -30,9 +31,15 @@ function TeamLeader() {
 	return (
 		<div className='' >
 			<Link href={"/profile"} className="pt-4 flex items-center">
-				<div className="rounded-full overflow-hidden bg-white w-[62px] h-[62px]">
-					<Image src={image_url} alt="Profile Image" width={62} height={62} />
-				</div>
+				<Image
+					className="rounded-full overflow-hidden bg-white w-[62px] h-[62px]"
+					src={ImageSrc(image_url, username)}
+					alt="Profile Image"
+					width={150}
+					height={150}
+					quality={100}
+					loading="lazy"
+				/>				
 				<div className="flex flex-col ml-5">
 					<div className=" text-white  font-bold text-[18px] tracking-tight	">{fullname}</div>
 					<div className="font-light mt-[2px] text-[#A1A1A1] text-[14px]">Your Status </div>

@@ -10,13 +10,16 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { ImageSrc } from "@/lib/ImageSrc";
 import Link from "next/link";
+import { removeNotification } from "@/api/user";
 
 
 
 export function NotificationContent({
 	notifications,
+	removeSelectedNotification,
 }: {
 	notifications: Notifications;
+	removeSelectedNotification: (id: number) => void;
 }) {
 	const [client, setClient] = useState(false);
 	const truncatedNotification = notifications.description;
@@ -46,8 +49,8 @@ export function NotificationContent({
 							notifications.sender.username
 						)}
 						alt='Profile Image'
-						width={35}
-						height={35}
+						width={100}
+						height={100}
 					/>
 				</div>
 				<div className='pl-2 flex flex-col items-start '>
@@ -61,7 +64,7 @@ export function NotificationContent({
 				</div>
 			</Link>
 			<div className=''>
-				<NotificationMenu id={notifications.id} />
+				<NotificationMenu id={notifications.id} removeSelectedNotification={removeSelectedNotification} />
 			</div>
 		</div>
 	);
@@ -72,6 +75,17 @@ const GetData = async () => {
 };
 const page = async () => {
 	const notifications: PaginationApiResponse<Notifications> = await GetData();
+	const removeSelectedNotification = async (id: number) => {
+		try {
+		  const index = notifications.results.findIndex(notification => notification.id === id);
+		  if (index !== -1) {
+			await removeNotification(id);
+			notifications.results.splice(index, 1);
+		  }
+		} catch (error) {
+		  console.log(error);
+		}
+	  };
 
 	return (
 		<div className='p-2 rounded h-full w-full bg-[#242424] flex flex-col'>
@@ -86,7 +100,7 @@ const page = async () => {
 						<div
 							key={index}
 							className={`flex flex-col justify-between items-center relative w-full`}>
-							<NotificationContent notifications={item} />
+							<NotificationContent notifications={item} removeSelectedNotification={removeSelectedNotification}/>
 						</div>
 					))}
 				</div>
