@@ -99,4 +99,5 @@ export enum useManageFRAction {
     Remove,
     Add,
     Accept,
+    Decline
 }
