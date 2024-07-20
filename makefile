@@ -1,10 +1,14 @@
-all: up
+all: up init
 
 up:
-	docker-compose -f ./src/docker-compose.yml up --build
+	docker-compose -f ./src/docker-compose.yml up --build -d
+
+init:
+	cd ./src/frontend && sh ./build-tools/init.sh
 
 down:
 	docker-compose -f ./src/docker-compose.yml down
+
 db:
 	docker exec backend python3 manage.py loaddata user/seed/seed.json
 
@@ -15,5 +19,6 @@ fclean: down
 
 clean_cache: fclean
 	docker system prune -a
+	
 clear_volume: down
 	docker volume rm $$(docker volume ls -q) &2>/dev/null
