@@ -32,14 +32,6 @@ function TournamentMenu({ id }: { id: number }) {
 	};
 
 	const deleteTournament = async () => {
-		OpenModal(
-			<Confirm
-				title='Are you sure?'
-				body='This action cannot be undone.'
-				onCancel={() => CancelModal()}
-				onConfirm={() => {}}
-			/>
-		);
 		try {
 			await removeTournament(id);
 			router.push("/tournaments");
