@@ -38,7 +38,7 @@ export function FriendContainer({
 			</Link>
 			<div className='flex items-center justify-center'>
 				<Link
-					href='/messenger'
+					href={`/profile/${name}`}
 					className='flex items-center justify-between mx-auto text-white text-[16px] font-medium'>
 					<RightArrow />
 				</Link>

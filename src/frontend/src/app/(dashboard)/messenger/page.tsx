@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import apiMock from "@/lib/axios-mock";
 import { GetChatRoom, roomItem } from "@/api/chat";
 import SendMessages from "@/app/ui/dashboard/messenger/SendMessages";
@@ -25,31 +25,31 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 			try {
 				const response = await GetChatRoom(clickedIndex, chatroom);
 				setSelectedChat(response);
-				if(chatroom)
-					router.push(`/messenger`);
+				// if (chatroom && selectedChat)
+				// 	router.push(`/messenger`);
 			} catch (error) {
 				console.error('Error fetching chat messages by chatroom', error);
 			}
 		};
 		fetchMessages();
-	}, [clickedIndex, chatroom, users]);
+	}, [clickedIndex, chatroom]);
 
-	useEffect(() =>{
-		if (selectedChat?.type === 'group' && users.length === 0 && clickedIndex) {
-			selectedChat.members.forEach((member: user) => {
-				addUser(member);
-			});
-		}
-		else if (clickedIndex === 0 && users.length > 0) {
+	useEffect(() => {
+		if (users.length > 0) {
 			users.forEach((user) => {
 				removeUser(user.id);
 			});
+			console.log("empty users: ", users);
 		}
-		if (selectedChat?.room_icon)
-			setRoomIcon(selectedChat?.room_icon);
-		if (selectedChat?.room_name)
-			setRoomName(selectedChat?.room_name);
-	},[selectedChat])
+		if (selectedChat?.room_icon) setRoomIcon(selectedChat.room_icon);
+		if (selectedChat?.room_name) setRoomName(selectedChat.room_name);
+		if (selectedChat?.type === 'group') {
+			selectedChat.members.forEach((member) => {
+				addUser(member);
+			});
+			console.log("add users: ", users);
+		}
+	}, [selectedChat]);
 
 	const handleIconClick = (index: number) => {
 		setClickedIndex(index);
@@ -67,7 +67,7 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 					<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
 					<div className="flex-1 h-full bg-secondary-400  rounded-xl relative overflow-hidden">
 						{selectedChat ? (
-							<SendMessages selectedChat={selectedChat} clickedGroup={handleClickGroup} handleIconClick={handleIconClick} clickedIndex={setClickedIndex}/>
+							<SendMessages selectedChat={selectedChat} clickedGroup={handleClickGroup} handleIconClick={handleIconClick} clickedIndex={setClickedIndex} />
 						) : !chatroom && (
 							<div className="flex justify-center items-center flex-col h-full">
 								<div className="text-3xl font-bold">Messenger</div>

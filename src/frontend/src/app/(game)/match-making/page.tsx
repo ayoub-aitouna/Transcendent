@@ -79,8 +79,8 @@ const page = ({ searchParams }: {
 		socket.current.onmessage = (event: any) => {
 			const data = JSON.parse(event.data);
 			const game_room = data;
-			console.log('Game Room', event.data);
 			if (game_room) {
+				console.log('Game Room', game_room);
 				setIsMatched(true);
 				setUuid(game_room.game_uuid);
 				router.replace(`/match-making?player=${game_room.player}`);

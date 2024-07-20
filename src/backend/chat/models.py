@@ -25,8 +25,8 @@ class ChatRoom(models.Model):
 
 class ChatMessage(models.Model):
     typeChoices = [
-        ('private', 'text'),
-        ('group', 'image')
+        ('text', 'Text'),
+        ('text', 'Image')
     ]
     chatRoom = models.ForeignKey(
         ChatRoom, on_delete=models.SET_NULL, null=True, related_name='messages_chat_room')

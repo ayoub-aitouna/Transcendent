@@ -10,6 +10,7 @@ export type MessageItem = {
 	image_file: string | null;
 	created_at: string;
 	seen: boolean;
+	type: string
 }
 
 

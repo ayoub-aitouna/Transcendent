@@ -2,6 +2,7 @@
 
 'use client'
 
+import { roomItem } from '@/api/chat';
 import { createContext, ReactNode, useContext, useState } from 'react';
 export type user = {
 	id: number;
@@ -17,6 +18,7 @@ interface UserContextType {
 	room_icon: string | undefined;
 	isChanged: boolean;
 	room_id: number;
+	newRoom: roomItem | null;
 	setRoomIcon: (icon: string) => void;
 	setRoomName: (name: string) => void;
 	addUser: (user: user) => void;
@@ -25,6 +27,7 @@ interface UserContextType {
 	addRemoveImage: (icon: File | null) => void;
 	setIsChanged: (isChanged: boolean) => void;
 	setRoomId: (id: number) => void;
+	setNewRoom: (room: roomItem | null) => void;
 }
 
 const initialState: UserContextType = {
@@ -35,6 +38,7 @@ const initialState: UserContextType = {
 	room_icon: "",
 	isChanged: false,
 	room_id: 0,
+	newRoom: null,
 	addUser: () => { },
 	addRemoveName: () => { },
 	addRemoveImage: () => { },
@@ -43,6 +47,7 @@ const initialState: UserContextType = {
 	setRoomName: () => { },
 	setIsChanged: () => { },
 	setRoomId: () => { },
+	setNewRoom: () => { },
 };
 
 export const UserContext = createContext<UserContextType>(initialState);
@@ -55,6 +60,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 	const [room_name, setRoomName] = useState<string | undefined>('');
 	const [isChanged, setIsChanged] = useState<boolean>(false);
 	const [room_id, setRoomId] = useState<number>(0);
+	const [newRoom, setNewRoom] = useState<roomItem | null>(null);
 
 	const addUser = (user: user) => {
 		setUsers(prevUsers => [...prevUsers, user]);
@@ -81,6 +87,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 			room_icon,
 			isChanged,
 			room_id,
+			newRoom,
 			addUser,
 			addRemoveName,
 			addRemoveImage,
@@ -89,6 +96,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 			setRoomName,
 			setIsChanged,
 			setRoomId,
+			setNewRoom
 		}}>
 			{children}
 		</UserContext.Provider>

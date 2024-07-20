@@ -46,7 +46,7 @@ class ChatRoomsListSerializer(serializers.ModelSerializer):
                 'message': last_message.message,
                 'image_file': last_message.image_file.url if last_message.image_file else None,
                 'created_at': last_message.created_at,
-                'sender': last_message.sender.username if last_message.sender else None,
+                'sender_username': last_message.sender.username if last_message.sender else None,
                 'seen': last_message.seen,
                 'type': 'text' if last_message.message else 'image'
             }
@@ -119,9 +119,11 @@ class WsChatRoomSerializer(serializers.ModelSerializer):
             return {
                 'id': last_message.id,
                 'message': last_message.message,
+                'image_file': last_message.image_file.url if last_message.image_file else None,
                 'created_at': timezone.localtime(last_message.created_at).isoformat(),
-                'sender': last_message.sender.username if last_message.sender else None,
+                'sender_username': last_message.sender.username if last_message.sender else None,
                 'seen': last_message.seen,
+                'type': 'text' if last_message.message else 'image'
             }
         return None
 
@@ -217,23 +219,23 @@ class GetChatRoomSerializer(ChatRoomSerializer):
 
 
 class AddMemberSerializer(serializers.ModelSerializer):
-	members = UserSerializer(many=True, read_only=True)
-	admin = UserSerializer(read_only=True)
-	new_members = serializers.ListField(
-		child=serializers.IntegerField(), write_only=False, required=False)
+    members = UserSerializer(many=True, read_only=True)
+    admin = UserSerializer(read_only=True)
+    new_members = serializers.ListField(
+        child=serializers.IntegerField(), write_only=False, required=False)
 
-	class Meta:
-		model = ChatRoom
-		fields = ['id', 'admin', 'members',  'new_members']
+    class Meta:
+        model = ChatRoom
+        fields = ['id', 'admin', 'members',  'new_members']
 
-	def create(self, validated_data):
-		user = self.context['request'].user
-		room_id = self.context['request'].parser_context['kwargs']['room_id']
-		chatRoom = ChatRoom.objects.get(id=room_id)
-		new_member_ids = validated_data['new_members']
-		new_members = User.objects.filter(id__in=new_member_ids)
-		chatRoom.members.add(*new_members)
-		return chatRoom
+    def create(self, validated_data):
+        user = self.context['request'].user
+        room_id = self.context['request'].parser_context['kwargs']['room_id']
+        chatRoom = ChatRoom.objects.get(id=room_id)
+        new_member_ids = validated_data['new_members']
+        new_members = User.objects.filter(id__in=new_member_ids)
+        chatRoom.members.add(*new_members)
+        return chatRoom
 
 
 class RemoveMemberSerializer(serializers.ModelSerializer):
@@ -251,6 +253,7 @@ class RemoveMemberSerializer(serializers.ModelSerializer):
         chatRoom = ChatRoom.objects.get(id=room_id)
         user_id = validated_data['user_id']
         user = User.objects.get(id=user_id)
+        
         chatRoom.members.remove(user)
         return chatRoom
 

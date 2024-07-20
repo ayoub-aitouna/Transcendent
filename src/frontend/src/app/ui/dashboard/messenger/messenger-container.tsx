@@ -7,15 +7,26 @@ import apiMock from '@/lib/axios-mock';
 import { ImageSrc } from '@/lib/ImageSrc';
 import { useUserContext } from '@/app/(dashboard)/messenger/context/UserContext';
 import { set } from 'react-hook-form';
+import { useAppSelector } from '@/redux/store';
+import { send } from 'process';
 
-function get_last_message({ lastMessage }: { lastMessage: MessageItem }) {
+function get_last_message({ lastMessage, type }: { lastMessage: MessageItem; type: string }) {
+	const { username } = useAppSelector((state) => state.user.user);
 	if (lastMessage === null)
 		return ""
-	if (lastMessage.image_file) {
+	let sender = lastMessage.sender_username
+	if (username === sender)
+		sender = 'You'
+	if (!lastMessage.message) {
+		if (lastMessage.type === 'image' && type === 'group')
+			return sender + ": Send A Photo";
 		return "Photo";
 	}
-	else
+	else {
+		if (lastMessage.type === 'text' && type === 'group')
+			return sender + ": " + lastMessage.message;
 		return lastMessage.message;
+	}
 }
 
 function formatTime(timestamp: string): string {
@@ -44,17 +55,17 @@ function formatTime(timestamp: string): string {
 }
 
 
-export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSelected, onClick, id }: {
+export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSelected, onClick, id, type }: {
 	name: string;
 	href: string;
 	LastMessage: MessageItem;
 	messagesNbr: number;
 	isSelected: boolean;
 	id: number;
+	type: string
 	onClick: () => void;
 }) {
-	const lastMassage = get_last_message({ lastMessage: LastMessage });
-	const { room_icon, room_name, isChanged , room_id, setIsChanged, setRoomId} = useUserContext();
+	const lastMassage = get_last_message({ lastMessage: LastMessage, type });
 	const [viewsMessages, setViewsMessages] = useState(messagesNbr !== 0 && !isSelected && LastMessage && LastMessage.id !== null);
 	const handleClick = () => {
 		onClick();
