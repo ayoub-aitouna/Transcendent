@@ -6,11 +6,13 @@ from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
 from chat.models import ChatRoom, ChatMessage, RemovedRoom
 from django.core.files.base import ContentFile
+from api.models import Notification  # Import your Notification model
+from user.views import BaseNotification
 
 channel_layer = get_channel_layer()
 
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class ChatConsumer(AsyncWebsocketConsumer, BaseNotification):
     async def connect(self):
         self.user = self.scope['user']
         self.room_id = self.scope['url_route']['kwargs']['room_id']
@@ -36,7 +38,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'error': 'Forbidden access'
             }))
-            await self.close(code=1000)  # Use a valid close code
+            await self.close(code=1000)
             return
         data_json = json.loads(text_data)
         message_type = data_json.get('type')
@@ -49,25 +51,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 self.create_message(message_text)
             )
+            await self.notify_users(message_text, message_type)
         elif message_type == 'image':
-            image_data = data_json['image']
+            image_data = data_json['image_file']
             await self.save_image_message(image_data)
             await self.emit_to_all_members(image_data)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 self.create_image_message(image_data)
             )
+            await self.notify_users(image_data, message_type)
 
     async def chat_message(self, event):
         if not await self.is_member(self.user, self.room_id):
             await self.send(text_data=json.dumps({
                 'error': 'Forbidden access'
             }))
-            await self.close(code=1000)  # Use a valid close code
+            await self.close(code=1000)
             return
         message = event['message']
         sender = message.get('sender')
-        if self.user.id == sender:
+        if self.user.username == sender:
             return
         await self.send(text_data=json.dumps({
             'message': message
@@ -78,7 +82,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'chat_message',
             'message': {
                 'message': message,
-                'sender': self.user.id,
+                'sender': self.user.username,
                 'room_id': self.room_id
             }
         }
@@ -88,7 +92,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'chat_message',
             'message': {
                 'image': image_data,
-                'sender': self.user.id,
+                'sender': self.user.username,
                 'room_id': self.room_id
             }
         }
@@ -105,6 +109,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_message(self, message_text):
+        if not message_text:
+            return
         chat_room = ChatRoom.objects.get(id=self.room_id)
         ChatMessage.objects.create(
             chatRoom=chat_room,
@@ -123,6 +129,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_image_message(self, image_data):
+        if not image_data:
+            return
         chat_room = ChatRoom.objects.get(id=self.room_id)
         format, imgstr = image_data.split(';base64,')
         ext = format.split('/')[-1]
@@ -146,3 +154,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def is_member(self, user, room_id):
         return ChatRoom.objects.filter(id=room_id, members=user).exists()
+
+    async def notify_users(self, message, message_type):
+        await sync_to_async(self._notify_users_sync)(message, message_type)
+
+    def _notify_users_sync(self, message, message_type):
+        chat_room = ChatRoom.objects.get(id=self.room_id)
+        members = list(chat_room.members.all())
+        title = 'You Have A  New Message'
+        type = 'messenger'
+        description = f'{self.user.username} sent a new message' if message_type == 'text' else f'{self.user.username} sent a new image'
+        action = f'{self.room_id}'
+
+        for member in members:
+            if member != self.user:
+                self._create_chat_notification(
+                    recipient=member,
+                    title=title,
+                    type=type,
+                    description=description,
+                    action=action,
+                    sender=self.user
+                )

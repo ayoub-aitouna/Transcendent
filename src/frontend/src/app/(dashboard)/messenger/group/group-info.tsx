@@ -6,7 +6,7 @@ import { GroupCustomize, roomItem } from "@/api/chat";
 import Image from "next/image";
 import { ChangeEvent, SetStateAction, useContext, useEffect, useState } from "react";
 import { useModal } from "@/app/provider/modal-provider";
-import {  useUserContext } from "../context/UserContext";
+import { useUserContext } from "../context/UserContext";
 import GroupMembers from "@/app/ui/modal/group-members";
 import { Friend } from "@/type/auth/user";
 import { GetFriendsData } from "@/api/user";
@@ -23,7 +23,7 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 	const [AddMember, setAddMember] = useState<boolean>(false);
 	const { username } = useAppSelector((state) => state.user.user);
 	const { OpenModal, CancelModal } = useModal();
-	const { users, setRoomIcon, setRoomName,setIsChanged,setRoomId, addUser, room_icon, room_name } = useUserContext();
+	const { users, setRoomIcon, setRoomName, setIsChanged, setRoomId, addUser, setNewRoom, room_icon, room_name } = useUserContext();
 	const [Friends, setFilteredFriends] = useState<Friend[]>([]);
 	const [isEditing, setIsEditing] = useState(false);
 	const [newName, setNewName] = useState(room_name || "");
@@ -102,6 +102,7 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 				onCancel={() => CancelModal()}
 				friends={Friends.filter((friend) => !users.some((user) => user.id === friend.id))}
 				addUser={addUser}
+				setNewRoom={setNewRoom}
 				selectedChat={selectedChat}
 			/>
 		);
@@ -109,10 +110,10 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 
 
 	return (
-		<div id="Group-infoPanel" className="flex-1 flex flex-col h-full lg:max-w-[440px] bg-secondary-400 rounded-xl relative overflow-hidden py-2">
-			<div className="flex justify-center flex-col  rounded-md m-3 h-[330px] items-center bg-[#161616]">
+		<div id="Group-infoPanel" className="flex-1 flex flex-col h-full  max-w-[400px] bg-secondary-400 rounded-xl relative overflow-hidden py-2">
+			<div className=" py-3 flex justify-center flex-col  rounded-md m-3  items-center bg-[#161616]">
 				<label >
-					<Image className="bg-white rounded-full border-white border-[2px] h-[200px] w-[200px]" src={room_icon || "/assets/images/lol.png"} width={200} height={200} quality={100} alt="Coming soon" />
+					<Image className=" bg-white rounded-full border-white border-[2px] h-[180px] w-[180px]" src={room_icon || "/assets/images/lol.png"} width={200} height={200} quality={100} alt="Coming soon" />
 					<input
 						type='file'
 						name="icon"
@@ -126,18 +127,18 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 						<input
 							type="text"
 							value={newName}
-							max={20}
+							maxLength={20}
 							onChange={(e) => {
 								setNewName(e.target.value)
 							}}
 							onBlur={handleBlur}
-							className="focus:outline-none bg-transparent border-b border-white  h-9 w-[200px]"
+							className="focus:outline-none bg-transparent border-b border-white  h-9 w-[120px] max-w-[180px]"
 							autoFocus
 						/>
 					) : (
 						room_name
 					)}
-					{isAdmin && (
+					{isAdmin && !isEditing ? (
 						<button
 							className="ml-2 bg-primary-400 text-white rounded-md px-1 py-1"
 							onClick={() => setIsEditing(true)}
@@ -155,7 +156,27 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 								/>
 							</svg>
 						</button>
-					)}
+					) : isAdmin && (
+						<button
+							className=" ml-2 px-1 py-1 bg-primary-400 text-white rounded-md"
+							onClick={() => setIsEditing(true)}
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									d="M20.285 5.285a1 1 0 00-1.414 0L9 15.157l-3.87-3.872a1 1 0 10-1.414 1.415l4.577 4.575a1 1 0 001.415 0L20.285 6.7a1 1 0 000-1.414z"
+									fill="#878787"
+								/>
+							</svg>
+						</button>
+
+					)
+					}
 				</div>
 			</div >
 			<div className="flex h-full flex-col flex-1 rounded-md m-3  overflow-y-scroll hide-scrollbar  bg-[#161616]">
@@ -174,8 +195,8 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 				</div>
 				<div className="flex flex-col mx-3">
 					{
-						selectedChat && selectedChat?.members && selectedChat?.admin &&
-						[...selectedChat.members]
+						selectedChat && selectedChat?.admin && users.length > 0 &&
+						[...users]
 							.sort((a, b) => a.username === selectedChat?.admin.username ? -1 : b.username === selectedChat?.admin.username ? 1 : 0)
 							.map((user) => (
 								<GroupsMembers name={user.username} key={user.id} {...user} selectedChat={selectedChat} />

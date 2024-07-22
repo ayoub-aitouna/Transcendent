@@ -39,6 +39,18 @@ class BaseNotification():
         notification.save()
         send_notification(notification)
 
+    def _create_chat_notification(self, recipient, title, description,type, action, sender):
+        notification = Notification(
+            recipient=recipient,
+            title=title,
+            type=type,
+            description=description,
+            action=action,
+            sender=sender
+        )
+        notification.save()
+        send_notification(notification)
+
 
 class UsersList(generics.ListAPIView):
     class QuerySerializer(serializers.Serializer):

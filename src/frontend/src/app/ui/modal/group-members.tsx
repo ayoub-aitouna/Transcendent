@@ -10,11 +10,13 @@ const GroupMembers = ({
 	addUser,
 	friends,
 	selectedChat,
+	setNewRoom,
 }: {
 	onCancel: () => void;
 	addUser: (user: user) => void;
 	friends: Friend[];
 	selectedChat: roomItem | null;
+	setNewRoom: (room: roomItem | null) => void;
 
 }) => {
 	const [Members, setMembers] = useState<Number[]>([]);
@@ -38,6 +40,7 @@ const GroupMembers = ({
 				addUser(user);
 			}
 			);
+			setNewRoom(selectedChat)
 			onCancel();
 		} catch (error) {
 			console.error("Error fetching friends:", error);

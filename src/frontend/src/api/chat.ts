@@ -10,6 +10,7 @@ export type MessageItem = {
 	image_file: string | null;
 	created_at: string;
 	seen: boolean;
+	type: string
 }
 
 
@@ -23,6 +24,7 @@ export type roomItem = {
 	receiverUser?: { id: string, status: string, username: string, }[];
 	members: user[];
 	admin: user;
+	all_messages_count: number;
 }
 
 export type roomPrivateItem = {

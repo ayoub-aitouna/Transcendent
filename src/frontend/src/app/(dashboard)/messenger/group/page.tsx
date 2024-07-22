@@ -12,6 +12,7 @@ import Link from "next/link";
 import GroupsContainer from "@/app/ui/dashboard/messenger/Group-container";
 import { UserContext } from "../context/UserContext";
 import { useAppSelector } from "@/redux/store";
+import { useToast } from '@/app/provider/ToastProvider';
 
 
 const Page = () => {
@@ -19,17 +20,13 @@ const Page = () => {
 	const router = useRouter();
 	const { users, addRemoveImage, addRemoveName, removeUser, group_name, icon } = useContext(UserContext);
 	const [src, setSrc] = useState<string | null>(null);
+	const { addToast } = useToast()
 
 	const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
 		if (!e.target.files) return;
 		addRemoveImage(e.target.files[0]);
 	};
-	// if (users.length > 0) {
-	// 	users.forEach((user) => {	
-	// 		removeUser(user.id);
-	// 	}
-	// 	)
-	// }
+
 	useEffect(() => {
 		if (icon) {
 			const reader = new FileReader();
@@ -53,26 +50,35 @@ const Page = () => {
 	}
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		const formData = new FormData();
-		formData.append("name", group_name?.toString() || '');
-		if (icon) formData.append('icon', icon);
-		formData.append("type", "group");
-		users.forEach((user) => {
-			formData.append("input_members", user.id.toString());
-		})
 		try {
+			const formData = new FormData();
+			formData.append("name", group_name?.toString() || '');
+			if (icon) formData.append('icon', icon);
+			formData.append("type", "group");
+			users.forEach((user) => {
+				formData.append("input_members", user.id.toString());
+			})
 			await apiMock.post('/chat/rooms/', formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}
 			});
+			for (let i = 0; i < users.length; i++) {
+				removeUser(users[i].id);
+			}
+			addRemoveImage(null);
+			addRemoveName('');
 			router.push('/messenger');
 		} catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred while creating the group chat.');
+			addToast({
+				id: id,
+				title: "Error",
+				message: `We encountered an error while attempting to create ${group_name} Group. Please ensure all necessary information is entered correctly, or try again later.`,
+				icon: "/assets/icons/light_close.png",
+				backgroundColor: "bg-red-500",
+			});
 		}
 	};
-	console.log(users);
 	return (
 		<div className='flex w-full justify-center items-center'>
 			<div className='w-[640px] justify-start items-start'>

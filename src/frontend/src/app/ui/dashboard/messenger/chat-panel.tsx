@@ -23,8 +23,8 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }
 	const { id } = useAppSelector((state) => state.user.user);
 	const { users, room_icon, room_name, removeUser } = useContext(UserContext);
 	const router = useRouter();
-	// console.log("exit group: ", users)
 
+	const isAdmin = selectedChat && selectedChat.admin && selectedChat.admin.id === id
 
 
 	useEffect(() => {
@@ -100,7 +100,26 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }
 			/>
 		);
 	}
+	const DeleteGroup = () => {
+		OpenModal(
+			<Confirm
+				title='Are you sure you want to Delete this Group !'
+				body='all conversations and data associated with it will be permanently lost !!'
+				onCancel={() => CancelModal()}
+				onConfirm={async () => {
+					try {
+						// await RemoveMemberFromGroup(id, selectedChat.id);
+						// removeUser(id)
+						CancelModal();
+						window.location.reload();
+					} catch (error) {
+						console.error("Error fetching friends:", error);
+					}
+				}}
 
+			/>
+		)
+	}
 	const confirmBlock = () => {
 		OpenModal(
 			<Confirm
@@ -125,7 +144,7 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }
 	}
 
 	return (
-		<div>
+		<div className="">
 			<button className="w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden">
 				<Link href="/profile" className="flex items-center justify-between p-4">
 					<Image
@@ -151,34 +170,40 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }
 					</div>
 				</div>
 				{clickedThreePoints && selectedChat.type === "private" ? (
-					<div className="z-50 absolute right-7 top-16 bg-[#161616] h-[175px] w-[200px] p-2 rounded-md">
-						<div className="flex flex-col items-start justify-start text-[16px] text-[#878787]">
-							<button className="hover:bg-[#262626] p-2 rounded-md" onClick={confirmClear}>
+					<div className="z-50 absolute right-7 top-16 bg-[#161616] h-[160px] w-[140px] p-2 rounded-md">
+						<div className="flex flex-col items-start justify-start  font-light text-[12px] text-[#878787]">
+							<button className="hover:bg-[#262626] py-2 px-5 rounded-md " onClick={confirmClear}>
 								<div>Clear Chat</div>
 							</button>
-							<button className="hover:bg-[#262626] p-2 rounded-md" onClick={() => {
+							<button className="hover:bg-[#262626] py-2 px-5  rounded-md" onClick={() => {
 								router.push(`/messenger`);
 								handleIconClick(0)
 							}}>
 								<div>Close Chat</div>
 							</button>
-							<button className="hover:bg-[#262626] p-2 rounded-md" onClick={confirmDelete}>
+							<button className=" hover:bg-[#262626] py-2 px-5 rounded-md" onClick={confirmDelete}>
 								<div>Delete Chat</div>
 							</button>
-							<button className="hover:bg-[#262626] p-2 rounded-md" onClick={confirmBlock}>
+							<button className="hover:bg-[#262626] py-2 px-5 rounded-md" onClick={confirmBlock}>
 								<div>Block</div>
 							</button>
 						</div>
 					</div>
 				) : clickedThreePoints && selectedChat.type === "group" &&
-				<div className="z-50 absolute right-7 top-16 bg-[#161616] h-[80px] w-[130px] p-2 rounded-md">
-					<div id='Group-info' className="flex flex-col items-start justify-start text-[16px] text-[#878787] gap-3">
-						<button className="hover:bg-[#262626]  rounded-md" onClick={() => handleGroup(true)}>
+				<div className={`z-50 absolute right-7 top-16 bg-[#161616] ${isAdmin ? "h-[120px]" : "h-[100]"} w-[140px] p-2 rounded-md`}>
+					<div id='Group-info' className="flex flex-col items-start justify-start font-light text-[12px] text-[#878787]">
+						<button className="hover:bg-[#262626] py-2 px-5  rounded-md" onClick={() => handleGroup(true)}>
 							<div>Group info</div>
 						</button>
-						<button className="hover:bg-[#262626] rounded-md" onClick={confirmExitGroup}>
+						<button className="hover:bg-[#262626] py-2 px-5 rounded-md" onClick={confirmExitGroup}>
 							<div>Exit Group</div>
 						</button>
+						{
+							isAdmin &&
+							<button className="hover:bg-[#262626] py-2 px-5 rounded-md" onClick={DeleteGroup}>
+								<div>Delete Group</div>
+							</button>
+						}
 					</div>
 				</div>
 				}

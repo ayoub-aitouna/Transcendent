@@ -32,7 +32,7 @@ export function NotificationContent({
 	if (notifications.type === 'friend-request')
 		href = `/profile/${notifications.sender.username}`
 	else if (notifications.type === 'messenger')
-		href = `/messenger?chatroom=${notifications.sender.id}`
+		href = `/messenger?chatroom=${notifications.sender.id}&groupId=${notifications.id}`
 	else if (notifications.type === 'invite')
 		href = `/match-making?player=${notifications.sender.username}`
 	return (

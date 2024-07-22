@@ -12,12 +12,15 @@ import { getRankLogs } from '@/api/user';
 import { useEffect, useState } from 'react';
 import Empty from '../component/Empty';
 import { ImageSrc } from "@/lib/ImageSrc";
+import { GetChatRoomsData, roomItem } from '@/api/chat';
 
 
 
 function TeamLeader() {
-	const { fullname,username, image_url, current_xp, rank, coins } = useAppSelector((state) => state.user.user);
+	const { fullname, username, image_url, current_xp, rank, coins } = useAppSelector((state) => state.user.user);
 	const [charData, setChartData] = useState<RankLogs[]>([])
+	const [rooms, setRooms] = useState<roomItem[]>([]);
+
 	const getPlayerProgress = async () => {
 		try {
 			const data = await getRankLogs()
@@ -27,6 +30,19 @@ function TeamLeader() {
 	}
 	useEffect(() => {
 		getPlayerProgress()
+	}, [])
+
+	useEffect(() => {
+		const fetchRooms = async () => {
+
+			try {
+				const room = await GetChatRoomsData('', false);
+				setRooms(room);
+			} catch (e) {
+				console.log("ERROR in fetching rooms data: ", e);
+			}
+		};
+		fetchRooms();
 	}, [])
 	return (
 		<div className='' >
@@ -39,7 +55,7 @@ function TeamLeader() {
 					height={150}
 					quality={100}
 					loading="lazy"
-				/>				
+				/>
 				<div className="flex flex-col ml-5">
 					<div className=" text-white  font-bold text-[18px] tracking-tight	">{fullname}</div>
 					<div className="font-light mt-[2px] text-[#A1A1A1] text-[14px]">Your Status </div>
@@ -96,7 +112,7 @@ function TeamLeader() {
 					</div>
 					<div className="flex items-center justify-end">
 						<div className="bg-[#434343] rounded dark:text-white">
-							<div className="ml-3 mr-3 font-medium  text-[12px]">15</div>
+							<div className="ml-3 mr-3 font-medium  text-[12px]">{rooms && rooms[0] && rooms[0].all_messages_count || 0}</div>
 						</div>
 					</div>
 

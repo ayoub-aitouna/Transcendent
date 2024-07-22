@@ -38,7 +38,7 @@ class RoomsConsumer(AsyncWebsocketConsumer):
             room_id = data_json['room_id']
             await self.save_message(room_id, message)
         elif message_type == 'image':
-            image_data = data_json['image']
+            image_data = data_json['image_file']
             room_id = data_json['room_id']
             await self.save_image_message(room_id, image_data)
 
@@ -72,12 +72,16 @@ class RoomsConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_message(self, room_id, message):
+        if not message:
+            return
         room = ChatRoom.objects.get(id=room_id)
         ChatMessage.objects.create(
             chatRoom=room, sender=self.user, message=message)
 
     @database_sync_to_async
     def save_image_message(self, room_id, image_data):
+        if not image_data:
+            return
         room = ChatRoom.objects.get(id=room_id)
         format, imgstr = image_data.split(';base64,')
         ext = format.split('/')[-1]

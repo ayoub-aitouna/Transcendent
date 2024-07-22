@@ -5,10 +5,11 @@ import React, {
 	useState,
 	useCallback,
 	useContext,
+	use,
 } from "react";
 import Upload from "../icons/messenger/Upload";
 import SendIcon from "../icons/messenger/send";
-import EmojiIcon from "../icons/messenger/emoji";
+import InviteIcon from "../icons/messenger/emoji";
 import { ChatMessage } from "./chat-message";
 import { useAppSelector } from "@/redux/store";
 import moment from "moment";
@@ -21,6 +22,7 @@ import { BlobOptions } from "buffer";
 import { m } from "framer-motion";
 import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
 import Link from "next/link";
+import { set } from "react-hook-form";
 
 
 const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex }
@@ -40,7 +42,9 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { username } = useAppSelector((state) => state.user.user);
 	const [friends, setFriends] = useState<{ username: string }[]>([]);
-	const { users, room_icon, room_name } = useContext(UserContext);
+	const { users, setRoomId, newRoom, setNewRoom } = useContext(UserContext);
+	const [isEditing, setIsEditing] = useState(false);
+
 
 	useEffect(() => {
 		const getFriendsList = async () => {
@@ -79,17 +83,22 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 			if (socket.current) {
 				socket.current.onerror = (err) => {
 					console.log("WebSocket closed by an error: ", err);
-					clickedIndex(0);
+					if (selectedChat.type === 'group') {
+						clickedIndex(0);
+						setRoomId(selectedChat.id);
+					}
 				};
 				socket.current.onmessage = (event) => {
 					const receivedMessage = JSON.parse(event.data);
+					console.log('new message :', receivedMessage)
 					const newMessage: MessageItem = {
 						message: receivedMessage.message.message,
-						image_file: receivedMessage.message.type === 'image' ? receivedMessage.message.image_file : null,
+						image_file: receivedMessage.message.image,
 						seen: false,
 						created_at: String(moment(receivedMessage.created_at)),
 						id: receivedMessage.message.id ? receivedMessage.message.id : 0,
 						sender_username: receivedMessage.message.sender_username,
+						type: receivedMessage.message.message ? 'text' : 'image'
 					};
 					setMessages(prevMessages => [...prevMessages, newMessage]);
 				};
@@ -102,9 +111,9 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 			};
 		} catch (error) {
 			console.error(users, "on error");
-			console.error("Error creating WebSocket connection:", error
-			);
-			window.location.reload();
+			clickedIndex(0);
+			setRoomId(selectedChat.id);
+			console.error("Error creating WebSocket connection:", error);
 
 		}
 	}, [selectedChat.id]);
@@ -131,29 +140,37 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 			const payload = {
 				id: selectedChat.id,
 				message: content,
+				image_file: imageBase64 ? `data:${imageFile?.type};base64,${imageBase64}` : null,
+				seen: false,
+				sender_username: username,
 				type: imageFile ? 'image' : 'text',
 				room_id: selectedChat.id,
-				image: imageBase64 ? `data:${imageFile?.type};base64,${imageBase64}` : null,
+				created_at: String(moment())
 			};
-			console.log("Sending message:", payload);
 			socket.current?.send(JSON.stringify(payload));
 			setMessages(prevMessages => [...prevMessages, {
-				message: content,
-				image_file: payload.image ? payload.image : null,
+				message: payload.message,
+				image_file: payload.image_file,
 				seen: false,
-				created_at: String(moment()),
-				id: selectedChat.id,
-				sender_username: username,
+				created_at: String(moment(payload.created_at)),
+				id: payload.id ? payload.id : 0,
+				sender_username: payload.sender_username,
+				type: payload.message ? 'text' : 'image'
 			}]);
-			setMessageContent("");
 		} catch (error) {
 			console.error("Error sending message:", error);
 		}
-	}, [selectedChat.id, username]);
+	}, [selectedChat.id, username, newRoom]);
 
-
-	const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
+	const handleImageConfirm = (file: File) => {
+		setSelectedImage(file);
+		sendMessage('', file);
+	};
+	const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLTextAreaElement>, file: File | null) => {
 		event.preventDefault();
+		if (file)
+			setSelectedImage(file);
+		console.log('selec : ', selectedImage)
 		if (messageContent.trim() === '' && !selectedImage)
 			return;
 
@@ -162,9 +179,6 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 		setSelectedImage(null);
 	};
 
-	const handleImageUpload = (image: File | null) => {
-		setSelectedImage(image);
-	};
 
 	useEffect(() => {
 		const element = containerRef.current;
@@ -176,53 +190,75 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 		}
 	}, [messages]);
 
+	useEffect(() => {
+		if (newRoom && socket.current) {
+			const payload = {
+				id: newRoom.id,
+				message: '',
+				type: 'text',
+				room_id: newRoom.id,
+				image: null,
+			};
+			socket.current?.send(JSON.stringify(payload));
+			setNewRoom(null);
+
+		}
+	}, [newRoom]);
+
 	return (
-		<div className='h-full'>
-			<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} handleIconClick={handleIconClick} />
-			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
-				<div className='flex-1 p mt-5'>
-					{messages.map((item, index) => (
-						<ChatMessage key={index} messages={item} type={selectedChat.type} />
-					))}
+		<div className='flex flex-col '>
+			<div className='flex-1'>
+				<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} handleIconClick={handleIconClick} />
+				<div className='overflow-y-scroll hide-scrollbar max-h-[630px]' ref={containerRef}>
+					<div className='flex flex-col p-5'>
+						{messages.map((item, index) => (
+							<ChatMessage key={index} messages={item} type={selectedChat.type} />
+						))}
+					</div>
 				</div>
 			</div>
-			<div className='absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
-				{isFriend || selectedChat.type !== 'private' ?
-					<div className='flex flex-row items-center justify-center h-full'>
-						<div className='p-2'>
-							<Link
-								href={`/match-making?player=${selectedChat && selectedChat?.receiverUser&& selectedChat.receiverUser[0].username || 0}`} className='pt-2'>
-								<EmojiIcon />
-							</Link>
-							<div className='text-[10px] text-[#878787]'>Invite</div>
+			<div className='bg-[#303030] p-2 h-[70px]'>
+				<div className=' flex bottom-0 justify-end items-center h-full'>
+					{isFriend || selectedChat.type !== 'private' ? (
+						<div className='flex items-center gap-3 w-full'>
+							{selectedChat.type === 'private' && (
+								<div className='p-2'>
+									<Link href={`/match-making?player=${selectedChat && selectedChat?.receiverUser && selectedChat.receiverUser[0].username || 0}`} className='pt-2'>
+										<InviteIcon />
+									</Link>
+									<div className='text-[10px] text-[#878787]'>Invite</div>
+								</div>
+							)}
+							<div>
+								<SendImage onImageUpload={(image) => setSelectedImage(image)} onImageConfirm={handleImageConfirm} />
+							</div>
+							<textarea
+								className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
+								placeholder='Type a message'
+								value={messageContent}
+								maxLength={1000}
+								onChange={(e) => setMessageContent(e.target.value)}
+								onClick={() => setIsEditing(true)}
+								onKeyPress={(e) => {
+									if (e.key === 'Enter') {
+										e.preventDefault();
+										handleSendMessage(e, null);
+									}
+								}}
+							/>
+							<button className='p-2' onClick={(e) => handleSendMessage(e, null)}>
+								<SendIcon />
+							</button>
 						</div>
-						<div>
-							<SendImage onImageUpload={handleImageUpload} />
+					) : (
+						<div className='flex items-center justify-center h-full'>
+							You can't send a message to a user that you are not friends with
 						</div>
-						<textarea
-							className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
-							placeholder='Type a message'
-							value={messageContent}
-							maxLength={1000}
-							onChange={(e) => setMessageContent(e.target.value)}
-							onKeyPress={(e) => {
-								if (e.key === 'Enter') {
-									e.preventDefault();
-									handleSendMessage(e);
-								}
-							}}
-						/>
-						<button className='p-2' onClick={handleSendMessage}>
-							<SendIcon />
-						</button>
-					</div>
-					: selectedChat.type === 'private' &&
-					<div className='flex flex-row items-center justify-center h-full'>
-						You can't send a message to a user that you are not friends with
-					</div>
-				}
+					)}
+				</div>
 			</div>
 		</div>
+
 	);
 };
 

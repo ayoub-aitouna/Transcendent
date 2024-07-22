@@ -2,10 +2,10 @@ import { MessengerContainer } from "@/app/ui/dashboard/messenger/messenger-conta
 import { GetChatRoomsData, roomItem } from "@/api/chat";
 import { ChatSearchBar } from "@/app/ui/dashboard/messenger/ChatsearchBar";
 import { useContext, useEffect, useState } from "react";
-import ChatRoomsWebSocket from "./ChatRoomsWebSocket";
 import { WS_BASE_URL } from "@/constant/api";
 import AuthWebSocket from "@/lib/AuthWebSocket";
 import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
+import { useAppSelector } from "@/redux/store";
 
 
 interface ChatRooms {
@@ -16,9 +16,9 @@ interface ChatRooms {
 
 const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q }) => {
 	const [filter, setFilter] = useState<boolean>(false);
+	const { users, isChanged, room_id, room_icon, room_name, newRoom, setIsChanged, setRoomId } = useContext(UserContext);
+	const { id } = useAppSelector((state) => state.user.user);
 	const [rooms, setRooms] = useState<roomItem[]>([]);
-	const { isChanged, room_id, room_icon, room_name, setIsChanged } = useContext(UserContext);
-
 
 
 	const handleFilterClick = () => {
@@ -27,7 +27,6 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 
 	useEffect(() => {
 		const fetchRooms = async () => {
-
 			try {
 				const room = await GetChatRoomsData(q, filter);
 				setRooms(room);
@@ -46,7 +45,6 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 
 			setRooms((prevRooms) => {
 				const roomIndex = prevRooms.findIndex((room) => room.id.toString() === roomId);
-				console.log('New room added', chat_room.members);
 				if (roomIndex !== -1) {
 					const updatedRooms = [...prevRooms];
 					updatedRooms[roomIndex] = {
@@ -56,9 +54,11 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 						last_message: chat_room.last_message,
 						unseen_messages_count: chat_room.unseen_messages_count,
 						members: chat_room.members,
+						all_messages_count: chat_room.all_messages_count,
 					};
 					return updatedRooms;
-				} else {
+				}
+				else {
 					return [...prevRooms, {
 						id: roomId,
 						room_name: chat_room.room_name,
@@ -68,6 +68,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 						type: chat_room.type,
 						members: chat_room.members,
 						admin: chat_room.admin,
+						all_messages_count: chat_room.all_messages_count,
 					}];
 				}
 			});
@@ -84,30 +85,57 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 		};
 	}, [q, filter]);
 
+	useEffect(() => {
+		const removeIdFromRooms = () => {
+
+			const isMember = users.some(user => user.id === id);
+			if (clickedIndex === 0 && !isMember && room_id) {
+				setRooms(prevRooms => prevRooms.filter(room => room.id !== room_id));
+			}
+		};
+		removeIdFromRooms();
+	}, [clickedIndex, users]);
+
+	useEffect(() => {
+		if (isChanged && room_id) {
+			setRooms(prevRooms => prevRooms.map(room => {
+				if (room.id === room_id) {
+					room.room_icon = room_icon || room.room_icon;
+					room.room_name = room_name || room.room_name;
+				}
+				return room;
+			}));
+			setIsChanged(false);
+			setRoomId(0);
+		}
+
+	}, [isChanged, room_id, room_icon, room_name]);
+
 	return (
-		<div className="h-full flex flex-row flex-wrap gap-5">
-			<div className="overflow-y-scroll hide-scrollbar w-full sm:w-full lg:max-w-[440px] bg-[#292929] rounded-xl p-4">
+		<div className="h-full flex flex-row flex-wrap gap-5 ">
+			<div className="overflow-y-scroll hide-scrollbar w-full  bg-[#292929] rounded-xl p-4">
 				<div className="flex flex-row items-center justify-between p-2 relative">
 					<ChatSearchBar onFilterClick={handleFilterClick} filter={filter} />
 				</div>
-				<div className="relative">
+				<div className="">
 					{rooms.map((item) => {
 						if (isChanged && item.id === room_id) {
 							item.room_icon = room_icon ? room_icon : item.room_icon;
 							item.room_name = room_name ? room_name : item.room_name;
 							setIsChanged(false);
+							setRoomId(0);
 						}
-
 						return (
 							<div key={item.id}>
 								<MessengerContainer
 									onClick={() => handleIconClick(item.id)}
-									name={item.room_name} // Use the possibly updated name
+									name={item.room_name}
 									LastMessage={item.last_message}
-									href={item.room_icon} // Use the possibly updated href
+									href={item.room_icon}
 									messagesNbr={item.unseen_messages_count}
 									isSelected={clickedIndex === item.id}
 									id={item.id}
+									type={item.type}
 								/>
 							</div>
 						);
