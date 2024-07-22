@@ -30,7 +30,7 @@ export const ChatSearchBar = ({ onFilterClick, filter }: {
 		<div className=''>
 			<div className="flex flex-row items-center justify-between relative">
 				<textarea
-					className="flex-row items-center justify-between rounded-lg overflow-hidden bg-[#363636] pl-[60px] p-2 h-[40px] w-[336px] resize-none outline-none"
+					className="flex-row items-center justify-between rounded-lg overflow-hidden bg-[#363636] pl-[60px] p-2 h-[40px] w-full resize-none outline-none"
 					placeholder="Search..."
 					defaultValue={searchParams.get('q')?.toString()}
 					onChange={(e) => handleChange(e.target.value)}

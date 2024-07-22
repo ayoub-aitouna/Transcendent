@@ -61,11 +61,11 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 	};
 
 	return (
-		<div className="h-full overflow-hidden rounded-xl">
+		<div className="h-[100%] overflow-hidden rounded-xl">
 			<div className="h-full flex-1 flex flex-col gap-4">
-				<div className="h-full flex f lex-row flex-wrap gap-5">
+				<div className="h-full flex  lex-row flex-wrap gap-5">
 					<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
-					<div className="flex-1 h-full bg-secondary-400  rounded-xl relative overflow-hidden">
+					<div className="flex-1  bg-secondary-400  rounded-xl  overflow-hidden relative">
 						{selectedChat ? (
 							<SendMessages selectedChat={selectedChat} clickedGroup={handleClickGroup} handleIconClick={handleIconClick} clickedIndex={setClickedIndex} />
 						) : !chatroom && (

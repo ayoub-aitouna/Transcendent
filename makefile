@@ -1,7 +1,7 @@
 all: up init
 
 up:
-	docker-compose -f ./src/docker-compose.yml up --build -d
+	docker-compose -f ./src/docker-compose.yml up --build 
 
 init:
 	cd ./src/frontend && sh ./build-tools/init.sh

@@ -106,7 +106,7 @@ export function MessengerContainer({ name, href, LastMessage, messagesNbr, isSel
 					</div>
 					<div
 						className={`ml-[10px] ${viewsMessages ? "text-white" : "text-[#878787]"
-							}text-[14px] w-[250px] truncate font-normal`}>
+							}text-[14px] w-[150px] sx:w-[130px] truncate font-normal`}>
 						{lastMassage}
 					</div>
 				</div>

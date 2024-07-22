@@ -144,7 +144,7 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }
 	}
 
 	return (
-		<div>
+		<div className="">
 			<button className="w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden">
 				<Link href="/profile" className="flex items-center justify-between p-4">
 					<Image

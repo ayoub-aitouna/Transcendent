@@ -1,12 +1,10 @@
 import { MessengerContainer } from "@/app/ui/dashboard/messenger/messenger-container";
 import { GetChatRoomsData, roomItem } from "@/api/chat";
 import { ChatSearchBar } from "@/app/ui/dashboard/messenger/ChatsearchBar";
-import { use, useContext, useEffect, useState } from "react";
-import ChatRoomsWebSocket from "./ChatRoomsWebSocket";
+import { useContext, useEffect, useState } from "react";
 import { WS_BASE_URL } from "@/constant/api";
 import AuthWebSocket from "@/lib/AuthWebSocket";
 import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
-import { set } from "react-hook-form";
 import { useAppSelector } from "@/redux/store";
 
 
@@ -29,7 +27,6 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 
 	useEffect(() => {
 		const fetchRooms = async () => {
-
 			try {
 				const room = await GetChatRoomsData(q, filter);
 				setRooms(room);
@@ -57,6 +54,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 						last_message: chat_room.last_message,
 						unseen_messages_count: chat_room.unseen_messages_count,
 						members: chat_room.members,
+						all_messages_count: chat_room.all_messages_count,
 					};
 					return updatedRooms;
 				}
@@ -70,6 +68,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 						type: chat_room.type,
 						members: chat_room.members,
 						admin: chat_room.admin,
+						all_messages_count: chat_room.all_messages_count,
 					}];
 				}
 			});
@@ -113,12 +112,12 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 	}, [isChanged, room_id, room_icon, room_name]);
 
 	return (
-		<div className="h-full flex flex-row flex-wrap gap-5">
-			<div className="overflow-y-scroll hide-scrollbar w-full sm:w-full lg:max-w-[440px] bg-[#292929] rounded-xl p-4">
+		<div className="h-full flex flex-row flex-wrap gap-5 ">
+			<div className="overflow-y-scroll hide-scrollbar w-full  bg-[#292929] rounded-xl p-4">
 				<div className="flex flex-row items-center justify-between p-2 relative">
 					<ChatSearchBar onFilterClick={handleFilterClick} filter={filter} />
 				</div>
-				<div className="relative">
+				<div className="">
 					{rooms.map((item) => {
 						if (isChanged && item.id === room_id) {
 							item.room_icon = room_icon ? room_icon : item.room_icon;
@@ -126,7 +125,6 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 							setIsChanged(false);
 							setRoomId(0);
 						}
-
 						return (
 							<div key={item.id}>
 								<MessengerContainer

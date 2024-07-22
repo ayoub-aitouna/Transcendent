@@ -57,11 +57,11 @@ const GroupsMembers: React.FC<GroupsContainerProps> = ({ id, name, image_url, le
 					width={53}
 					height={53}
 				/>
-				<div className='flex items-start flex-col max-w-[80px] ml-4'>
-					<div className='text-white truncate text-[18px] font-bold'>
+				<div className='flex items-start flex-col  ml-4'>
+					<div className='text-white truncate text-[18px] max-w-[80px]font-bold'>
 						{name}
 					</div>
-					<div className='text-[#878787] text-[12px] truncate font-medium'>
+					<div className='text-[#878787] text-[12px] truncate max-w-[80px] font-medium'>
 						Level {level}
 					</div>
 				</div>

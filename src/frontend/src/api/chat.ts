@@ -24,6 +24,7 @@ export type roomItem = {
 	receiverUser?: { id: string, status: string, username: string, }[];
 	members: user[];
 	admin: user;
+	all_messages_count: number;
 }
 
 export type roomPrivateItem = {
