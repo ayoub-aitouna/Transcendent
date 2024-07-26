@@ -112,7 +112,7 @@ const ChatRoomsPanel: React.FC<ChatRooms> = ({ clickedIndex, handleIconClick, q 
 	}, [isChanged, room_id, room_icon, room_name]);
 
 	return (
-		<div className="h-full flex flex-row flex-wrap gap-5 ">
+		<div className="h-full flex flex-row flex-wrap gap-5">
 			<div className="overflow-y-scroll hide-scrollbar w-full  bg-[#292929] rounded-xl p-4">
 				<div className="flex flex-row items-center justify-between p-2 relative">
 					<ChatSearchBar onFilterClick={handleFilterClick} filter={filter} />

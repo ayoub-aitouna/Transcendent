@@ -11,11 +11,13 @@ import Confirm from "../../modal/confirm";
 import { UserContext } from "@/app/(dashboard)/messenger/context/UserContext";
 import { BlockUser } from "@/api/user";
 import { useAppSelector } from "@/redux/store";
-export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }:
+import LeftArrow from "../icons/content_area/left-arrow";
+export default function ChatPanel({ selectedChat, handleGroup, handleIconClick, windowWidth }:
 	{
 		selectedChat: roomItem;
 		handleGroup: (index: boolean) => void;
 		handleIconClick: (index: number) => void;
+		windowWidth: boolean;
 	}) {
 	const { OpenModal, CancelModal } = useModal();
 
@@ -146,6 +148,13 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }
 	return (
 		<div className="">
 			<button className="w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden">
+
+				{windowWidth &&
+					<LeftArrow onClick={() => {
+						router.push(`/messenger`);
+						handleIconClick(0)
+					}}></LeftArrow>
+				}
 				<Link href="/profile" className="flex items-center justify-between p-4">
 					<Image
 						className="bg-white w-[53px] h-[53px] rounded-full"
@@ -156,7 +165,7 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick }
 						quality={100}
 					/>
 					<div className="flex items-start flex-col max-w-[80px]">
-						<div className="ml-[10px] text-white truncate text-[16px] font-bold">
+						<div className="ml-[10px] text-white truncate text-[16px] font-bold lg:w-[100px]">
 							{room_name}
 						</div>
 						<div className="ml-[10px] text-[#878787] text-[14px] truncate font-normal">

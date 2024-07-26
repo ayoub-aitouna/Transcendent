@@ -81,7 +81,7 @@ const Page = () => {
 	};
 	return (
 		<div className='flex w-full justify-center items-center'>
-			<div className='w-[640px] justify-start items-start'>
+			<div className='lg:max-w-[640px] w-full justify-start items-start'>
 				<div className='pl-1 font-semibold text-[18px]'>
 					Create new Chat Group
 				</div>
@@ -111,12 +111,12 @@ const Page = () => {
 									<UploadIcon />
 								</div>
 								<div>
-									<label className='font-bold text-[15px]'>
+									<label className='font-bold text-[15px] w-full'>
 										Click to upload
 										<input
 											type='file'
 											name="icon"
-											className='hidden'
+											className='hidden w-full'
 											onChange={handleImageUpload}
 											accept='image/*'
 										/>
@@ -132,12 +132,12 @@ const Page = () => {
 						)}
 					</div>
 
-					<div className='py-2 flex flex-col justify-start items-start'>
-						<div className='py-2 text-[14px] font-normal text-[#878787]'>
+					<div className='py-2 flex flex-col justify-start items-start w-full'>
+						<div className='py-2 text-[14px] font-normal text-[#878787] h-full'>
 							Name *
 						</div>
 						<input
-							className='rounded overflow-hidden bg-[#373737] h-[47px] w-[592px] text-[#878787] font-light text-[12px] pl-3 outline-none'
+							className='rounded overflow-hidden bg-[#373737] h-[47px] w-full text-[#878787] font-light text-[12px] pl-3 outline-none'
 							type='text'
 							value={group_name || ''}
 							placeholder='Chat Group Name'
@@ -147,7 +147,7 @@ const Page = () => {
 					</div>
 
 					<div className='flex flex-col justify-start items-start pt-8'>
-						<Link href={`/messenger/group/choice-members`} className='w-[592px] flex items-center justify-between rounded-lg mb-[10px]'>
+						<Link href={`/messenger/group/choice-members`} className='w-full flex items-center justify-between rounded-lg mb-[10px]'>
 							<div className='flex items-center justify-between'>
 								<div className='flex items-start flex-col'>
 									<div className='text-white truncate font-semibold'>
@@ -162,7 +162,7 @@ const Page = () => {
 								<RightArrow />
 							</div>
 						</Link>
-						<div className='w-[592px] flex  flex-col items-center justify-between rounded-lg mb-[10px]'>
+						<div className='w-full flex  flex-col items-center justify-between rounded-lg mb-[10px]'>
 							{users.filter(user => user.id !== id).map(user => (
 								<GroupsContainer key={user.id} {...user} />
 							)).slice(0, 3)}

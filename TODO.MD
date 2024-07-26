@@ -48,3 +48,16 @@
 
       - add django channels tests
       - added drf tests
+
+## Cybersecurity: GDPR Compliance :
+
+	# User Data Anonymization
+		- Add an option in settings for users to anonymize their personal data:
+		- Allow users to anonymize all their personal data or specific pieces of data (e.g., email address).
+	# Hide Sensitive Information
+		- Implement measures to hide user IDs and other sensitive data to prevent easy access to personal information.
+	# Account Deletion
+		- Add an option for users to delete their account.
+		- Ensure that all data associated with the account is permanently removed from the database.
+		- Help and Support
+		- Add a Help icon that provides instructions on how users can anonymize or delete their data.

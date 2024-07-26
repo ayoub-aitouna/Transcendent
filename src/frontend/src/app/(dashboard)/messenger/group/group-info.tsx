@@ -110,7 +110,7 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 
 
 	return (
-		<div id="Group-infoPanel" className="flex-1 flex flex-col h-full  max-w-[400px] bg-secondary-400 rounded-xl relative overflow-hidden py-2">
+		<div id="Group-infoPanel" className="flex-1 flex flex-col h-full w-full  max-w-[400px] bg-secondary-400 rounded-xl relative overflow-hidden py-2">
 			<div className=" py-3 flex justify-center flex-col  rounded-md m-3  items-center bg-[#161616]">
 				<label >
 					<Image className=" bg-white rounded-full border-white border-[2px] h-[180px] w-[180px]" src={room_icon || "/assets/images/lol.png"} width={200} height={200} quality={100} alt="Coming soon" />

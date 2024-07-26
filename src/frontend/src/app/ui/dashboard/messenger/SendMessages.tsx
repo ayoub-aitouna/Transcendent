@@ -25,13 +25,14 @@ import Link from "next/link";
 import { set } from "react-hook-form";
 
 
-const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex }
+const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex , windowWidth}
 	:
 	{
 		selectedChat: roomItem;
 		clickedGroup: (index: boolean) => void;
 		handleIconClick: (index: number) => void;
 		clickedIndex: (index: number) => void;
+		windowWidth : boolean;
 
 	}) => {
 
@@ -205,60 +206,58 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 		}
 	}, [newRoom]);
 
+
 	return (
-		<div className='flex flex-col '>
-			<div className='flex-1'>
-				<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} handleIconClick={handleIconClick} />
-				<div className='overflow-y-scroll hide-scrollbar max-h-[630px]' ref={containerRef}>
-					<div className='flex flex-col p-5'>
-						{messages.map((item, index) => (
-							<ChatMessage key={index} messages={item} type={selectedChat.type} />
-						))}
-					</div>
+		<div className='h-full'>
+			<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} handleIconClick={handleIconClick} windowWidth={windowWidth}/>
+			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
+				<div className='flex-1 p mt-5'>
+					{messages.map((item, index) => (
+						<ChatMessage key={index} messages={item} type={selectedChat.type} />
+					))}
 				</div>
 			</div>
-			<div className='bg-[#303030] p-2 h-[70px]'>
-				<div className=' flex bottom-0 justify-end items-center h-full'>
-					{isFriend || selectedChat.type !== 'private' ? (
-						<div className='flex items-center gap-3 w-full'>
-							{selectedChat.type === 'private' && (
-								<div className='p-2'>
-									<Link href={`/match-making?player=${selectedChat && selectedChat?.receiverUser && selectedChat.receiverUser[0].username || 0}`} className='pt-2'>
-										<InviteIcon />
-									</Link>
-									<div className='text-[10px] text-[#878787]'>Invite</div>
-								</div>
-							)}
-							<div>
-								<SendImage onImageUpload={(image) => setSelectedImage(image)} onImageConfirm={handleImageConfirm} />
+			<div className='absolute bottom-0 gap-3 left-0 right-0 p-2 h-[70px] bg-[#303030]'>
+				{isFriend || selectedChat.type !== 'private' ?
+					<div className='flex flex-row items-center justify-center h-full'>
+						{
+							selectedChat.type === 'private' &&
+							<div className='p-2'>
+								<Link
+									href={`/match-making?player=${selectedChat && selectedChat?.receiverUser && selectedChat.receiverUser[0].username || 0}`} className='pt-2'>
+									<InviteIcon />
+								</Link>
+								<div className='text-[10px] text-[#878787]'>Invite</div>
 							</div>
-							<textarea
-								className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
-								placeholder='Type a message'
-								value={messageContent}
-								maxLength={1000}
-								onChange={(e) => setMessageContent(e.target.value)}
-								onClick={() => setIsEditing(true)}
-								onKeyPress={(e) => {
-									if (e.key === 'Enter') {
-										e.preventDefault();
-										handleSendMessage(e, null);
-									}
-								}}
-							/>
-							<button className='p-2' onClick={(e) => handleSendMessage(e, null)}>
-								<SendIcon />
-							</button>
+						}
+						<div>
+							<SendImage onImageUpload={(image) => setSelectedImage(image)} onImageConfirm={handleImageConfirm} />
 						</div>
-					) : (
-						<div className='flex items-center justify-center h-full'>
-							You can't send a message to a user that you are not friends with
-						</div>
-					)}
-				</div>
+						<textarea
+							className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
+							placeholder='Type a message'
+							value={messageContent}
+							maxLength={1000}
+							onChange={(e) => setMessageContent(e.target.value)}
+							onClick={() => setIsEditing(true)}
+							onKeyPress={(e) => {
+								if (e.key === 'Enter') {
+									e.preventDefault();
+									handleSendMessage(e, null);
+								}
+							}}
+						/>
+						<button className='p-2' onClick={(e) => handleSendMessage(e, null)}>
+							<SendIcon />
+						</button>
+					</div>
+					: selectedChat.type === 'private' &&
+					<div className='flex flex-row items-center justify-center h-full'>
+						You can't send a message to a user that you are not friends with
+					</div>
+				}
 			</div>
 		</div>
-
 	);
 };
 

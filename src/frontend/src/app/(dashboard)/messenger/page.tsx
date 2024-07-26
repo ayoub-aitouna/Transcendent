@@ -10,6 +10,39 @@ import { GroupInfo } from "./group/group-info";
 import { user, UserContext, useUserContext } from "./context/UserContext";
 import { set } from "react-hook-form";
 
+export const SmallWindowChat = ({ selectedChat, clickedIndex, chatroom, clickedGroup, handleIconClick, handleClickGroup, setclickedIndex, q }: {
+	selectedChat: roomItem | null;
+	clickedIndex: number;
+	chatroom: string;
+	clickedGroup: boolean;
+	handleIconClick: (index: number) => void;
+	handleClickGroup: (index: boolean) => void;
+	setclickedIndex: (index: number) => void;
+	q: string;
+}) => {
+	return (
+		<div className="h-full overflow-hidden rounded-xl">
+			<div className="h-full flex-1 flex flex-col gap-4">
+				<div className="h-full flex  lex-row flex-wrap gap-5">
+					{!selectedChat &&
+						< ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
+					}
+					{
+						!clickedGroup &&
+						<div className="flex-1  bg-secondary-400  rounded-xl  overflow-hidden relative">
+							{selectedChat &&
+								<SendMessages selectedChat={selectedChat} clickedGroup={handleClickGroup} handleIconClick={handleIconClick} clickedIndex={setclickedIndex} windowWidth={true} />
+							}
+						</div>
+					}
+					{clickedGroup &&
+						<GroupInfo selectedChat={selectedChat} setClickedGroup={handleClickGroup} />
+					}
+				</div>
+			</div>
+		</div>
+	);
+}
 
 const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string } }) => {
 	const [clickedIndex, setClickedIndex] = useState<number>(0);
@@ -17,7 +50,7 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 	const [selectedChat, setSelectedChat] = useState<roomItem | null>(null);
 	const chatroom = searchParams?.chatroom || '';
 	const q = searchParams?.q || '';
-	const router = useRouter();
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const { users, addUser, removeUser, setRoomIcon, setRoomName } = useUserContext();
 
 	useEffect(() => {
@@ -60,32 +93,47 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 
 	};
 
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
+
 	return (
 		<div className="h-[100%] overflow-hidden rounded-xl">
-			<div className="h-full flex-1 flex flex-col gap-4">
-				<div className="h-full flex  lex-row flex-wrap gap-5">
-					<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
-					<div className="flex-1  bg-secondary-400  rounded-xl  overflow-hidden relative">
-						{selectedChat ? (
-							<SendMessages selectedChat={selectedChat} clickedGroup={handleClickGroup} handleIconClick={handleIconClick} clickedIndex={setClickedIndex} />
-						) : !chatroom && (
-							<div className="flex justify-center items-center flex-col h-full">
-								<div className="text-3xl font-bold">Messenger</div>
-								<div className="text-lg font-light mt-2">
-									Send and receive messages without keeping your phone online.
+			{
+				windowWidth < 1024 ? <SmallWindowChat selectedChat={selectedChat} clickedIndex={clickedIndex} chatroom={chatroom} clickedGroup={clickedGroup} handleIconClick={handleIconClick} handleClickGroup={handleClickGroup} setclickedIndex={setClickedIndex} q={q} />
+					: (
+						<div className="h-full flex-1 flex flex-col gap-4">
+							<div className="h-full flex fex-row flex-wrap gap-5">
+								<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
+								<div className="flex-1  bg-secondary-400  rounded-xl  overflow-hidden relative">
+									{selectedChat ? (
+										<SendMessages selectedChat={selectedChat} clickedGroup={handleClickGroup} handleIconClick={handleIconClick} clickedIndex={setClickedIndex} windowWidth={false} />
+									) : !chatroom && (
+										<div className="flex justify-center items-center flex-col h-full">
+											<div className="text-3xl font-bold">Messenger</div>
+											<div className="text-lg font-light mt-2">
+												Send and receive messages without keeping your phone online.
+											</div>
+											<div className="text-lg font-light mt-2">
+												Use Messenger Transcendent on your PC.
+											</div>
+										</div>
+									)
+									}
 								</div>
-								<div className="text-lg font-light mt-2">
-									Use Messenger Transcendent on your PC.
-								</div>
+								{clickedGroup &&
+									<GroupInfo selectedChat={selectedChat} setClickedGroup={handleClickGroup} />
+								}
 							</div>
-						)
-						}
-					</div>
-					{clickedGroup &&
-						<GroupInfo selectedChat={selectedChat} setClickedGroup={handleClickGroup} />
-					}
-				</div>
-			</div>
+						</div>
+					)
+			}
 		</div>
 	);
 };
