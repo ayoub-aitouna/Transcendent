@@ -5,7 +5,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import Stats from 'stats.js/src/Stats.js'
 
 let scene, camera, renderer, controls;
 let computer = null;
@@ -15,8 +14,8 @@ let score_board = null;
 let bg_scene =null;
 let tableModel = null;
 let tableWidth = 0; // Width of the table, to be determined dynamically
-let z_velocity = 0.05;
-let x_velocity = 0.05;
+let z_velocity = 0.005;
+let x_velocity = 0.005;
 let moveLeftPlayer = false;
 let moveRightPlayer = false;
 let moveLeftComputer = false;
@@ -66,7 +65,7 @@ const ThreeScene = () => {
       // Load models and set up the scene
       const loadModels = () => {
         const loader_scene = new GLTFLoader();
-        loader_scene.load('/game/scene_bg.glb', (glb) => {
+        loader_scene.load('/scene_bg.glb', (glb) => {
           if (!bg_scene) {
             bg_scene = glb.scene;
             scene.add(bg_scene);
@@ -76,28 +75,35 @@ const ThreeScene = () => {
         });
 
         const loader_scene1 = new GLTFLoader();
-        loader_scene1.load('/game/low_table.glb', (glb) => {
-            tableModel = glb.scene;
-            scene.add(tableModel);
-            tableModel.position.set(0, 3.8, 0);
-            tableModel.scale.set(1.2, 1.2, 1.2);
-            tableModel.rotation.y = 1.6;
-            const box = new THREE.Box3().setFromObject(tableModel);
-            const size = new THREE.Vector3();
-            box.getSize(size);
-            tableWidth = size.x;
-            console.log("----->>>>>>",tableWidth)
+        loader_scene1.load('/low_table.glb', (glb) => {
+          tableModel = glb.scene;
+          scene.add(tableModel);
+          tableModel.position.set(0, 3.8, 0);
+          tableModel.scale.set(1.2, 1.2, 1.2);
+          tableModel.rotation.y = 1.6;
+          
+          const box = new THREE.Box3().setFromObject(tableModel);
+          const size = new THREE.Vector3();
+          box.getSize(size);
+          tableWidth = size.x;
+          //3.340033802727273
+          //538242.01536809
+          if (tableWidth > 1000) {
+            console.warn("Table width seems too large. Check model dimensions.");
+            tableWidth = 5.8; // Default to old table width
+          }
+          console.log("table witdh =>>>>    ",tableWidth);
         });
 // computer player
         const loader_cpm = new GLTFLoader();
-        loader_cpm.load('/game/paddle_hock.glb', (glb) =>
+        loader_cpm.load('paddle_hock.glb', (glb) =>
         {
             if (!computer)
             {
-            computer = glb.scene;
-            scene.add(computer);
-            computer.position.set(0, 0.7, -1);
-            computer.scale.set(1.2, 1.2, 1.2); // Adjust the scale if necessary
+              computer = glb.scene;
+              scene.add(computer);
+              computer.position.set(0, 0.7, -1);
+              computer.scale.set(1.2, 1.2, 1.2); // Adjust the scale if necessary
             }
           }, undefined, (error) => {
             console.error('An error occurred while loading the GLTF model:', error);
@@ -105,19 +111,19 @@ const ThreeScene = () => {
 
     // Load the ball model
     const loader = new GLTFLoader();
-    loader.load('/game/ball_rca.glb', (glb) => 
+    loader.load('/ball_rca.glb', (glb) => 
     {
       if (!ballModel)
       {
         ballModel = glb.scene;
         scene.add(ballModel);
-        ballModel.position.set(0.5, 0.9, -2.5);
-        ballModel.scale.set(0.9, 1.2, 0.9);
+        ballModel.position.set(0.5, -0.6, -2.5);
+        ballModel.scale.set(1, 1.7, 1);
       }
       });
     // Load the player paddle model
     const loader2 = new GLTFLoader();
-    loader2.load('/game/paddle_hock.glb', (glb) => 
+    loader2.load('/paddle_hock.glb', (glb) => 
     {
       if (!player_model)
       {
@@ -129,7 +135,7 @@ const ThreeScene = () => {
       });
     //load the soccer board
     const loader_board = new GLTFLoader();
-    loader_board.load('/game/score.glb', (glb) => 
+    loader_board.load('/score.glb', (glb) => 
     {
       if (!score_board)
       {
@@ -233,7 +239,8 @@ const ThreeScene = () => {
     };
 
       // Check collisions
-      const checkCollision = () => {
+      const checkCollision = () => 
+      {
         const playerBB = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
         const ballBB = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
         const computerBB = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
@@ -252,14 +259,14 @@ const ThreeScene = () => {
             z_velocity = Math.abs(z_velocity);
             x_velocity = (ballModel.position.x - computer.position.x) * 0.05;
           }
-            else if (ballModel.position.z > 1.6)
+          else if (ballModel.position.z > 2.4)
             {
                 // console.log('Player hit');
                 console.log("computer ----------------");
                 resetBallPosition();
                 computer_score++;
             }
-            else if (ballModel.position.z < -7)
+            else if (ballModel.position.z < -8.5)
             {
                 console.log("player ----------------");
                 resetBallPosition_player();
@@ -350,7 +357,8 @@ const ThreeScene = () => {
       // Reset ball position
       const resetBallPosition = () => 
       {
-        ballModel.position.set(0.5, 0.9, -2.5); // Reset the ball to the center of the table
+        ballModel.position.set(0.5, -0.6, -2.5);
+        ballModel.scale.set(1, 1.7, 1);
         z_velocity = 0.05;
         x_velocity = 0.05;
         update_text();
@@ -358,35 +366,32 @@ const ThreeScene = () => {
 
       const resetBallPosition_player = () => 
         {
-          ballModel.position.set(0.5, 0.9, -2.5); // Reset the ball to the center of the table
+          ballModel.position.set(0.5, -0.6, -2.5);
+          ballModel.scale.set(1, 1.7, 1);
           z_velocity = 0.05;
           x_velocity = 0.05;
           update_text_player();
         };
-
-        var stats = new Stats();
-        stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-        document.body.appendChild( stats.dom );
-
       // Animate the scene
       const animate = () => {
-        stats.begin();
         requestAnimationFrame(animate);
-        if (ballModel) {
+        if (ballModel) 
+        {
           ballModel.translateZ(z_velocity);
           ballModel.translateX(x_velocity);
-
           if (tableWidth > 0) 
-        {
-            if (ballModel.position.x > tableWidth / 2) 
             {
-              ballModel.position.x = tableWidth / 2;
-              x_velocity = -Math.abs(x_velocity);
-            } else if (ballModel.position.x < -tableWidth / 2) {
-              ballModel.position.x = -tableWidth / 2;
-              x_velocity = Math.abs(x_velocity);
-            }
-        }
+              console.log("before ==>>",ballModel.position.x);
+              if (ballModel.position.x > tableWidth / 2) {
+                ballModel.position.x = tableWidth / 2;
+                x_velocity = -Math.abs(x_velocity);
+              }
+              else if (ballModel.position.x < -tableWidth / 2) 
+              {
+                ballModel.position.x = -tableWidth / 2;
+                x_velocity = Math.abs(x_velocity);
+              }
+          }
           checkCollision();
         }
 
@@ -403,7 +408,7 @@ const ThreeScene = () => {
         if (moveRightComputer) {
           computer.position.x += 0.05;
         }
-        stats.end();
+
         controls.update();
         renderer.render(scene, camera);
       };
