@@ -148,14 +148,13 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick, 
 	return (
 		<div className="">
 			<button className="w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden">
-
-				{windowWidth &&
-					<LeftArrow onClick={() => {
-						router.push(`/messenger`);
-						handleIconClick(0)
-					}}></LeftArrow>
-				}
-				<Link href="/profile" className="flex items-center justify-between p-4">
+				<div className="flex items-center justify-between p-4">
+					{windowWidth &&
+						<LeftArrow onClick={() => {
+							router.push(`/messenger`);
+							handleIconClick(0)
+						}}/>
+					}
 					<Image
 						className="bg-white w-[53px] h-[53px] rounded-full"
 						src={ImageSrc(room_icon, room_name)}
@@ -164,15 +163,15 @@ export default function ChatPanel({ selectedChat, handleGroup, handleIconClick, 
 						height={53}
 						quality={100}
 					/>
-					<div className="flex items-start flex-col max-w-[80px]">
-						<div className="ml-[10px] text-white truncate text-[16px] font-bold lg:w-[100px]">
+					<Link href="/profile" className="flex items-start flex-col max-w-[80px]">
+						<div className="ml-[10px] text-white truncate text-[16px] font-bold sm:max-w-[100px]">
 							{room_name}
 						</div>
 						<div className="ml-[10px] text-[#878787] text-[14px] truncate font-normal">
 							{selectedChat.type === 'private' ? selectedChat.receiverUser && selectedChat?.receiverUser[0].status : users && users.length > 0 ? users.map((member) => member.username).join(', ') : 'No members'}
 						</div>
-					</div>
-				</Link>
+					</Link>
+				</div>
 				<div className="relative flex flex-col items-center">
 					<div className="relative flex flex-col items-center p-7" onClick={() => setClickedThreePoints(!clickedThreePoints)}>
 						<ThreePointsIcon />

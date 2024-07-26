@@ -25,14 +25,14 @@ import Link from "next/link";
 import { set } from "react-hook-form";
 
 
-const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex , windowWidth}
+const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedIndex, windowWidth }
 	:
 	{
 		selectedChat: roomItem;
 		clickedGroup: (index: boolean) => void;
 		handleIconClick: (index: number) => void;
 		clickedIndex: (index: number) => void;
-		windowWidth : boolean;
+		windowWidth: boolean;
 
 	}) => {
 
@@ -209,7 +209,7 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 
 	return (
 		<div className='h-full'>
-			<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} handleIconClick={handleIconClick} windowWidth={windowWidth}/>
+			<ChatPanel selectedChat={selectedChat} handleGroup={clickedGroup} handleIconClick={handleIconClick} windowWidth={windowWidth} />
 			<div className='overflow-y-scroll hide-scrollbar max-h-[500px]' ref={containerRef}>
 				<div className='flex-1 p mt-5'>
 					{messages.map((item, index) => (
@@ -234,7 +234,7 @@ const SendMessages = ({ selectedChat, clickedGroup, handleIconClick, clickedInde
 							<SendImage onImageUpload={(image) => setSelectedImage(image)} onImageConfirm={handleImageConfirm} />
 						</div>
 						<textarea
-							className='flex-grow bg-[#464646] ml-3 pl-3 h-[50px] p-3 rounded-lg outline-none resize-none'
+							className='flex-grow bg-[#464646] ml-3 pl-3 max-h-[50px] p-3 rounded-lg outline-none resize-none'
 							placeholder='Type a message'
 							value={messageContent}
 							maxLength={1000}

@@ -80,19 +80,7 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 	}, [AddMember]);
 
 
-	useEffect(() => {
-		const handleOutsideClick = (event: MouseEvent) => {
-			const target = event.target as HTMLElement;
-			const panel = document.getElementById("Group-infoPanel");
-			if (panel && !panel.contains(target)) {
-				setClickedGroup(false);
-			}
-		};
-		document.addEventListener("mousedown", handleOutsideClick);
-		return () => {
-			document.removeEventListener("mousedown", handleOutsideClick);
-		};
-	}, []);
+
 
 
 	const confirmAddUser = () => {
@@ -110,7 +98,18 @@ export const GroupInfo = ({ selectedChat, setClickedGroup }:
 
 
 	return (
-		<div id="Group-infoPanel" className="flex-1 flex flex-col h-full w-full  max-w-[400px] bg-secondary-400 rounded-xl relative overflow-hidden py-2">
+		<div className="flex-1 flex flex-col h-full w-full  lg:max-w-[400px] bg-secondary-400 rounded-xl relative overflow-hidden">
+			<button className="w-full h-[80px] bg-[#363636] flex items-center justify-between rounded-lg overflow-hidden py-2">
+				<div className="flex flex-row px-2 items-center justify-between" >
+					<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => setClickedGroup(false)}>
+						<path d="M4.8 14.25L3.75 13.2L7.95 9L3.75 4.8L4.8 3.75L9 7.95L13.2 3.75L14.25 4.8L10.05 9L14.25 13.2L13.2 14.25L9 10.05L4.8 14.25Z" fill="white" />
+					</svg>
+					<div className="ml-2 font-semibold text-[16px]" >
+						Group Info
+					</div>
+				</div>
+
+			</button>
 			<div className=" py-3 flex justify-center flex-col  rounded-md m-3  items-center bg-[#161616]">
 				<label >
 					<Image className=" bg-white rounded-full border-white border-[2px] h-[180px] w-[180px]" src={room_icon || "/assets/images/lol.png"} width={200} height={200} quality={100} alt="Coming soon" />

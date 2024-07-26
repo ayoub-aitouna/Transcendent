@@ -27,8 +27,8 @@ export const ChatSearchBar = ({ onFilterClick, filter }: {
 	}, 300);
 
 	return (
-		<div className=''>
-			<div className="flex flex-row items-center justify-between relative">
+		<div className='w-full lg:max-w-[400px]'>
+			<div className="flex flex-row items-center justify-between relative w-full lg:max-w-[400px]">
 				<textarea
 					className="flex-row items-center justify-between rounded-lg overflow-hidden bg-[#363636] pl-[60px] p-2 h-[40px] w-full resize-none outline-none"
 					placeholder="Search..."

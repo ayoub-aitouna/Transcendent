@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   nginx:
     restart: always
@@ -82,14 +81,14 @@ volumes:
     driver_opts:
       type: "none"
       o: "bind"
-      device: "${PWD}/src/backend/"
+      device: "/home/kmahdi/Desktop/Transcendent/src/backend/"
 
   frontend_volume:
     driver: local
     driver_opts:
       type: "none"
       o: "bind"
-      device: "${PWD}/src/frontend"
+      device: "/home/kmahdi/Desktop/Transcendent/src/frontend"
   db_volume:
 
 networks:

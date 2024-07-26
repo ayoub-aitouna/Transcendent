@@ -10,7 +10,7 @@ import { GroupInfo } from "./group/group-info";
 import { user, UserContext, useUserContext } from "./context/UserContext";
 import { set } from "react-hook-form";
 
-export const SmallWindowChat = ({ selectedChat, clickedIndex, chatroom, clickedGroup, handleIconClick, handleClickGroup, setclickedIndex, q }: {
+export const SmallWindowChat = ({ selectedChat, clickedIndex, chatroom, clickedGroup, handleIconClick, handleClickGroup, setclickedIndex, q, windowWidth }: {
 	selectedChat: roomItem | null;
 	clickedIndex: number;
 	chatroom: string;
@@ -19,6 +19,7 @@ export const SmallWindowChat = ({ selectedChat, clickedIndex, chatroom, clickedG
 	handleClickGroup: (index: boolean) => void;
 	setclickedIndex: (index: number) => void;
 	q: string;
+	windowWidth: number;
 }) => {
 	return (
 		<div className="h-full overflow-hidden rounded-xl">
@@ -35,9 +36,24 @@ export const SmallWindowChat = ({ selectedChat, clickedIndex, chatroom, clickedG
 							}
 						</div>
 					}
-					{clickedGroup &&
-						<GroupInfo selectedChat={selectedChat} setClickedGroup={handleClickGroup} />
-					}
+					{clickedGroup && (
+						<>
+							{windowWidth > 600 && (
+								<div className="flex-1 bg-secondary-400 rounded-xl overflow-hidden relative">
+									{selectedChat && (
+										<SendMessages
+											selectedChat={selectedChat}
+											clickedGroup={handleClickGroup}
+											handleIconClick={handleIconClick}
+											clickedIndex={setclickedIndex}
+											windowWidth={true}
+										/>
+									)}
+								</div>
+							)}
+							<GroupInfo selectedChat={selectedChat} setClickedGroup={handleClickGroup} />
+						</>
+					)}
 				</div>
 			</div>
 		</div>
@@ -103,14 +119,34 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 		};
 	}, []);
 
+	// useEffect(() => {
+	// 	const handleClick = (event: MouseEvent) => {
+	// 		const target = event.target as HTMLElement;
+	// 		const panel = document.getElementById("group-info-panel");
+	// 		if (panel && panel.contains(target)) {
+	// 			setClickedGroup(false);
+	// 		}
+	// 	};
+
+	// 	document.addEventListener("mousedown", handleClick);
+	// 	return () => {
+	// 		document.removeEventListener("mousedown", handleClick);
+	// 	};
+	// }, []);
+
+
+
+
 	return (
-		<div className="h-[100%] overflow-hidden rounded-xl">
+		<div className="h-[100%] overflow-hidden rounded-xl min-w-[350px]">
 			{
-				windowWidth < 1024 ? <SmallWindowChat selectedChat={selectedChat} clickedIndex={clickedIndex} chatroom={chatroom} clickedGroup={clickedGroup} handleIconClick={handleIconClick} handleClickGroup={handleClickGroup} setclickedIndex={setClickedIndex} q={q} />
+				windowWidth < 1024 ? <SmallWindowChat selectedChat={selectedChat} clickedIndex={clickedIndex} chatroom={chatroom} clickedGroup={clickedGroup} handleIconClick={handleIconClick} handleClickGroup={handleClickGroup} setclickedIndex={setClickedIndex} q={q} windowWidth={windowWidth} />
 					: (
-						<div className="h-full flex-1 flex flex-col gap-4">
-							<div className="h-full flex fex-row flex-wrap gap-5">
-								<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
+						<div className="h-full w-full flex-1 flex flex-col gap-4">
+							<div className="h-full flex fex-row flex-wrap gap-5 w-full">
+								<div id="group-info-panel" >
+									<ChatRoomsPanel clickedIndex={clickedIndex} handleIconClick={handleIconClick} q={q} />
+								</div>
 								<div className="flex-1  bg-secondary-400  rounded-xl  overflow-hidden relative">
 									{selectedChat ? (
 										<SendMessages selectedChat={selectedChat} clickedGroup={handleClickGroup} handleIconClick={handleIconClick} clickedIndex={setClickedIndex} windowWidth={false} />
@@ -127,7 +163,7 @@ const Page = ({ searchParams }: { searchParams?: { chatroom?: string, q?: string
 									)
 									}
 								</div>
-								{clickedGroup &&
+								{clickedGroup && selectedChat?.type === 'group' &&
 									<GroupInfo selectedChat={selectedChat} setClickedGroup={handleClickGroup} />
 								}
 							</div>
