@@ -1,12 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { TournamentsContainer } from "@/app/ui/dashboard/home/content_area/tournamentContainer";
-import { TopAchievementsList, tournamentLinks } from "@/constant/dashboard";
 import { StreamingCard } from "@/app/ui/dashboard/tournament/index";
 import { AchievementCard } from "@/app/ui/dashboard/profile/AchievementCard";
 import {
 	MatchHistory,
-	ProfileData,
 	TournamentHistory,
 	UserDetailByUsername,
 } from "@/api/user";

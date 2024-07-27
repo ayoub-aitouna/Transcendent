@@ -81,14 +81,14 @@ volumes:
     driver_opts:
       type: "none"
       o: "bind"
-      device: "/home/kmahdi/Desktop/Transcendent/src/backend/"
+      device: "${PWD}/src/backend/"
 
   frontend_volume:
     driver: local
     driver_opts:
       type: "none"
       o: "bind"
-      device: "/home/kmahdi/Desktop/Transcendent/src/frontend"
+      device: "${PWD}/src/frontend"
   db_volume:
 
 networks:

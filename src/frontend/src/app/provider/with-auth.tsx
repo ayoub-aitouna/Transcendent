@@ -24,10 +24,11 @@ export default function WithAuth({
 		try {
 			const nookies = parseCookies();
 			if (!nookies.access || !nookies.refresh) return;
-			const data = await ProfileData();
+			const user = await ProfileData();
+			console.log("data", user);
 			dispatch(
 				Login({
-					user: data,
+					user: user,
 					token: token,
 					isAuth: true,
 					isLoading: false,

@@ -1,4 +1,4 @@
-BACKEND_HOST_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' backend)
+BACKEND_HOST_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx)
 ENV_FILE=.env.local
 #check if .env.local file exists
 if [ ! -f .env.local ]; then
