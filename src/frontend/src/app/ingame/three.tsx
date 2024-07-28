@@ -14,8 +14,8 @@ let score_board = null;
 let bg_scene =null;
 let tableModel = null;
 let tableWidth = 0; // Width of the table, to be determined dynamically
-let z_velocity = 0.05;
-let x_velocity = 0.05;
+let z_velocity = 0.10;
+let x_velocity = 0.10;
 let moveLeftPlayer = false;
 let moveRightPlayer = false;
 let moveLeftComputer = false;
@@ -66,7 +66,7 @@ const ThreeScene = () => {
       // Load models and set up the scene
       const loadModels = () => {
         const loader_scene = new GLTFLoader();
-        loader_scene.load('/scene_bg.glb', (glb) => {
+        loader_scene.load('game/scene_bg.glb', (glb) => {
           if (!bg_scene) {
             bg_scene = glb.scene;
             scene.add(bg_scene);
@@ -76,7 +76,7 @@ const ThreeScene = () => {
         });
 
         const loader_scene1 = new GLTFLoader();
-        loader_scene1.load('/low_table.glb', (glb) => {
+        loader_scene1.load('game/low_table.glb', (glb) => {
           tableModel = glb.scene;
           scene.add(tableModel);
           tableModel.position.set(0, 3.8, 0);
@@ -97,7 +97,7 @@ const ThreeScene = () => {
         });
 // computer player
         const loader_cpm = new GLTFLoader();
-        loader_cpm.load('paddle_hock.glb', (glb) =>
+        loader_cpm.load('game/paddle_hock.glb', (glb) =>
         {
             if (!computer)
             {
@@ -112,7 +112,7 @@ const ThreeScene = () => {
 
     // Load the ball model
     const loader = new GLTFLoader();
-    loader.load('/ball_rca.glb', (glb) => 
+    loader.load('game/ball_rca.glb', (glb) => 
     {
       if (!ballModel)
       {
@@ -124,7 +124,7 @@ const ThreeScene = () => {
       });
     // Load the player paddle model
     const loader2 = new GLTFLoader();
-    loader2.load('/paddle_hock.glb', (glb) => 
+    loader2.load('game/paddle_hock.glb', (glb) => 
     {
       if (!player_model)
       {
@@ -136,7 +136,7 @@ const ThreeScene = () => {
       });
     //load the soccer board
     const loader_board = new GLTFLoader();
-    loader_board.load('/score.glb', (glb) => 
+    loader_board.load('game/score.glb', (glb) => 
     {
       if (!score_board)
       {
@@ -373,8 +373,8 @@ const ThreeScene = () => {
       {
         ballModel.position.set(0.5, -0.6, -2.5);
         ballModel.scale.set(1, 1.7, 1);
-        z_velocity = 0.05;
-        x_velocity = 0.05;
+        z_velocity = 0.10;
+        x_velocity = 0.10;
         update_text();
       };
 
@@ -382,8 +382,8 @@ const ThreeScene = () => {
         {
           ballModel.position.set(0.5, -0.6, -2.5);
           ballModel.scale.set(1, 1.7, 1);
-          z_velocity = 0.05;
-          x_velocity = 0.05;
+          z_velocity = 0.10;
+          x_velocity = 0.10;
           update_text_player();
         };
       // Animate the scene
@@ -495,5 +495,4 @@ const ThreeScene = () => {
 };
 
 export default ThreeScene;
-
 
