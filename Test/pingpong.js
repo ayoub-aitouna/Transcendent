@@ -1,7 +1,10 @@
 // Select the canvas element and set up the context
 const canvas = document.getElementById("gameCanvas");
 const context = canvas.getContext("2d");
-
+const token = document.cookie
+.split("; ")
+.find((row) => row.startsWith("access="))
+?.split("=")[1];
 
 // Game variables
 let paddleWidth = 10,
@@ -16,9 +19,9 @@ let socket = null;
 
 // WebSocket setup
 const loobySocket = new WebSocket(
-  "ws://localhost:8000/ws/game/normal/looby/?game_mode=multiplayer"
+  `ws://localhost:8000/ws/game/normal/looby/?game_mode=singleplayer&token=${token}`
 );
-console.log(loobySocket);
+
 if (!loobySocket) {
   console.log("Socket not created");
   alert("Socket not created");
@@ -30,7 +33,7 @@ loobySocket.onopen = function (event) {
 
 
 loobySocket.onclose = function (event) {
-  alert("Game not started due to no opponent.");
+  // alert("Game not started due to no opponent.");
   console.log("WebSocket is closed.", event);
 };
 
@@ -46,7 +49,8 @@ loobySocket.onmessage = function (event) {
 };
 
 const PingPongGame = (uuid) => {
-  const socket = new WebSocket(`ws://localhost:8000/ws/game/${game_uuid}/`);
+
+  const socket = new WebSocket(`ws://localhost:8000/ws/game/${game_uuid}/?token=${token}`);
   socket.onopen = function (event) {
     console.log("WebSocket is connected.");
   };
