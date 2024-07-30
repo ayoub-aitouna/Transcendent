@@ -6,16 +6,16 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 
-let scene, camera, renderer, controls;
-let computer = null;
-let ballModel = null;
-let player_model = null;
-let score_board = null;
-let bg_scene =null;
+let scene:any, camera:any, renderer:any, controls:any;
+let computer:any = null;
+let ballModel:any = null;
+let player_model:any = null;
+let score_board:any = null;
+let bg_scene :any=null;
 let tableModel = null;
 let tableWidth = 0; // Width of the table, to be determined dynamically
-let z_velocity = 0.10;
-let x_velocity = 0.10;
+let z_velocity = 0.05;
+let x_velocity = 0.05;
 let moveLeftPlayer = false;
 let moveRightPlayer = false;
 let moveLeftComputer = false;
@@ -24,12 +24,12 @@ let computer_score = 0;
 let player_score = 0;
 let player_score_text = "player :";
 let computer_score_text = "player :";
-let textMesh = null;
+let textMesh:any = null;
 let textMesh_computer = null;
-let textMesh_player = null;
+let textMesh_player:any = null;
 let textMesh_score_player = null;
 let textMesh_score_computer = null;
-
+let socket:any  = null;
 
 const ThreeScene = () => {
   const mountRef = useRef(null);
@@ -373,8 +373,8 @@ const ThreeScene = () => {
       {
         ballModel.position.set(0.5, -0.6, -2.5);
         ballModel.scale.set(1, 1.7, 1);
-        z_velocity = 0.10;
-        x_velocity = 0.10;
+        z_velocity = 0.05;
+        x_velocity = 0.05;
         update_text();
       };
 
@@ -382,10 +382,65 @@ const ThreeScene = () => {
         {
           ballModel.position.set(0.5, -0.6, -2.5);
           ballModel.scale.set(1, 1.7, 1);
-          z_velocity = 0.10;
-          x_velocity = 0.10;
+          z_velocity = 0.05;
+          x_velocity = 0.05;
           update_text_player();
         };
+
+
+        const handleWebSocketMessages = (message) => {
+          if (!message.data) return;
+          const data = JSON.parse(message.data);
+  
+          switch (data.type) {
+            case 'update':
+              // Game state update
+              if (data.ball) {
+                ballModel.position.set(data.ball.x, data.ball.y, data.ball.z);
+              }
+              if (data.leftPaddle) {
+                player_model.position.set(data.leftPaddle.x, player_model.position.y, data.leftPaddle.z);
+              }
+              if (data.rightPaddle) {
+                computer.position.set(data.rightPaddle.x, computer.position.y, data.rightPaddle.z);
+              }
+              break;
+            case 'goal':
+              // Update scores
+              player_score = data.first_player_score;
+              computer_score = data.second_player_score;
+              update_text();
+              resetBallPosition();
+              break;
+            case 'game_over':
+              // Handle game over scenario
+              alert("Game Over!");
+              break;
+            default:
+              console.log(data);
+              break;
+          }
+        };
+  
+        const setupWebSocket = () => {
+          socket = new WebSocket('ws://localhost/ingame'); // Replace with your WebSocket server URL
+  
+          socket.addEventListener('open', () => {
+            console.log('WebSocket connected');
+          });
+  
+          socket.addEventListener('message', (message) => {
+            handleWebSocketMessages(message);
+          });
+  
+          socket.addEventListener('close', () => {
+            console.log('WebSocket disconnected');
+          });
+          socket.addEventListener('error', (error) => {
+            console.error('WebSocket error:', error);
+          });
+        };
+
       // Animate the scene
       const animate = () => {
         requestAnimationFrame(animate);
@@ -408,7 +463,6 @@ const ThreeScene = () => {
           }
           checkCollision();
         }
-
         if (moveLeftPlayer) {
           player_model.position.x -= 0.05;
         }
@@ -429,6 +483,7 @@ const ThreeScene = () => {
 
       init();
       loadModels();
+      setupWebSocket();
       animate();
 
       // Event listeners for resizing and keyboard input
@@ -458,6 +513,8 @@ const ThreeScene = () => {
             controls.enabled = false;
             break;
         }
+        socket.send(JSON.stringify({ type: "move", y: player_model.position.x })); // its x but i still use y
+        // socket.send(JSON.stringify({ type: "move", y: playerY }));
       });
 
       window.addEventListener('keyup', (event) => {
@@ -480,6 +537,7 @@ const ThreeScene = () => {
             controls.enabled = true;
             break;
         }
+        socket.send(JSON.stringify({ type: "move", y: player_model.position.x })); // its x but i still use y
       });
 
       // Clean up on component unmount
