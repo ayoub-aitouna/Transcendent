@@ -27,9 +27,8 @@ const page = ({ searchParams }: {
 	const [playerInfo, setPlayerInfo] = useState<user>();
 	const router = useRouter();
 	const targetDateRef = useRef(new Date(new Date().getTime() + 1000 * 120));
-	const sec = useRef(new Date(new Date().getTime() + 1000 * 5));
+	const sec = useRef(new Date(new Date().getTime() + 1000 * 3));
 	const [minutes, seconds] = GameCountdown(targetDateRef.current);
-	const [minute, five_seconds] = GameCountdown(sec.current);
 	const [isMatched, setIsMatched] = useState(false);
 	const [uid, setUuid] = useState<number>(0);
 
@@ -66,11 +65,14 @@ const page = ({ searchParams }: {
 			}
 			router.replace('/game')
 		}
-		if (isMatched && five_seconds == 0) {
+	}, [minutes, seconds, isMatched])
+
+	useEffect(() => {
+		if (isMatched) {
 			router.replace(`/ingame?uuid=${uid}`)
 			socket.current.close()
 		}
-	}, [minutes, seconds])
+	}, [isMatched])
 
 	useEffect(() => {
 		if (socket.current)

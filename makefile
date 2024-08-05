@@ -1,4 +1,4 @@
-all: init up 
+all: up init
 
 up:
 	docker-compose -f ./src/docker-compose.yml up --build

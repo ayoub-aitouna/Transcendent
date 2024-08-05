@@ -1,5 +1,5 @@
 BACKEND_HOST_IP=$(hostname -i | awk '{print $1}')
-PORT=4433
+PORT=443
 ENV_FILE=.env.local
 
 #check if .env.local file exists
