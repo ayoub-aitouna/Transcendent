@@ -16,11 +16,13 @@ const nextConfig = {
             },
             {
                 protocol: 'http',
-                hostname: process.env.NEXT_PUBLIC_BACKEND_HOST,
+                hostname: process.env.NEXT_PUBLIC_BACKEND_IP,
+                port: process.env.NEXT_PUBLIC_BACKEND_PORT,
             },
             {
                 protocol: 'https',
-                hostname: process.env.NEXT_PUBLIC_BACKEND_HOST,
+                hostname: process.env.NEXT_PUBLIC_BACKEND_IP,
+                port: process.env.NEXT_PUBLIC_BACKEND_PORT,
             },
             {
                 protocol: 'https',
@@ -32,7 +34,6 @@ const nextConfig = {
             }
         ],
     },
-
 };
 
 export default nextConfig;
