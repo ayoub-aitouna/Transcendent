@@ -5,6 +5,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import AuthWebSocket from "@/lib/AuthWebSocket";
+import { useSearchParams } from 'next/navigation'
+import Cookies from 'js-cookie';
+import { parseCookies } from 'nookies';
+import { WS_BASE_URL } from '@/constant/api';
+// import { uid } from 'chart.js/dist/helpers/helpers.core';
 
 let scene:any, camera:any, renderer:any, controls:any;
 let computer:any = null;
@@ -30,9 +36,17 @@ let textMesh_player:any = null;
 let textMesh_score_player = null;
 let textMesh_score_computer = null;
 let socket:any  = null;
+// game uid
+
+//serach params = 
+// let token = new AuthWebSocket(`${WS_BASE_URL}/game/tournament/${tournament.uuid}/`);
+//
 
 const ThreeScene = () => {
   const mountRef = useRef(null);
+  const params = useSearchParams();
+  const uuid = params.get('uuid')
+  console.log("uuid from search prams is ----------------->: ", uuid) 
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -168,32 +182,6 @@ const ThreeScene = () => {
           textMesh_score_computer.position.set(0.2, 6.3, -4.5);
           scene.add(textMesh_score_computer);
       });
-
-
-      // const loader1 = new FontLoader();
-      // loader1.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
-      //     const textGeometry = new TextGeometry(computer_score.toString(), {
-      //         font: font,
-      //         size: 0.6,
-      //         depth: 0.2,
-      //         curveSegments: 12,
-      //         bevelEnabled: true,
-      //         bevelThickness: 0.03,
-      //         bevelSize: 0.02,
-      //         bevelSegments: 5
-      //     });
-  
-      //     // Create a material and a mesh
-      //     const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      //     textMesh = new THREE.Mesh(textGeometry, textMaterial);
-
-      //     // Position the text
-      //     textMesh.position.set(0.7, 5.6, -4.5);
-
-      //     // Add the text to the scene
-      //     scene.add(textMesh);
-      // });
-  
   
       // player score
       const text_loader_player = new FontLoader();
@@ -213,30 +201,6 @@ const ThreeScene = () => {
           textMesh_score_player.position.set(-1.3, 6.3, -4.5);
           scene.add(textMesh_score_player);
       });
-  
-    //   const text_load = new FontLoader();
-    //   text_load.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
-    //       const textGeometry = new TextGeometry(player_score.toString(), {
-    //           font: font,
-    //           size: 0.6,
-    //           depth: 0.2,
-    //           curveSegments: 12,
-    //           bevelEnabled: true,
-    //           bevelThickness: 0.03,
-    //           bevelSize: 0.02,
-    //           bevelSegments: 5
-    //       });
-  
-    //       // Create a material and a mesh
-    //       const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    //       textMesh_player = new THREE.Mesh(textGeometry, textMaterial);
-  
-    //       // Position the text
-    //       textMesh_player.position.set(-1, 5.6, -4.5);
-  
-    //       // Add the text to the scene
-    //       scene.add(textMesh_player);
-    //   });
     };
 
       // Check collisions
@@ -262,16 +226,7 @@ const ThreeScene = () => {
           }
           else if (ballModel.position.z > 2.4)
             {
-                // console.log('Player hit');
                 console.log("computer ----------------");
-                // if (computer_score == 0)
-                // {
-                //   scene.remove(textMesh_computer);
-                //   textMesh_computer.geometry.dispose();
-                //   textMesh_computer.material.dispose();
-                //   textMesh_computer = null;
-                //   console.log("when zero ---------------- ,",textMesh_computer);
-                // }
                 computer_score++;
                 resetBallPosition();
             }
@@ -421,22 +376,55 @@ const ThreeScene = () => {
               break;
           }
         };
-  
-        const setupWebSocket = () => {
-          socket = new WebSocket('ws://localhost/ingame'); // Replace with your WebSocket server URL
-  
-          socket.addEventListener('open', () => {
+
+        const setupWebSocket = () => 
+        {
+          //AuthWebSocket
+          //searchparams
+
+          // get a token of game
+          //  i should be to get uid of game
+          // const cookies = parseCookies();
+          // const token = Cookies.get('access');
+          // if (!token) {
+          //   console.error('No access token found in cookies');
+          // } else {
+          //   console.log('token found:', token);
+          // }
+          // console.log(token,"============");
+
+          // const game_uuid = searcb
+          const lobbySocket = new AuthWebSocket(`${WS_BASE_URL}/game/${uuid}/`);          
+//https://localhost/ingame?uuid=8119c1f6-cb63-49ec-8c8f-7d9e092d7eec
+          lobbySocket.onerror = (error) => {
+            console.error('WebSocket error: dxx', error);
+          };
+          lobbySocket.onclose = (event) => {
+            console.log('WebSocket closed:', event.code, event.reason);
+          };
+          lobbySocket.onopen = (event) => {
+              console.log("yaaaaaaaaaaaa hooo");
+          };
+          
+          // const searchParams = useSearchParams();
+// 
+          // const search = searchParams.get(`/so games?uuid=${uid}`);
+
+//  const socket = new WebSocket(`ws://localhost:8000/ws/game/${game_uuid}/?token=${token}`);
+          lobbySocket.addEventListener('open', () => {
             console.log('WebSocket connected');
           });
   
-          socket.addEventListener('message', (message) => {
+          lobbySocket.addEventListener('message', (message) => 
+          {
+            console.log("=------------------=-=--==-=i have a message");
             handleWebSocketMessages(message);
           });
   
-          socket.addEventListener('close', () => {
+          lobbySocket.addEventListener('close', () => {
             console.log('WebSocket disconnected');
           });
-          socket.addEventListener('error', (error) => {
+          lobbySocket.addEventListener('error', (error) => {
             console.error('WebSocket error:', error);
           });
         };
@@ -513,7 +501,7 @@ const ThreeScene = () => {
             controls.enabled = false;
             break;
         }
-        socket.send(JSON.stringify({ type: "move", y: player_model.position.x })); // its x but i still use y
+        // socket.send(JSON.stringify({ type: "move", y: player_model.position.x })); // its x but i still use y
         // socket.send(JSON.stringify({ type: "move", y: playerY }));
       });
 
@@ -537,7 +525,7 @@ const ThreeScene = () => {
             controls.enabled = true;
             break;
         }
-        socket.send(JSON.stringify({ type: "move", y: player_model.position.x })); // its x but i still use y
+        // socket.send(JSON.stringify({ type: "move", y: player_model.position.x })); // its x but i still use y
       });
 
       // Clean up on component unmount
