@@ -63,6 +63,8 @@ const ThreeScene = () => {
 
         // Create a renderer and add it to the DOM
         renderer = new THREE.WebGLRenderer();
+        if (!renderer)
+            console.log("error");
         renderer.setSize(window.innerWidth, window.innerHeight);
         mountRef.current.appendChild(renderer.domElement);
 
@@ -351,7 +353,13 @@ const ThreeScene = () => {
             case 'update':
               // Game state update
               if (data.ball) {
-                ballModel.position.set(data.ball.x, data.ball.y, data.ball.z);
+                if (ballModel && ballModel.position)
+                {
+                  ballModel.position.x = data.ball.x;
+                  ballModel.position.y = data.ball.y;
+                } else {
+                  console.error('ballModel is not initialized', ballModel);
+                }
               }
               if (data.leftPaddle) {
                 player_model.position.set(data.leftPaddle.x, player_model.position.y, data.leftPaddle.z);
@@ -384,18 +392,8 @@ const ThreeScene = () => {
 
           // get a token of game
           //  i should be to get uid of game
-          // const cookies = parseCookies();
-          // const token = Cookies.get('access');
-          // if (!token) {
-          //   console.error('No access token found in cookies');
-          // } else {
-          //   console.log('token found:', token);
-          // }
-          // console.log(token,"============");
 
-          // const game_uuid = searcb
           const lobbySocket = new AuthWebSocket(`${WS_BASE_URL}/game/${uuid}/`);          
-//https://localhost/ingame?uuid=8119c1f6-cb63-49ec-8c8f-7d9e092d7eec
           lobbySocket.onerror = (error) => {
             console.error('WebSocket error: dxx', error);
           };
@@ -405,12 +403,7 @@ const ThreeScene = () => {
           lobbySocket.onopen = (event) => {
               console.log("yaaaaaaaaaaaa hooo");
           };
-          
-          // const searchParams = useSearchParams();
-// 
-          // const search = searchParams.get(`/so games?uuid=${uid}`);
 
-//  const socket = new WebSocket(`ws://localhost:8000/ws/game/${game_uuid}/?token=${token}`);
           lobbySocket.addEventListener('open', () => {
             console.log('WebSocket connected');
           });

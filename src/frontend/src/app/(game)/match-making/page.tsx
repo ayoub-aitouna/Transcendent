@@ -123,7 +123,7 @@ const page = ({ searchParams }: {
 					</button>
 					<div className="flex h-full items-center justify-center">
 						<div className="text-white p-32">
-							<PlayerCard href={myInfo?.image_url || "/assets/images/Unknown.jpg"} name={myInfo?.username || '----'} lvl={String(myInfo?.level)} icon={myInfo?.rank.icon || "/assets/icons/Gold_3_Rank.png"} />
+							<PlayerCard href={myInfo?.image_url || "/assets/images/Unknown.jpg"} name={myInfo?.username || '----'} lvl={String(myInfo?.level)} icon={myInfo?.rank?.icon || "/assets/icons/Gold_3_Rank.png"} />
 						</div>
 						<div className=' font-black text-[60px] text-[#A2A2A2] '>VS</div>
 						{playerInfo?.username == null ?
@@ -149,7 +149,7 @@ const page = ({ searchParams }: {
 
 
 								<div role="status" className="  flex items-center justify-center  bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
-									<PlayerCard href={playerInfo.image_url} name={playerInfo.username} lvl={String(playerInfo.level)} icon={playerInfo.rank.icon} />
+									<PlayerCard href={playerInfo.image_url} name={playerInfo.username} lvl={String(playerInfo.level)} icon={playerInfo?.rank?.icon} />
 								</div>
 
 							</div>
