@@ -10,17 +10,18 @@ const nextConfig = {
                 hostname: 'placehold.co',
             },
             {
-                protocol: 'http',
-                hostname: 'localhost',
-                port: '8000',
+                protocol: 'https',
+                hostname: process.env.NEXT_PUBLIC_BACKEND_IP,
             },
             {
                 protocol: 'http',
                 hostname: process.env.NEXT_PUBLIC_BACKEND_IP,
+                port: process.env.NEXT_PUBLIC_BACKEND_PORT,
             },
             {
                 protocol: 'https',
                 hostname: process.env.NEXT_PUBLIC_BACKEND_IP,
+                port: process.env.NEXT_PUBLIC_BACKEND_PORT,
             },
             {
                 protocol: 'https',
