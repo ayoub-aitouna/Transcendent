@@ -3,7 +3,7 @@ import { inputProps } from "@/type";
 import clsx from "clsx";
 import React from "react";
 
-const Input = React.forwardRef<HTMLInputElement | null, inputProps>(
+const  Input = React.forwardRef<HTMLInputElement | null, inputProps>(
 	(
 		{
 			type,

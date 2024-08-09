@@ -1,4 +1,4 @@
-BACKEND_HOST_IP=$(hostname -i | awk '{print $1}')
+BACKEND_HOST_IP=$(hostname -I | awk '{print $1}')
 PORT=4433
 ENV_FILE=.env.local
 

@@ -20,14 +20,16 @@ import { serialize } from 'node:v8'
 const page = ({ searchParams }: {
 	searchParams?: {
 		player?: string;
+		isRobot?: string;
 	};
 }) => {
 	let player = searchParams?.player || '';
+	let isRobot = searchParams?.isRobot || '';
 	const [myInfo, setMyInfo] = useState<user>();
 	const [playerInfo, setPlayerInfo] = useState<user>();
 	const router = useRouter();
 	const targetDateRef = useRef(new Date(new Date().getTime() + 1000 * 120));
-	const sec = useRef(new Date(new Date().getTime() + 1000 * 3));
+	const sec = useRef(new Date(new Date().getTime() + 1000 * 5));
 	const [minutes, seconds] = GameCountdown(targetDateRef.current);
 	const [isMatched, setIsMatched] = useState(false);
 	const [uid, setUuid] = useState<number>(0);
@@ -65,7 +67,7 @@ const page = ({ searchParams }: {
 			}
 			router.replace('/game')
 		}
-	}, [minutes, seconds, isMatched])
+	}, [minutes, seconds])
 
 	useEffect(() => {
 		if (isMatched) {
@@ -128,33 +130,38 @@ const page = ({ searchParams }: {
 							<PlayerCard href={myInfo?.image_url || "/assets/images/Unknown.jpg"} name={myInfo?.username || '----'} lvl={String(myInfo?.level)} icon={myInfo?.rank?.icon || "/assets/icons/Gold_3_Rank.png"} />
 						</div>
 						<div className=' font-black text-[60px] text-[#A2A2A2] '>VS</div>
-						{playerInfo?.username == null ?
-							<div className="scroll-parent p-32 max-h-[600px]">
-								<div className="scroll-element primary my-4">
-									<div className="text-white my-4">
-										<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
-									</div>
-									<div className="text-white my-4">
-										<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
+						{
+							isRobot === 'true' ?
+								<div className="my-4 p-32">
+									<div role="status" className="  flex items-center justify-center  bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
+										<PlayerCard href={"/assets/images/robot.webp"} name={"Machine"} lvl={String("---")} icon={"/assets/icons/Gold_3_Rank.png"} />
 									</div>
 								</div>
-								<div className="scroll-element secondary my-4">
-									<div className="text-white my-4">
-										<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
+								: !playerInfo?.username ?
+									<div className="scroll-parent p-32 max-h-[600px]">
+										<div className="scroll-element primary my-4">
+											<div className="text-white my-4">
+												<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
+											</div>
+											<div className="text-white my-4">
+												<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
+											</div>
+										</div>
+										<div className="scroll-element secondary my-4">
+											<div className="text-white my-4">
+												<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
+											</div>
+											<div className="text-white my-4">
+												<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
+											</div>
+										</div>
+									</div> :
+									<div className="my-4 p-32">
+										<div role="status" className="  flex items-center justify-center  bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
+											<PlayerCard href={playerInfo?.image_url || '/assets/images/Unknown.jpg'} name={playerInfo.username} lvl={String(playerInfo?.level)} icon={playerInfo?.rank?.icon} />
+										</div>
 									</div>
-									<div className="text-white my-4">
-										<PlayerCard href='/assets/images/Unknown.jpg' name='Unknown' lvl={'---'} icon='/assets/icons/Gold_3_Rank.png' />
-									</div>
-								</div>
-							</div> :
-							<div className="my-4 p-32">
 
-
-								<div role="status" className="  flex items-center justify-center  bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
-									<PlayerCard href={playerInfo.image_url} name={playerInfo.username} lvl={String(playerInfo.level)} icon={playerInfo?.rank?.icon} />
-								</div>
-
-							</div>
 						}
 					</div>
 				</div>
