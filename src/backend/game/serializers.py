@@ -1,8 +1,8 @@
 import os
 from django.conf import settings
 from rest_framework import serializers
-from .models import Game, Tournament, TournamentsRegisteredPlayers, Brackets, stream, Matchup
-from user.serializers import UserSerializer
+from .models import Game, Tournament, TournamentsRegisteredPlayers, Brackets, stream, Matchup, GamePlayer
+from user.serializers import UserSerializer, UserDetailSerializer
 from django.core.files.storage import default_storage
 from django.contrib.auth.models import AnonymousUser
 
@@ -25,10 +25,11 @@ class GameSerializer(serializers.ModelSerializer):
 
 class BracketsSerializer(serializers.ModelSerializer):
     player = UserSerializer()
+    alias = serializers.CharField()
 
     class Meta:
         model = Brackets
-        fields = ['player', 'round_number']
+        fields = ['player', 'alias', 'round_number']
 
 
 class StreamsSerializer(serializers.ModelSerializer):
@@ -46,10 +47,11 @@ class TournamentSerializer(serializers.ModelSerializer, BaseTournamentSerializer
         view_name='tournament-register')
     icon = serializers.SerializerMethodField(read_only=True)
     icon_file = serializers.FileField(write_only=True)
+    uuid = serializers.UUIDField(format='hex_verbose', read_only=True)
 
     class Meta:
         model = Tournament
-        fields = ['id', 'icon', 'icon_file', 'name', 'description', 'start_date',
+        fields = ['id', 'icon', 'icon_file', 'name', 'description', 'uuid', 'start_date',
                   'max_players', 'is_public', 'is_monetized', 'url', 'register']
 
     def create(self, validated_data):
@@ -77,8 +79,9 @@ class TournamentDetailsSerializer(serializers.ModelSerializer, BaseTournamentSer
     class Meta:
         model = Tournament
         fields = ['id', 'uuid', 'icon', 'name', 'description', 'max_players', 'is_public', 'is_monetized',
-                  'is_registered', 'is_my_tournament', 'tournament_bracket', 'start_date', 'registered_users',
+                  'is_registered', 'finished', 'ongoing', 'is_my_tournament', 'tournament_bracket', 'start_date', 'registered_users',
                   'streams', 'games_states', 'match_ups', 'created_at', 'updated_at']
+        read_only_fields = ['finished', 'ongoing', 'created_at', 'updated_at']
 
     def get_games_states(self, obj):
         games_states = Matchup.objects.all().filter(
@@ -105,20 +108,64 @@ class TournamentDetailsSerializer(serializers.ModelSerializer, BaseTournamentSer
         return user in obj.registered_users.all()
 
 
+class GamePlayerSerializer(serializers.ModelSerializer):
+    user = UserDetailSerializer(read_only=True)
+
+    class Meta:
+        model = GamePlayer
+        fields = '__all__'
+
+
 class MatchUpSerializer(serializers.ModelSerializer):
-    first_player = UserSerializer()
-    second_player = UserSerializer()
-    Winner = UserSerializer()
+    first_player = GamePlayerSerializer(read_only=True)
+    second_player = GamePlayerSerializer(read_only=True)
+    Winner = GamePlayerSerializer(read_only=True)
+
+    first_player_alias = serializers.CharField(
+        write_only=True, required=False, allow_blank=True, default=None)
+    second_player_alias = serializers.CharField(
+        write_only=True, required=False, allow_blank=True, default=None)
+
+    class Meta:
+        model = Matchup
+        fields = ['id', 'first_player', 'first_player_alias', 'second_player', 'second_player_alias', 'Winner',
+                  'game_uuid', 'game_type', 'game_over', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'first_player',  'second_player', 'Winner',
+                            'game_uuid', 'game_type', 'game_over', 'created_at', 'updated_at']
+
+    def create(self, validated_data):
+        validated_data.pop('first_player_alias')
+        validated_data.pop('second_player_alias')
+        return super().create(validated_data)
+
+
+class MatchInfoSerializer(serializers.ModelSerializer):
+    first_player = GamePlayerSerializer()
+    second_player = GamePlayerSerializer()
+    Winner = GamePlayerSerializer(read_only=True)
 
     class Meta:
         model = Matchup
         fields = ['id', 'first_player', 'second_player', 'Winner',
-                  'first_player_score', 'second_player_score',
-                  'game_over', 'created_at', 'updated_at']
+                  'game_type', 'game_over', 'created_at', 'updated_at']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not representation["second_player"]:
+            representation["second_player"] = {
+                'user': {
+                    'image_url': 'https://imgcdn.stablediffusionweb.com/2024/3/16/56c125c5-daa3-45aa-8c74-bc8e2bc26128.jpg',
+                    'username': 'root',
+                },
+                'alias': 'root'
+            }
+        return representation
 
 
 class TournamentsRegisteredPlayersSerializer(serializers.ModelSerializer):
-    tournament = TournamentSerializer()
+    tournament = TournamentSerializer(read_only=True)
+    alias = serializers.CharField()
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = TournamentsRegisteredPlayers

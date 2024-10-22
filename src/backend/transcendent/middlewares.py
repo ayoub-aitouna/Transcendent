@@ -4,6 +4,9 @@ from channels.security.websocket import WebsocketDenier
 from user.models import User
 from asgiref.sync import sync_to_async
 from urllib.parse import parse_qs
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class JWTAuthMiddlewareStack():
@@ -25,13 +28,12 @@ class JWTAuthMiddlewareStack():
             else:
                 raise ValueError('No token found')
         except Exception as e:
+            logger.error(f'Error validating token: {e}')
             denier = WebsocketDenier()
             return await denier(scope, receive, send)
         return await self.app(scope, receive, send)
 
     def get_cookies(self, scope):
-        # headers = scope.get('headers')
-        # cookies = [x for x in headers if x[0] == b'cookie']
         cookies = self.get_from_headers(scope, b'cookie')
         if not cookies:
             return scope
@@ -58,3 +60,14 @@ class JWTAuthMiddlewareStack():
 
     def get_user(self, user_id):
         return User.objects.get(id=user_id)
+
+
+class DisableCSRFMiddlewareForAPI:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Adjust this path for your API
+        if request.path.startswith('/api/v1/'):
+            setattr(request, '_dont_enforce_csrf_checks', True)
+        return self.get_response(request)

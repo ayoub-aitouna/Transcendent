@@ -2,6 +2,9 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from game.managers.tournament_manager import TournamentRoutine, TournamentManager
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TournamentConsumer(AsyncWebsocketConsumer):
@@ -17,7 +20,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         self.tournament_routine: TournamentRoutine = await self.tournament_manager.get_or_create_tournament(self.tournament_id)
 
         if self.tournament_routine is None:
-            print('Tournament not found')
             return await self.close(4004, 'Tournament not found')
         await self.channel_layer.group_add(
             self.tournament_group_name,
@@ -29,7 +31,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         if self.tournament_routine is None:
             return
         lastPlayer = await self.tournament_routine.remove_player(self.user)
-        if lastPlayer:
+        if lastPlayer and self.tournament_routine.tournament.finished:
             await self.tournament_manager.remove_tournament(self.tournament_id)
         await self.channel_layer.group_discard(
             self.tournament_group_name,
@@ -41,7 +43,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             JsonData = json.loads(text_data)
         except json.JSONDecodeError:
             return await self.send(text_data=json.dumps({'error': 'Invalid JSON'}))
-        print(f'JsonData is \n{JsonData}')
         return
 
     async def match_result(self, event):
@@ -49,18 +50,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
     async def broadcast(self, event):
         message = event['message']
-        print(message)
         await self.send(text_data=message)
         try:
             if isinstance(message, str):
                 message = json.loads(message)
-            status = message['status']
-            if status == 'over':
-                print(f'closing connection for {self.user}')
+            if 'status' in message and message['status'] == 'over':
                 await self.close()
         except json.JSONDecodeError:
-            print('Failed to decode JSON message:', message)
-        except KeyError:
-            print('Key "status" not found in message:', message)
+            logger.error('Failed to decode JSON message:', message)
         except Exception as e:
-            print(f'Unexpected error: {e}')
+            logger.error(f'Unexpected error: {e}')

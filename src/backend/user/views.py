@@ -21,10 +21,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from transcendent.consumers import NotifyUser
 import json
-from django.utils import timezone
-from datetime import timedelta
 from api.serializers import NotificationSerializer
 from django.core.exceptions import ObjectDoesNotExist
+from game.models import Matchup
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseNotification():
@@ -39,7 +42,7 @@ class BaseNotification():
         notification.save()
         send_notification(notification)
 
-    def _create_chat_notification(self, recipient, title, description,type, action, sender):
+    def _create_chat_notification(self, recipient, title, description, type, action, sender):
         notification = Notification(
             recipient=recipient,
             title=title,
@@ -50,6 +53,18 @@ class BaseNotification():
         )
         notification.save()
         send_notification(notification)
+
+
+class UserMixine():
+
+    def getFriendsQ(self, user):
+        block_list = BlockList.objects.filter(
+            Q(user=user) | Q(blocked_user=user))
+        query = user.friends.all()
+        query = query.exclude(
+            id__in=block_list.values_list('blocked_user', flat=True))
+        query = query.exclude(id__in=block_list.values_list('user', flat=True))
+        return query
 
 
 class UsersList(generics.ListAPIView):
@@ -63,9 +78,9 @@ class UsersList(generics.ListAPIView):
         is_none_friend = False
         if user.is_anonymous:
             return User.objects.all()
-        query_serializer = self.QuerySerializer(data=self.request.query_params)
-        if query_serializer.is_valid():
-            is_none_friend = query_serializer.validated_data.get(
+        serializer = self.QuerySerializer(data=self.request.query_params)
+        if serializer.is_valid():
+            is_none_friend = serializer.validated_data.get(
                 'is_none_friend', False)
         if is_none_friend:
             return User.objects.exclude(id__in=user.friends.all()).exclude(id=user.id)
@@ -214,41 +229,43 @@ class RemoveFriend(generics.DestroyAPIView):
         return
 
 
-class OnlineFriendsList(generics.ListAPIView):
+class OnlineFriendsList(generics.ListAPIView, UserMixine):
     class QuerySerializer(serializers.Serializer):
         filterbyName = serializers.BooleanField(required=False)
         filterByLevel = serializers.BooleanField(required=False)
+        search = serializers.CharField(required=False)
+
     serializer_class = OnlineUserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        query_serializer = self.QuerySerializer(data=self.request.query_params)
-        friends_query = self.request.user.friends.all().filter(status='online')
-        if query_serializer.is_valid():
-            filterbyName = query_serializer.validated_data.get('filterbyName')
-            filterByLevel = query_serializer.validated_data.get(
-                'filterByLevel')
+        serializer = self.QuerySerializer(data=self.request.query_params)
+        query = self.getFriendsQ(self.request.user).filter(status='online')
+        if serializer.is_valid():
+            filterbyName = serializer.validated_data.get('filterbyName')
+            filterByLevel = serializer.validated_data.get('filterByLevel')
+            search = serializer.validated_data.get('search')
             if filterbyName:
-                return friends_query.order_by('username')
+                return query.order_by('username')
             if filterByLevel:
-                return friends_query.order_by('rank__hierarchy_order').order_by('current_xp').reverse()
-        return friends_query
+                return query.order_by('rank__hierarchy_order').order_by('current_xp').reverse()
+            if search:
+                return query.filter(Q(username__icontains=search) | Q(email__icontains=search))
+        return query
 
 
 class RankAchievementList(APIView):
     serializer_class = RankAchievementSerializer
 
-    def get(slef, request):
-        user = request.user
+    def get(self, request):
         ranking_logs = RankAchievement.objects.all().filter(
-            user=user).order_by('achieved_at')
+            user=request.user).order_by('achieved_at')
         data = RankAchievementSerializer(ranking_logs, many=True).data
         return Response(data, status=200)
 
     def post(self, request):
-        user = request.user
         rank_achievement = RankAchievement(
-            user=user, rank=Ranks.objects.get(id=3))
+            user=request.user, rank=Ranks.objects.get(id=3))
         rank_achievement.save()
         return Response(status=201)
 
@@ -271,18 +288,25 @@ class InvitePlayer(APIView, BaseNotification):
 
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
-        game_room_id = str(uuid.uuid4())
+        invite_id = str(uuid.uuid4())
+
         self._create_notification(
-            addressee=user,
+            recipient=user,
             title='Game invitation',
-            description=f'{self.request.user.username} invited you to a game room {game_room_id}',
-            type='invite',
-            action=game_room_id
+            description=f'''{self.request.user.username
+                             } invited you to a game room''',
+            type='game-invite',
+            action=json.dumps(
+                {
+                    "invite_id": invite_id,
+                    "player": self.request.user.username
+                })
         )
-        return Response({'message': 'Invitation sent', 'game_room_id': game_room_id})
+        return Response({'message': 'Invitation sent', 'invite_id': invite_id})
 
 
 class SendTestNotification(APIView):
+
     def get(self, request):
         user = User.objects.get(id=1)
         notification = Notification(
@@ -315,7 +339,7 @@ class SearchUser(generics.ListAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
 
-    def get_my_friends_query(self, search_query):
+    def get_my_query(self, search_query):
         user = self.request.user
         block_list = BlockList.objects.filter(
             Q(user=user) | Q(blocked_user=user))
@@ -325,7 +349,7 @@ class SearchUser(generics.ListAPIView):
                      .values_list('blocked_user', flat=True))\
             .exclude(id__in=block_list.values_list('user', flat=True))
 
-    def get_none_friends_query(self, search_query):
+    def get_none_query(self, search_query):
         user = self.request.user
         return User.objects.filter(
             Q(username__icontains=search_query) | Q(email__icontains=search_query))\
@@ -334,17 +358,17 @@ class SearchUser(generics.ListAPIView):
     def get_queryset(self):
         none_friend_only = False
         search_query = ""
-        query_serializer = self.QuerySerializer(data=self.request.query_params)
-        if query_serializer.is_valid():
-            none_friend_only = query_serializer.validated_data.get(
+        serializer = self.QuerySerializer(data=self.request.query_params)
+        if serializer.is_valid():
+            none_friend_only = serializer.validated_data.get(
                 'none_friend_only')
-            search_query = query_serializer.validated_data.get('search_query')
+            search_query = serializer.validated_data.get('search_query')
         search_query = search_query if search_query is not None else ""
 
         if not none_friend_only:
-            return self.get_my_friends_query(search_query)
+            return self.get_my_query(search_query)
         else:
-            return self.get_none_friends_query(search_query)
+            return self.get_none_query(search_query)
 
 
 class RecommendUsers(generics.ListAPIView):
@@ -371,18 +395,13 @@ class AppendingRequests(generics.ListAPIView):
         return Friends_Request.objects.filter(addressee=self.request.user)
 
 
-class FriendList(generics.ListAPIView):
+class FriendList(generics.ListAPIView, UserMixine):
     serializer_class = UserFriendsSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        block_list = BlockList.objects.filter(
-            Q(user=user) | Q(blocked_user=user))
-        return user.friends.all().exclude(id__in=block_list
-                                          .values_list('blocked_user', flat=True))\
-            .exclude(id__in=block_list.values_list('user', flat=True))
+        return self.getFriendsQ(self.request.user)
 
 
 class UnblockUser(generics.DestroyAPIView):
@@ -392,7 +411,7 @@ class UnblockUser(generics.DestroyAPIView):
     def perform_destroy(self, instance):
         pk = self.kwargs.get("pk")
         blocked_user = get_object_or_404(User, pk=pk)
-        print('blocked user', blocked_user)
+
         BlockList.objects.filter(
             user=self.request.user, blocked_user=blocked_user).delete()
         return
@@ -413,11 +432,10 @@ class LogoutAllDevices(APIView):
         return Response({'message': 'All devices logged out'})
 
 
-def send_notification(notification, type='notification', request=None):
+def send_notification(notification, request=None):
     channel_layer = get_channel_layer()
     notification_serialized = NotificationSerializer(
         notification,  context={'request': request}).data
-    notification_serialized['type'] = type  # type of notification
     str_obj = json.dumps(notification_serialized)
     NotifyUser(notification_serialized['recipient']
                ['id'], str_obj, channel_layer)

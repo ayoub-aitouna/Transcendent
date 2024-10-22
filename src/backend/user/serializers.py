@@ -105,10 +105,11 @@ class UserFriendsSerializer(serializers.ModelSerializer, BaseUserSerializer):
     message = serializers.HyperlinkedIdentityField(
         view_name='block-user', lookup_field='pk')
     image_url = serializers.SerializerMethodField()
+    current_xp = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'image_url', 'fullname', 'username',
+        fields = ['id', 'image_url', 'fullname', 'username', 'current_xp',
                   'url', 'unfriend', 'block', 'message']
 
 
@@ -126,6 +127,7 @@ class UserSerializer(serializers.ModelSerializer, BaseUserSerializer):
         model = User
         fields = ['id', 'image_url', 'fullname',
                   'username', 'rank', 'current_xp', 'coins', 'url', 'send_request']
+
 
 class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     registration_method = serializers.CharField(read_only=True)
@@ -151,7 +153,7 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
 
     def __init__(self, *args, **kwargs):
         super(UserDetailSerializer, self).__init__(*args, **kwargs)
-        if self.context.get('view').kwargs.get('pk') == self.context.get('request').user.id:
+        if self.context.get('view') and self.context.get('view').kwargs.get('pk') == self.context.get('request').user.id:
             self.fields.pop('send_request')
 
     class Meta:
@@ -166,11 +168,13 @@ class UserDetailSerializer(serializers.ModelSerializer, BaseUserSerializer):
     def create(self, validated_data):
         return super().create(self.create_avatar(validated_data))
 
-
     def get_rankProgressPercentage(self, obj):
         if obj.rank is None:
-            return 0
-        return (obj.current_xp / obj.rank.xp_required) * 100
+            try:
+                obj.rank = Ranks.objects.get(pk=1)
+            except Exception:
+                return 0
+        return round((obj.current_xp / obj.rank.xp_required) * 100)
 
 
 class RankAchievementSerializer(serializers.ModelSerializer):
@@ -181,7 +185,6 @@ class RankAchievementSerializer(serializers.ModelSerializer):
         fields = ['id', 'point', 'achieved_at']
 
     def get_point(slef, obj):
-        print(obj.rank.hierarchy_order * obj.rank.xp_required)
         return (obj.rank.hierarchy_order * obj.rank.xp_required)
 
 
@@ -192,10 +195,11 @@ class OnlineUserSerializer(serializers.ModelSerializer, BaseUserSerializer):
     send_invitation = serializers.HyperlinkedIdentityField(
         view_name='invite-player', lookup_field='pk')
     image_url = serializers.SerializerMethodField()
+    current_xp = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'image_url', 'fullname',
+        fields = ['id', 'image_url', 'fullname', 'current_xp',
                   'username', 'url', 'send_invitation']
 
 
@@ -212,22 +216,24 @@ class BlockListSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source='requester.id', read_only=True)
     image_url = serializers.SerializerMethodField()
     fullname = serializers.SerializerMethodField()
     username = serializers.CharField(source='requester.username')
+    current_xp = serializers.IntegerField(
+        source='requester.current_xp', read_only=True)
     manage_friend_request = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'fullname', 'image_url',
+        fields = ['user_id', 'username', 'fullname', 'image_url', 'current_xp',
                   'url',  'manage_friend_request']
 
     def get_manage_friend_request(self, obj):
         return reverse('manage-friend-request', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
 
     def get_url(self, obj):
-        print(obj)
         return reverse('user', kwargs={"pk": obj.requester.id},  request=self.context.get('request'))
 
     def get_fullname(self, obj):

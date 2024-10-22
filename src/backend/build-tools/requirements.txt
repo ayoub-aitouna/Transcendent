@@ -18,3 +18,7 @@ shortuuid
 
 apscheduler
 django-apscheduler
+
+django_otp
+
+drf-spectacular

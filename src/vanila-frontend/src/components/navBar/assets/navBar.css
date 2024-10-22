@@ -1,0 +1,722 @@
+/* Converted from Tailwind */
+body.bg-dark {
+	background-color: #161616;
+	width: 100%;
+
+}
+
+.navbar-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	min-width: 381px;
+}
+
+.nav-links {
+	display: flex;
+	flex-direction: row;
+	gap: 4rem;
+	justify-content: center;
+	align-items: center;
+	font-weight: 600;
+	color: #ffffff;
+}
+
+/* Existing CSS for Play Now Button */
+.play_now_button {
+	background: linear-gradient(90deg, #Ff4106 0%, #Ff4106 37%, #FE284F 64%, #FF0099 100%);
+	border: none;
+	margin-right: 20px;
+	color: white;
+	padding: 3px 30px;
+	font-size: 15px;
+	cursor: pointer;
+	border-radius: 5px;
+	height: 36px;
+	width: 144px;
+	display: grid;
+	place-content: center;
+	font-weight: 600;
+	text-decoration: none;
+	/* Add this line to remove the underline */
+}
+
+.play_now_button:hover {
+	opacity: 0.8;
+}
+
+
+
+.desktop-nav {
+	display: none;
+
+	@media (min-width: 1200px) {
+		display: block;
+	}
+}
+
+.desktop-nav ul.nav-list {
+	list-style-type: none;
+	display: flex;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	flex-direction: column;
+	gap: 0.5rem;
+	justify-content: center;
+	align-items: flex-start;
+
+
+
+
+}
+
+@media (min-width: 1200px) {
+	.desktop-nav ul.nav-list {
+		padding-top: 0;
+		padding-bottom: 0;
+		flex-direction: row;
+		gap: 2rem;
+	}
+}
+
+.desktop-nav ul.nav-list li.nav-item {
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+	width: 100%;
+}
+
+@media (min-width: 1200px) {
+	.desktop-nav ul.nav-list li.nav-item {
+		padding-left: 0;
+		padding-right: 0;
+		/* width: auto; */
+	}
+}
+
+.no-underline {
+	text-decoration: none;
+}
+
+.group:hover .group-child {
+	/* Example style for the child element when the parent is hovered */
+	color: #FD4106;
+}
+
+.desktop-nav ul.nav-list li.nav-item a.no-underline {
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	cursor: pointer;
+	border-bottom: 2px solid transparent;
+	transition: border-color 0.3s, color 0.3s;
+}
+
+.desktop-nav ul.nav-list li.nav-item a.no-underline:hover {
+	border-bottom-color: #FD4106;
+}
+
+.desktop-nav ul.nav-list li.nav-item a.no-underline .nav-icons {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	/* Space between items */
+	margin-left: 0.25rem;
+	/* Left margin */
+	cursor: pointer;
+}
+
+.desktop-nav ul.nav-list li.nav-item a.no-underline .nav-icons svg {
+	width: 30px;
+	/* Adjust size as needed */
+	height: 31px;
+	/* Adjust size as needed */
+}
+
+.desktop-nav ul.nav-list li.nav-item a.no-underline .nav-icons p {
+	font-size: 0.875rem;
+	/* Font size */
+	line-height: 1.25rem;
+	/* Line height */
+	margin: 0;
+	/* Remove default margin */
+	display: flex;
+	/* Use flexbox for text alignment */
+	align-items: center;
+	color: #a2a2a2;
+	/* Default text color */
+	transition: color 0.3s;
+}
+
+
+.desktop-nav ul.nav-list li.nav-item a.no-underline:hover .nav-icons p {
+	color: #FD4106;
+}
+
+.desktop-nav ul.nav-list li.nav-item a.active.no-underline:hover .nav-icons p {
+	color: #FD4106;
+}
+
+.nav-item a.active {
+	color: #FD4106;
+}
+
+@media (min-width: 1200px) {
+	.desktop-nav ul.nav-list li.nav-item a.no-underline .nav-icons {
+		height: 3rem;
+	}
+
+	.desktop-nav ul.nav-list li.nav-item a.no-underline .nav-icons p {
+		font-size: 1rem;
+		line-height: 1.5rem;
+	}
+}
+
+.right-icons {
+	display: flex;
+	margin-left: 0.5rem;
+	gap: 1rem;
+	align-items: center;
+
+}
+
+.social-list {
+	display: flex;
+	flex-direction: row;
+	gap: 0.25rem;
+	justify-content: center;
+	align-items: center;
+}
+
+
+.social-icons {
+	position: relative;
+}
+
+.icon-container {
+	position: relative;
+	aspect-ratio: 1 / 1;
+	border-radius: 9999px;
+	height: 30px;
+	width: 30px;
+	background: #303030;
+
+
+
+	@media (min-width: 1200px) {
+		height: 40px;
+		width: 40px;
+	}
+
+}
+
+.notification-badge {
+	height: fit-content;
+	min-height: 17px;
+	min-width: 17px;
+	border-radius: 50%;
+	width: fit-content;
+	position: absolute;
+	top: -12px;
+	right: -12px;
+	background-color: #FD4106;
+	color: white;
+	padding: 3px 4px;
+	font-size: 10px;
+	font-weight: bold;
+	justify-items: center;
+}
+
+/* Profile button converted */
+.navbar-profile-button {
+	position: relative;
+	z-index: 99;
+	/* padding: 16px; */
+	border-radius: 8px;
+
+}
+
+.profile-button .profile {
+	background: #292929;
+	display: flex;
+	overflow: hidden;
+	padding: 0.25rem;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	border-radius: 4px;
+	height: 46.9px;
+	border: none;
+}
+
+.profile-content {
+	display: flex;
+	align-items: center;
+}
+
+.profile-image {
+	display: flex;
+	align-items: flex-start;
+}
+
+.profile-image img {
+	object-fit: cover;
+	border-radius: 9999px;
+	width: 2.5rem;
+	background-color: #ffffff;
+	height: 38.9px;
+	border: none;
+
+}
+
+.profile-details {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	max-width: 80px;
+}
+
+.profile-name {
+	font-size: 15px;
+	font-weight: 600;
+	color: #ffffff;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-left: 5px;
+	max-width: 60px;
+	color: 15px;
+	max-width: 70px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+}
+
+.profile-level {
+	width: 38px;
+	height: 9.73px;
+	top: 23.34px;
+	left: 48px;
+	gap: 0px;
+	opacity: 0px;
+
+}
+
+.profile-dropdown-icon {
+	margin-left: 8px;
+	background-color: black;
+	border-radius: 50%;
+	/* Converted from Tailwind's rounded-full */
+	width: 28px;
+	/* Converted from Tailwind's w-7 */
+	height: 28px;
+	/* Converted from Tailwind's h-7 */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.icon-link {
+	display: grid;
+	place-content: center;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background-color: #303030;
+	border: none;
+
+}
+
+.icon-content {
+	display: flex;
+	position: relative;
+	margin-left: 0.25rem;
+	flex-direction: row;
+	align-items: center;
+	cursor: pointer;
+
+
+}
+
+.dropdown-svg {
+	width: 16px;
+	/* Converted from Tailwind's w-4 */
+	height: 16px;
+	/* Converted from Tailwind's h-4 */
+	color: gray;
+}
+
+/* Existing CSS for SVG color in nav items */
+.nav svg {
+	fill: #a2a2a2;
+}
+
+.nav:hover svg {
+	fill: #FD4106;
+}
+
+.notification-icon-container {
+	position: relative; 
+	display: inline-block;
+	height: 40px;
+	width: 40px;
+}
+
+/* The notification panel */
+.notification-panel {
+	position: absolute;
+	z-index: 50;
+	top: 100%; /* Directly below the icon */
+	right: 0; /* Align to the right */
+	width: 276px;
+	background-color: #242424;
+	padding: 2px;
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	margin-top: 8px; /* Optional space between the icon and panel */
+	height: 400px;
+}
+
+
+
+
+
+
+.notification-title {
+	font-weight: 600;
+	font-size: 14px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	color: #666666;
+}
+
+.notification-divider {
+	width: 256px;
+	border-top: 2px solid #363636;
+	padding-top: 3px;
+	margin-top: 3px;
+}
+
+.notification-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.notification-list {
+	height: 330px;
+	width: 100%;
+	padding: 0% 8px;
+	overflow-y: scroll;
+	/* overflow-x: hidden; */
+}
+
+.hide-scrollbar {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+
+.hidden {
+	display: none;
+}
+
+.notification-item {
+	padding: 8px;
+	height: 50px;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	border-radius: 4px;
+	margin: 3px 0;
+	overflow: hidden;
+	background-color: #474747;
+}
+
+.notification-item.seen {
+	background-color: transparent;
+}
+
+.notification-link {
+	display: flex;
+	align-items: center;
+	border-radius: 4px;
+}
+
+.notification-image-container {
+	display: flex;
+	align-items: start;
+	border-radius: 50%;
+}
+
+.notification-image {
+	background-color: white;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+}
+
+.notification-text-container {
+	padding-left: 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+}
+
+.notification-text {
+	color: white;
+	font-weight: 300;
+	font-size: 12px;
+	overflow: hidden;
+	max-height: 80px;
+}
+
+.notification-time {
+	font-weight: 400;
+	color: #878787;
+	font-size: 10px;
+}
+
+.notification-menu-container {
+	display: flex;
+	cursor: pointer;
+}
+
+.notification-menu {
+	position: relative;
+}
+
+.three-points-trigger {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 7px;
+	cursor: pointer;
+}
+
+.notification-menu-content {
+	display: none;
+	background-color: #161616;
+	z-index: 50;
+	position: absolute;
+	right: 8px;
+	bottom: -42%;
+	height: 40px;
+	width: 120px;
+	padding: 4px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+}
+
+.notification-menu-content.show {
+	display: flex;
+}
+
+.notification-menu-button {
+	display: flex;
+	flex-direction: row;
+	align-items: start;
+	justify-content: start;
+	font-size: 16px;
+	color: #878787;
+	gap: 2px;
+	background-color: transparent;
+	padding: 2px;
+	width: 100%;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.notification-menu-button:hover {
+	background-color: #262626;
+}
+
+.notification-menu-text {
+	font-weight: 300;
+	font-size: 12px;
+}
+
+
+
+
+
+/* 2xl screen and above */
+@media (min-width: 1536px) {
+	.navbar-container {
+		max-width: 1736px;
+	}
+}
+
+.profile-icon-container {
+	position: relative;
+	z-index: 50;
+}
+
+.profile-button {
+	display: flex;
+	align-items: center;
+	background-color: #292929;
+	padding: 0.5rem;
+	height: 46.9px;
+	min-width: 40px;
+	border-radius: 6px;
+	overflow: hidden;
+	cursor: pointer;
+	margin-left: 1rem;
+}
+
+.profile-image-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-right: 0.25rem;
+}
+
+.profile-image {
+	background-color: white;
+	width: 40px;
+	height: 38.9px;
+	border-radius: 50%;
+}
+
+.profile-info {
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	max-width: 80px;
+	margin-left: 5px;
+}
+
+.profile-username {
+	font-family: Inter;
+	font-size: 8px;
+	font-weight: 400;
+	line-height: 9.68px;
+	letter-spacing: -0.01em;
+	text-align: left;
+	color: #A2A2A2;
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+}
+
+.profile-level {
+	color: white;
+	font-size: 8px;
+	font-weight: 400;
+	margin-top: 2px;
+}
+
+.profile-icon-toggle {
+	margin-left: 8px;
+	background-color: black;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.profile-panel {
+	margin-top: 3px;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	background-color: #242424;
+	width: 200px;
+	min-height: 145px;
+	padding: 16px;
+	border-radius: 6px;
+	display: none;
+}
+
+.profile-panel-header {
+	display: flex;
+	align-items: start;
+}
+
+.profile-panel-info {
+	margin-left: 5px;
+}
+
+.profile-fullname {
+	font-family: Inter;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 16.94px;
+	letter-spacing: -0.01em;
+	text-align: left;
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+}
+
+.profile-main-username {
+	font-family: Inter;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 16.94px;
+	letter-spacing: -0.01em;
+	text-align: left;
+	max-width: 70px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+
+}
+
+.profile-view-link {
+	color: #fd4106;
+	font-size: 8px;
+	margin-top: 4px;
+}
+
+.profile-panel-links {
+	margin-top: 6px;
+	border-top: 1px solid #363636;
+	padding-top: 8px;
+}
+
+.icons-panel-links {
+	margin-top: 6px;
+	border-top: 1px solid #363636;
+	padding-top: 8px;
+}
+
+.profile-panel-link {
+	display: flex;
+	align-items: center;
+	font-size: 8px;
+	color: white;
+	text-decoration: none;
+	margin-top: 8px;
+	background: #242424;
+}
+
+.profile-panel-link span {
+	margin-left: 8px;
+}

@@ -17,33 +17,33 @@ services:
     restart: always
     container_name: frontend
     build:
-      context: ./frontend/build-tools
+      context: ./vanila-frontend/build-tools
     networks:
       - mynetwork
-
     volumes:
-      - frontend_volume:/var/app
+      - ./vanila-frontend:/var/www/html
+    env_file:
+      - .env
     depends_on:
       - backend
-    environment:
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
-
+    user: root
 
   backend:
     restart: always
     container_name: backend
     build:
       context: ./backend/build-tools
-    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]
     networks:
       - mynetwork
-    environment:
-      - PYTHONUNBUFFERED=1
     volumes:
-      - backend_volume:/var/app
+      - ./backend:/var/app
+    env_file:
+      - .env
     depends_on:
       - db
       - redis
+    user: root
 
   redis:
     restart: always
@@ -76,19 +76,6 @@ services:
       - db
 
 volumes:
-  backend_volume:
-    driver: local
-    driver_opts:
-      type: "none"
-      o: "bind"
-      device: "${PWD}/src/backend/"
-
-  frontend_volume:
-    driver: local
-    driver_opts:
-      type: "none"
-      o: "bind"
-      device: "${PWD}/src/frontend"
   db_volume:
 
 networks:

@@ -1,14 +1,29 @@
 import math
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class Config():
+    tableWidth = 200
+    tableHeight = 10
+    tableDepth = 100
+    ballRadius = 3
+    paddleWidth = 3
+    paddleHeight = 0.5
+    paddleDepth = 15
+    winScore = 4
+    maxScore = 7
+    requiredScoreDiff = 2
 
 
 class Ball():
-    RADIUS = 5
-    SPEED = 5
+    SPEED = 2
 
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.radius = Ball.RADIUS
+    def __init__(self):
+        self.width = Config.tableWidth
+        self.height = Config.tableDepth
+        self.radius = Config.ballRadius
         self.reset()
 
     def setAngle(self, angle):
@@ -44,7 +59,8 @@ class Ball():
 
         # Ball out of bounds (left or right)
         if self.x - self.radius < 0 or self.x + self.radius > self.width:
-            await callback(self.x - self.radius < 0)
+            is_left_goal = self.x - self.radius < 0
+            await callback(is_left_goal)
             self.reset()
 
     def setPaddles(self, leftPaddle, rightPaddle):
@@ -53,32 +69,54 @@ class Ball():
 
 
 class Paddle():
-    HEIGHT = 60
-    WIDTH = 10
-    PADDLE_SPEED = 2
+    PADDLE_SPEED = 3
     AI_MODE = False
 
-    def __init__(self, x, y, is_ai=False, ai_difficulty=1):
+    def __init__(self, x, y, is_ai=False, ai_difficulty=.3):
         self.x = x
         self.y = y
         self.is_ai = is_ai
-        self.PADDLE_SPEED = Paddle.PADDLE_SPEED * ai_difficulty
+        self.HEIGHT = Config.paddleDepth
+        self.WIDTH = Config.paddleWidth
+        self.tableHeight = Config.tableDepth
+        self.max_height = self.tableHeight - (self.HEIGHT / 2)
+        self.min_height = (self.HEIGHT / 2)
+
+        self.AI_PADDLE_SPEED = self.PADDLE_SPEED * ai_difficulty
 
     def updatePosition(self, y):
         self.y = y
 
+    def movePaddle(self, action):
+        if action == 'left':
+            nv = self.y - self.PADDLE_SPEED
+            self.y = nv if (nv > self.min_height) else self.min_height
+
+        elif action == 'right':
+            nv = self.y + self.PADDLE_SPEED
+            self.y = nv if (nv < self.max_height) else self.max_height
+        else:
+            logger.error(f'Unsupported Action {action},'
+                         'please make sure to use on of this actions (left|right)')
+
+    def getY(self):
+        return self.y
+
+    def getX(self):
+        return self.x
+
     def ai_update(self, ball):
-        if ball.y < self.y - Paddle.HEIGHT / 2:
-            self.y -= Paddle.PADDLE_SPEED
-        elif ball.y > self.y + Paddle.HEIGHT / 2:
-            self.y += Paddle.PADDLE_SPEED
+        if ball.y < self.y - self.HEIGHT / 2:
+            self.y -= self.AI_PADDLE_SPEED
+        elif ball.y > self.y + self.HEIGHT / 2:
+            self.y += self.AI_PADDLE_SPEED
 
     def get_hit_angle(self, ball):
         diff = ball.y - self.y
-        return map_value(diff, -Paddle.HEIGHT / 2, Paddle.HEIGHT / 2, -math.pi / 4, math.pi / 4)
+        return map_value(diff, -self.HEIGHT / 2, self.HEIGHT / 2, -math.pi / 4, math.pi / 4)
 
     def is_on_same_level(self, ball):
-        return self.y - Paddle.HEIGHT / 2 <= ball.y <= self.y + Paddle.HEIGHT / 2
+        return self.y - self.HEIGHT / 2 <= ball.y <= self.y + self.HEIGHT / 2
 
 
 def map_value(val, start_src, end_src, start_dst, end_dst):
