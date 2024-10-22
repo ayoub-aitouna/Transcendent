@@ -6,9 +6,9 @@ This repository contains the code and resources necessary to understand, install
 
 
 ## Preview
-<video src="https://vimeo.com/1022309070" width="300" height="300"></video>
+<!-- <video src="https://vimeo.com/1022309070" width="300" height="300"></video>-->
 
-<!-- [![](https://markdown-videos-api.jorgenkh.no/vimeo/1022309070?width=320&height=180&filetype=jpeg)](https://vimeo.com/1022309070) -->
+ [![](https://markdown-videos-api.jorgenkh.no/vimeo/1022309070?width=320&height=180&filetype=jpeg)](https://vimeo.com/1022309070) 
 
 
 
