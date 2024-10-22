@@ -3,6 +3,14 @@
 Welcome to our web-based gaming platform, where players can engage in thrilling matches against random opponents, challenge AI competitors, or participate in exciting tournaments. Our platform meticulously tracks users' achievements and ranks, allowing players to showcase their progress and compare standings with friends. Enjoy seamless communication through our messaging and live chat features, and create chat groups to stay connected with your gaming community. Join us and immerse yourself in a dynamic and competitive gaming environment where every match brings new opportunities for victory and camaraderie.
 This repository contains the code and resources necessary to understand, install, and contribute to the project.
 
+
+
+## Preview
+
+https://vimeo.com/1022309070
+
+
+
 ## Table of Contents
 
 - [Introduction](#introduction)
